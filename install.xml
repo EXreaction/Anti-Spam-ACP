@@ -18,7 +18,7 @@
 		</author>
 	</author-group>
 
-	<mod-version>0.1.0</mod-version>
+	<mod-version>0.1.X</mod-version>
 
 	<installation>
 		<level>easy</level>

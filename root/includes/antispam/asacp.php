@@ -9,6 +9,7 @@
 
 /* DO NOT FORGET
 uncomment //trigger_error('TOO_MANY_REGISTERS');
+update url in ACP for new version
 */
 
 if (!defined('IN_PHPBB'))
@@ -17,7 +18,7 @@ if (!defined('IN_PHPBB'))
 }
 
 $user->add_lang('mods/asacp');
-define('ASACP_VERSION', '0.1.0');
+define('ASACP_VERSION', '0.1.2');
 if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
 {
 	antispam::update_db();
@@ -25,13 +26,16 @@ if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSIO
 
 class antispam
 {
+	/**
+	* UCP Register Operations
+	*/
 	public static function ucp_register()
 	{
 		global $config, $db, $phpbb_root_path, $phpEx, $template, $user;
 
-		if (!$config['asacp_enable'])
+		if (!$config['asacp_enable'] || !$config['asacp_reg_captcha'])
 		{
-			return;
+			return array();
 		}
 
 		$asacp_id = request_var('asacp_id', '');
@@ -122,11 +126,43 @@ class antispam
 	//public static function ucp_register()
 
 	/**
+	* Get the latest version number from Lithium Studios
+	*/
+	public static function version_check()
+	{
+		global $cache;
+
+		$version = $cache->get('asacp_version');
+		if ($version === false)
+		{
+			if (!function_exists('get_remote_file'))
+			{
+				global $phpbb_root_path, $phpEx;
+				include($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
+			}
+
+			$errstr = $errno = '';
+			$version = get_remote_file('lithiumstudios.org', '/updatecheck', 'anti_spam_acp_3_version.txt', $errstr, $errno);
+
+			$cache->put('asacp_version', $version, 3600);
+		}
+
+		return $version;
+	}
+	//public static function version_check()
+
+	/**
 	* Update/Install Database section
 	*/
 	public static function update_db()
 	{
-		global $config;
+		global $cache, $config, $phpbb_root_path, $phpEx;
+
+		if (!class_exists('auth_admin'))
+		{
+			include($phpbb_root_path . 'includes/acp/auth.' . $phpEx);
+		}
+		$auth_admin = new auth_admin();
 
 		if (!isset($config['asacp_version']))
 		{
@@ -137,9 +173,19 @@ class antispam
 		switch ($config['asacp_version'])
 		{
 			case '0.1.0' :
+				$auth_admin->acl_add_option(array(
+					'local'		=> array(),
+					'global'	=> array(
+						'a_asacp',
+					),
+				));
+			case '0.1.1' :
+				set_config('asacp_reg_captcha', true);
 		}
 
 		set_config('asacp_version', ASACP_VERSION);
+
+		$cache->purge();
 	}
 	//public static function update_db()
 }

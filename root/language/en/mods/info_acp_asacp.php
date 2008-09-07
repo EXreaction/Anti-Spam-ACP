@@ -30,7 +30,10 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'ASACP_CREDITS'	=> 'Protected by <a href="http://www.lithiumstudios.org" target="_blank">Anti-Spam ACP</a>',
+	'ANTISPAM'				=> 'Anti-Spam',
+	'ASACP_SETTINGS'		=> 'Anti-Spam ACP Settings',
+
+	'LOG_ASACP_SETTINGS'	=> 'Updated Anti-Spam ACP Settings',
 ));
 
 ?>
