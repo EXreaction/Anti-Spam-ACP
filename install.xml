@@ -22,7 +22,7 @@
 
 	<installation>
 		<level>easy</level>
-		<time>120</time>
+		<time>180</time>
 		<target-version>3.0.2</target-version>
 	</installation>
 </header>
@@ -48,6 +48,21 @@
 			<action type="after-add"><![CDATA[			// START Anti-Spam ACP
 			$s_hidden_fields = array_merge($s_hidden_fields, $asacp_hidden);
 			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[						if (strcasecmp($row['code'], $data['confirm_code']) === 0)
+						{
+							$sql = 'DELETE FROM ' . CONFIRM_TABLE . "
+								WHERE confirm_id = '" . $db->sql_escape($confirm_id) . "'
+									AND session_id = '" . $db->sql_escape($user->session_id) . "'
+									AND confirm_type = " . CONFIRM_REG;
+							$db->sql_query($sql);
+						}
+						else
+						{]]></find>
+			<action type="after-add"><![CDATA[							// START Anti-Spam ACP
+							antispam::add_log('LOG_INCORRECT_CODE', array($row['code'], $data['confirm_code']));
+							// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[$s_hidden_fields = build_hidden_fields($s_hidden_fields);]]></find>
