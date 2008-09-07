@@ -158,6 +158,7 @@ class acp_asacp
 				$options = array(
 					'legend1'				=> 'ASACP_SETTINGS',
 					'asacp_enable'			=> array('lang' => 'ASACP_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_log'				=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 
 					'legend2'				=> 'ASACP_REGISTER_SETTINGS',
 					'asacp_reg_captcha'		=> array('lang' => 'ASACP_REG_CAPTCHA', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),

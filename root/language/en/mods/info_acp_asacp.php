@@ -30,14 +30,14 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'ANTISPAM'				=> 'Anti-Spam',
-	'ASACP_SETTINGS'		=> 'Anti-Spam ACP Settings',
-	'ASACP_SPAM_LOG'		=> 'Spam Log',
+	'ANTISPAM'					=> 'Anti-Spam',
+	'ASACP_SETTINGS'			=> 'Anti-Spam ACP Settings',
+	'ASACP_SPAM_LOG'			=> 'Spam Log',
 
-	'LOG_ASACP_SETTINGS'	=> 'Updated Anti-Spam ACP Settings',
-	'LOG_CLEAR_SPAM_LOG'	=> 'Cleared Spam Log',
-	'LOG_INCORRECT_CODE'	=> 'Entered in wrong confirm code.',
-	'LOG_INCORRECT_CODE_DATA' => 'Code Shown: "%s"<br />Code Entered: "%s"',
+	'LOG_ASACP_SETTINGS'		=> 'Updated Anti-Spam ACP Settings',
+	'LOG_CLEAR_SPAM_LOG'		=> 'Cleared Spam Log',
+	'LOG_INCORRECT_CODE'		=> 'Entered in wrong confirm code.',
+	'LOG_INCORRECT_CODE_DATA'	=> 'Code Shown: "%s"<br />Code Entered: "%s"',
 ));
 
 ?>

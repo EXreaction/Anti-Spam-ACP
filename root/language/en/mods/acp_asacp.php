@@ -32,6 +32,8 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ASACP_ENABLE'				=> 'Enable Anti-Spam ACP',
 	'ASACP_ENABLE_EXPLAIN'		=> 'Set to no to disable the entire Anti-Spam ACP system.',
+	'ASACP_LOG'					=> 'Enable Spam Log',
+	'ASACP_LOG_EXPLAIN'			=> 'If disabled new items will not be added to the spam log.',
 	'ASACP_REGISTER_SETTINGS'	=> 'Registration Settings',
 	'ASACP_REG_CAPTCHA'			=> 'Pre-Registration Captcha',
 	'ASACP_REG_CAPTCHA_EXPLAIN'	=> 'This controls the display of the initial captcha shown before the registration process begins.<br />If enabled you should consider disabling "Enable visual confirmation for registrations" in General->Board configuration->User registration settings so the user does not have to fill out two captchas to register.',
