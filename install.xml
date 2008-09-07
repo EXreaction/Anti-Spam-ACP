@@ -70,5 +70,6 @@ require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
 // END Anti-Spam ACP]]></action>
 		</edit>
     </open>
+	<diy-instructions lang="en">Add the ACP Module.</diy-instructions>
 </action-group>
 </mod>
