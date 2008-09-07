@@ -71,18 +71,6 @@
 		// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
-	<open src="includes/functions_admin.php">
-		<edit>
-			<find><![CDATA[		case 'admin':
-			$log_type = LOG_ADMIN;]]></find>
-			<action type="before-add"><![CDATA[		// START Anti-Spam ACP
-		case 'spam' :
-			$log_type = LOG_SPAM;
-			$sql_forum = '';
-		break;
-		// END Anti-Spam ACP]]></action>
-		</edit>
-    </open>
 	<open src="styles/prosilver/template/overall_footer.html">
 		<edit>
 			<find><![CDATA[<!-- IF U_ACP --><br /><strong><a href="{U_ACP}">{L_ACP}</a></strong><!-- ENDIF -->]]></find>
