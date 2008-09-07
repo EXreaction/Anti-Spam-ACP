@@ -152,14 +152,14 @@ class acp_asacp
 		if ($latest_version === false)
 		{
 			$version = $user->lang['NOT_AVAILABLE'];
-			$version .= '<br />' . sprintf($user->lang['CLICK_CHECK_NEW_VERSION'], '<a href="http://www.lithiumstudios.org/phpBB3/viewtopic.php?f=41&amp;t=433">', '</a>');
+			$version .= '<br />' . sprintf($user->lang['CLICK_CHECK_NEW_VERSION'], '<a href="http://www.lithiumstudios.org/phpBB3/viewtopic.php?f=31&amp;t=941">', '</a>');
 		}
 		else
 		{
 			$version = $latest_version;
 			if (version_compare(ASACP_VERSION, $latest_version, '<'))
 			{
-				$version .= '<br />' . sprintf($user->lang['CLICK_GET_NEW_VERSION'], '<a href="http://www.lithiumstudios.org/phpBB3/viewtopic.php?f=41&amp;t=433">', '</a>');
+				$version .= '<br />' . sprintf($user->lang['CLICK_GET_NEW_VERSION'], '<a href="http://www.lithiumstudios.org/phpBB3/viewtopic.php?f=31&amp;t=941">', '</a>');
 			}
 		}
 

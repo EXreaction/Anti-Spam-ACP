@@ -9,7 +9,6 @@
 
 /* DO NOT FORGET
 uncomment //trigger_error('TOO_MANY_REGISTERS');
-update url in ACP for new version
 */
 
 if (!defined('IN_PHPBB'))
