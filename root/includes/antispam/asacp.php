@@ -157,6 +157,97 @@ class antispam
 	//public static function add_log($mode, $action, $data = '')
 
 	/**
+	* View log
+	*/
+	public static function view_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
+	{
+		global $db, $user, $auth, $phpEx, $phpbb_root_path, $phpbb_admin_path;
+
+		$is_auth = $is_mod = array();
+
+		$profile_url = (defined('IN_ADMIN')) ? append_sid("{$phpbb_admin_path}index.$phpEx", 'i=users&amp;mode=overview') : append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile');
+
+		$sql = "SELECT l.*, u.username, u.username_clean, u.user_colour
+			FROM " . LOG_TABLE . " l, " . USERS_TABLE . " u
+			WHERE l.log_type = " . LOG_SPAM . "
+				AND u.user_id = l.user_id
+				" . (($limit_days) ? "AND l.log_time >= $limit_days" : '') . "
+			ORDER BY $sort_by";
+		$result = $db->sql_query_limit($sql, $limit, $offset);
+
+		$i = 0;
+		$log = array();
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$log[$i] = array(
+				'id'				=> $row['log_id'],
+
+				'reportee_id'			=> '',
+				'reportee_username'		=> '',
+				'reportee_username_full'=> '',
+
+				'user_id'			=> $row['user_id'],
+				'username'			=> $row['username'],
+				'username_full'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], false, $profile_url),
+
+				'ip'				=> $row['log_ip'],
+				'time'				=> $row['log_time'],
+				'forum_id'			=> $row['forum_id'],
+				'topic_id'			=> $row['topic_id'],
+
+				'viewforum'			=> false,
+				'action'			=> (isset($user->lang[$row['log_operation']])) ? $user->lang[$row['log_operation']] : '{' . ucfirst(str_replace('_', ' ', $row['log_operation'])) . '}',
+				'operation'			=> $row['log_operation'],
+				'data'				=> unserialize($row['log_data']),
+			);
+
+			if (!empty($row['log_data']))
+			{
+				$log_data_ary = unserialize($row['log_data']);
+
+				if (isset($user->lang[$row['log_operation']]))
+				{
+					// We supress the warning about inappropriate number of passed parameters here due to possible changes within LOG strings from one version to another.
+					$log[$i]['action'] = @vsprintf($log[$i]['action'], $log_data_ary);
+
+					// If within the admin panel we do not censor text out
+					if (defined('IN_ADMIN'))
+					{
+						$log[$i]['action'] = bbcode_nl2br($log[$i]['action']);
+					}
+					else
+					{
+						$log[$i]['action'] = bbcode_nl2br(censor_text($log[$i]['action']));
+					}
+				}
+				else
+				{
+					$log[$i]['action'] .= '<br />' . implode('', $log_data_ary);
+				}
+
+				/* Apply make_clickable... has to be seen if it is for good. :/
+				// Seems to be not for the moment, reconsider later...
+				$log[$i]['action'] = make_clickable($log[$i]['action']);
+				*/
+			}
+
+			$i++;
+		}
+		$db->sql_freeresult($result);
+
+		$sql = 'SELECT COUNT(l.log_id) AS total_entries
+			FROM ' . LOG_TABLE . " l
+			WHERE l.log_type = " . LOG_SPAM . "
+				AND l.log_time >= $limit_days";
+		$result = $db->sql_query($sql);
+		$log_count = (int) $db->sql_fetchfield('total_entries');
+		$db->sql_freeresult($result);
+
+		return;
+	}
+	//public static function view_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
+
+	/**
 	* Get the latest version number from Lithium Studios
 	*/
 	public static function version_check()

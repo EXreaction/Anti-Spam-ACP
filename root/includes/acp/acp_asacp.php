@@ -123,7 +123,7 @@ class acp_asacp
 				// Grab log data
 				$log_data = array();
 				$log_count = 0;
-				view_log('spam', $log_data, $log_count, $config['topics_per_page'], $start, 0, 0, 0, $sql_where, $sql_sort);
+				antispam::view_log($log_data, $log_count, $config['topics_per_page'], $start, $sql_where, $sql_sort);
 
 				$template->assign_vars(array(
 					'L_TITLE'		=> $user->lang['ASACP_SPAM_LOG'],
@@ -140,17 +140,6 @@ class acp_asacp
 
 				foreach ($log_data as $row)
 				{
-					$data = array();
-
-/*					$checks = array('viewtopic', 'viewlogs', 'viewforum');
-					foreach ($checks as $check)
-					{
-						if (isset($row[$check]) && $row[$check])
-						{
-							$data[] = '<a href="' . $row[$check] . '">' . $user->lang['LOGVIEW_' . strtoupper($check)] . '</a>';
-						}
-					}*/
-
 					$template->assign_block_vars('log', array(
 						'USERNAME'			=> $row['username_full'],
 						'REPORTEE_USERNAME'	=> ($row['reportee_username'] && $row['user_id'] != $row['reportee_id']) ? $row['reportee_username_full'] : '',
@@ -158,10 +147,9 @@ class acp_asacp
 						'IP'				=> $row['ip'],
 						'DATE'				=> $user->format_date($row['time']),
 						'ACTION'			=> $row['action'],
-						'DATA'				=> (sizeof($data)) ? implode(' | ', $data) : '',
+						'DATA'				=> (sizeof($row['data'])) ? @vsprintf($user->lang[$row['operation'] . '_DATA'], $row['data']) : '',
 						'ID'				=> $row['id'],
-						)
-					);
+					));
 				}
 			break;
 			// case 'log':

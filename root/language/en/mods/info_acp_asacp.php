@@ -36,7 +36,8 @@ $lang = array_merge($lang, array(
 
 	'LOG_ASACP_SETTINGS'	=> 'Updated Anti-Spam ACP Settings',
 	'LOG_CLEAR_SPAM_LOG'	=> 'Cleared Spam Log',
-	'LOG_INCORRECT_CODE'	=> 'Entered in wrong confirm code.<br />Code Shown: "%s"<br />Code Entered: "%s"',
+	'LOG_INCORRECT_CODE'	=> 'Entered in wrong confirm code.',
+	'LOG_INCORRECT_CODE_DATA' => 'Code Shown: "%s"<br />Code Entered: "%s"',
 ));
 
 ?>
