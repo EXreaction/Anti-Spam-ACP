@@ -16,8 +16,12 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+define('ASACP_VERSION', '0.1.3');
+define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
+define('LOG_SPAM', 6);
+
 $user->add_lang('mods/asacp');
-define('ASACP_VERSION', '0.1.2');
+
 if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
 {
 	antispam::update_db();
@@ -57,6 +61,7 @@ class antispam
 				if (strcasecmp($row['code'], $asacp_code) !== 0)
 				{
 					$wrong_confirm = true;
+					self::add_log('LOG_INCORRECT_CODE', array($row['code'], $asacp_code));
 				}
 			}
 			else
@@ -125,6 +130,33 @@ class antispam
 	//public static function ucp_register()
 
 	/**
+	* Add spam log event
+	*/
+	public static function add_log($action, $data = array())
+	{
+		global $config, $db, $user;
+
+		if (!$config['asacp_log'])
+		{
+			return;
+		}
+
+		$sql_ary = array(
+			'log_type'		=> LOG_SPAM,
+			'user_id'		=> (empty($user->data)) ? ANONYMOUS : $user->data['user_id'],
+			'log_ip'		=> $user->ip,
+			'log_time'		=> time(),
+			'log_operation'	=> $action,
+			'log_data'		=> serialize($data),
+		);
+
+		$db->sql_query('INSERT INTO ' . LOG_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary));
+
+		return $db->sql_nextid();
+	}
+	//public static function add_log($mode, $action, $data = '')
+
+	/**
 	* Get the latest version number from Lithium Studios
 	*/
 	public static function version_check()
@@ -180,6 +212,8 @@ class antispam
 				));
 			case '0.1.1' :
 				set_config('asacp_reg_captcha', true);
+			case '0.1.2' :
+				set_config('asacp_log', true);
 		}
 
 		set_config('asacp_version', ASACP_VERSION);
