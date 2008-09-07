@@ -7,7 +7,9 @@
 	<title lang="en">Anti-Spam ACP</title>
 	<description lang="en">Prevents spam on your phpBB3 forum.</description>
 
-	<author-notes lang="en">Support will only be given at my website - http://www.lithiumstudios.org.</author-notes>
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
+
+Support will only be given at my website - http://www.lithiumstudios.org.</author-notes>
 
 	<author-group>
 		<author>
