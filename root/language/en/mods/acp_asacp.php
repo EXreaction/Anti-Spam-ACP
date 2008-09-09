@@ -39,7 +39,7 @@ $lang = array_merge($lang, array(
 	'ASACP_REG_CAPTCHA_EXPLAIN'	=> 'This controls the display of the initial captcha shown before the registration process begins.<br />If enabled you should consider disabling "Enable visual confirmation for registrations" in General->Board configuration->User registration settings so the user does not have to fill out two captchas to register.',
 	'ASACP_SETTINGS_UPDATED'	=> 'Anti-Spam ACP Settings have been updated successfully.',
 	'ASACP_VERSION'				=> 'Version Information',
-	'ASACP_IP_SEARCH' => 'IP Search',
+
 	'ASACP_IP_SEARCH_EXPLAIN' => 'Search through the entire forum for actions made from a certain IP Address.',
 
 	'INSTALLED_VERSION'			=> 'Installed Version',
