@@ -17,7 +17,7 @@ if (!defined('IN_PHPBB'))
 }
 
 define('ASACP_VERSION', '0.1.3');
-define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
+//define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
 define('LOG_SPAM', 6);
 
 $user->add_lang('mods/asacp');

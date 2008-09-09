@@ -43,6 +43,16 @@ class acp_asacp
 
 		switch ($mode)
 		{
+			case 'ip_search' :
+				$template->assign_vars(array(
+					'L_TITLE'			=> $user->lang['ASACP_IP_SEARCH'],
+					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_IP_SEARCH_EXPLAIN'],
+					'S_IP_SEARCH'		=> true,
+				));
+				$this->tpl_name = 'acp_asacp';
+				$this->page_title = 'ASACP_IP_SEARCH';
+			break;
+
 			case 'log' :
 				$user->add_lang('mcp');
 
@@ -144,7 +154,7 @@ class acp_asacp
 						'USERNAME'			=> $row['username_full'],
 						'REPORTEE_USERNAME'	=> ($row['reportee_username'] && $row['user_id'] != $row['reportee_id']) ? $row['reportee_username_full'] : '',
 
-						'IP'				=> $row['ip'],
+						'IP'				=> '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i={$this->p_name}&amp;mode=ip_search&amp;ip={$row['ip']}") . '">' . $row['ip'] . '</a>',
 						'DATE'				=> $user->format_date($row['time']),
 						'ACTION'			=> $row['action'],
 						'DATA'				=> (sizeof($row['data'])) ? @vsprintf($user->lang[$row['operation'] . '_DATA'], $row['data']) : '',

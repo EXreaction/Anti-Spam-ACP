@@ -18,6 +18,7 @@ class acp_asacp_info
 			'modes'		=> array(
 				'settings'		=> array('title' => 'ASACP_SETTINGS', 'auth' => 'acl_a_asacp', 'cat' => array('ANTISPAM')),
 				'log'			=> array('title' => 'ASACP_SPAM_LOG', 'auth' => 'acl_a_asacp', 'cat' => array('ANTISPAM')),
+				'ip_search'		=> array('title' => 'ASACP_IP_SEARCH', 'auth' => 'acl_a_asacp', 'cat' => array('ANTISPAM')),
 			),
 		);
 	}
