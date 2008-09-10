@@ -44,7 +44,7 @@ class antispam
 		$asacp_id = request_var('asacp_id', '');
 		$asacp_code = request_var('asacp_code', '');
 
-		$wrong_confirm = false;
+		$wrong_confirm = true;
 		if ($asacp_id)
 		{
 			$sql = 'SELECT code
@@ -58,20 +58,15 @@ class antispam
 
 			if ($row)
 			{
-				if (strcasecmp($row['code'], $asacp_code) !== 0)
+				if (strcasecmp($row['code'], $asacp_code) === 0)
 				{
-					$wrong_confirm = true;
+					$wrong_confirm = false;
+				}
+				else
+				{
 					self::add_log('LOG_INCORRECT_CODE', array($row['code'], $asacp_code));
 				}
 			}
-			else
-			{
-				$wrong_confirm = true;
-			}
-		}
-		else
-		{
-			$wrong_confirm = true;
 		}
 
 		if ($wrong_confirm)

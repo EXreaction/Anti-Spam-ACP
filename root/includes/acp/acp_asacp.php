@@ -18,7 +18,6 @@ if (!defined('IN_PHPBB'))
 class acp_asacp
 {
 	var $u_action;
-	var $new_config = array();
 
 	function main($id, $mode)
 	{
@@ -26,6 +25,7 @@ class acp_asacp
 		global $config, $phpbb_admin_path, $phpbb_root_path, $phpEx;
 
 		$user->add_lang(array('acp/board', 'mods/acp_asacp', 'install'));
+		include($phpbb_root_path . 'includes/antispam/acp_asacp.' . $phpEx);
 
 		$error = $notify = array();
 		$submit = (isset($_POST['submit'])) ? true : false;
@@ -37,23 +37,31 @@ class acp_asacp
 			trigger_error($user->lang['FORM_INVALID'] . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		$this->new_config = $config;
-		$cfg_array = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $this->new_config;
 		$error = $options = array();
 
 		switch ($mode)
 		{
 			case 'ip_search' :
+				$this->tpl_name = 'acp_asacp';
+				$this->page_title = 'ASACP_IP_SEARCH';
+
+				$type = request_var('type', '');
+				$ip = request_var('ip', '');
+
+				asacp_display_ip_search($type, $ip);
+
 				$template->assign_vars(array(
 					'L_TITLE'			=> $user->lang['ASACP_IP_SEARCH'],
 					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_IP_SEARCH_EXPLAIN'],
 					'S_IP_SEARCH'		=> true,
 				));
-				$this->tpl_name = 'acp_asacp';
-				$this->page_title = 'ASACP_IP_SEARCH';
 			break;
+			// case 'ip_search' :
 
 			case 'log' :
+				$this->tpl_name = 'acp_logs';
+				$this->page_title = $user->lang['ASACP_SPAM_LOG'];
+
 				$user->add_lang('mcp');
 
 				// Set up general vars
@@ -66,9 +74,6 @@ class acp_asacp
 				$sort_days	= request_var('st', 0);
 				$sort_key	= request_var('sk', 't');
 				$sort_dir	= request_var('sd', 'd');
-
-				$this->tpl_name = 'acp_logs';
-				$this->page_title = $user->lang['ASACP_SPAM_LOG'];
 
 				// Delete entries if requested and able
 				if (($deletemark || $deleteall) && $auth->acl_get('a_clearlogs'))
@@ -120,8 +125,8 @@ class acp_asacp
 
 				// Sorting
 				$limit_days = array(0 => $user->lang['ALL_ENTRIES'], 1 => $user->lang['1_DAY'], 7 => $user->lang['7_DAYS'], 14 => $user->lang['2_WEEKS'], 30 => $user->lang['1_MONTH'], 90 => $user->lang['3_MONTHS'], 180 => $user->lang['6_MONTHS'], 365 => $user->lang['1_YEAR']);
-				$sort_by_text = array('u' => $user->lang['SORT_USERNAME'], 't' => $user->lang['SORT_DATE'], 'i' => $user->lang['SORT_IP'], 'o' => $user->lang['SORT_ACTION']);
-				$sort_by_sql = array('u' => 'u.username_clean', 't' => 'l.log_time', 'i' => 'l.log_ip', 'o' => 'l.log_operation');
+				$sort_by_text = array('t' => $user->lang['SORT_DATE'], 'u' => $user->lang['SORT_USERNAME'], 'i' => $user->lang['SORT_IP'], 'o' => $user->lang['SORT_ACTION']);
+				$sort_by_sql = array('t' => 'l.log_time', 'u' => 'u.username_clean', 'i' => 'l.log_ip', 'o' => 'l.log_operation');
 
 				$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
 				gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
@@ -162,9 +167,12 @@ class acp_asacp
 					));
 				}
 			break;
-			// case 'log':
+			// case 'log' :
 
 			default :
+				$this->tpl_name = 'acp_asacp';
+				$this->page_title = 'ASACP_SETTINGS';
+
 				$options = array(
 					'legend1'				=> 'ASACP_SETTINGS',
 					'asacp_enable'			=> array('lang' => 'ASACP_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
@@ -182,85 +190,14 @@ class acp_asacp
 					'CURRENT_VERSION'	=> ASACP_VERSION,
 					'LATEST_VERSION'	=> $this->asacp_latest_version(),
 				));
-				$this->tpl_name = 'acp_asacp';
-				$this->page_title = 'ASACP_SETTINGS';
 			break;
 		}
 		// switch($mode)
 
-
+		// Display the options if there are any (setup similar to acp_board)
 		if (sizeof($options))
 		{
-			validate_config_vars($options, $cfg_array, $error);
-			foreach ($options as $config_name => $null)
-			{
-				if (!isset($cfg_array[$config_name]) || strpos($config_name, 'legend') !== false)
-				{
-					continue;
-				}
-
-				$this->new_config[$config_name] = $config_value = $cfg_array[$config_name];
-
-				if ($submit && !sizeof($error))
-				{
-					set_config($config_name, $config_value);
-				}
-			}
-
-			if ($submit && !sizeof($error))
-			{
-				add_log('admin', 'LOG_ASACP_SETTINGS');
-
-				trigger_error($user->lang['ASACP_SETTINGS_UPDATED'] . adm_back_link($this->u_action));
-			}
-
-			foreach ($options as $config_key => $vars)
-			{
-				if (!is_array($vars) && strpos($config_key, 'legend') === false)
-				{
-					continue;
-				}
-
-				if (strpos($config_key, 'legend') !== false)
-				{
-					$template->assign_block_vars('options', array(
-						'S_LEGEND'		=> true,
-						'LEGEND'		=> (isset($user->lang[$vars])) ? $user->lang[$vars] : $vars)
-					);
-
-					continue;
-				}
-
-				$type = explode(':', $vars['type']);
-
-				$l_explain = '';
-				if ($vars['explain'] && isset($vars['lang_explain']))
-				{
-					$l_explain = (isset($user->lang[$vars['lang_explain']])) ? $user->lang[$vars['lang_explain']] : $vars['lang_explain'];
-				}
-				else if ($vars['explain'])
-				{
-					$l_explain = (isset($user->lang[$vars['lang'] . '_EXPLAIN'])) ? $user->lang[$vars['lang'] . '_EXPLAIN'] : '';
-				}
-
-				$content = build_cfg_template($type, $config_key, $this->new_config, $config_key, $vars);
-
-				if (empty($content))
-				{
-					continue;
-				}
-
-				$template->assign_block_vars('options', array(
-					'KEY'			=> $config_key,
-					'TITLE'			=> (isset($user->lang[$vars['lang']])) ? $user->lang[$vars['lang']] : $vars['lang'],
-					'S_EXPLAIN'		=> $vars['explain'],
-					'TITLE_EXPLAIN'	=> $l_explain,
-					'CONTENT'		=> $content,
-					)
-				);
-
-				unset($options[$config_key]);
-			}
+			asacp_display_options($options, $error, $this->u_action);
 		}
 
         $template->assign_vars(array(
