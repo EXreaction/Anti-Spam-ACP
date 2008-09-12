@@ -45,15 +45,20 @@ class acp_asacp
 				$this->tpl_name = 'acp_asacp';
 				$this->page_title = 'ASACP_IP_SEARCH';
 
-				$type = request_var('type', '');
 				$ip = request_var('ip', '');
-
-				asacp_display_ip_search($type, $ip);
+				$type = request_var('type', '');
+				if ($ip)
+				{
+					asacp_display_ip_search($type, $ip, $this->u_action . '&amp;ip=' . $ip, request_var('start', 0));
+				}
 
 				$template->assign_vars(array(
 					'L_TITLE'			=> $user->lang['ASACP_IP_SEARCH'],
 					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_IP_SEARCH_EXPLAIN'],
 					'S_IP_SEARCH'		=> true,
+					'S_DISPLAY_INPUT'	=> ($ip) ? false : true,
+
+					'U_BACK'			=> ($type) ? $this->u_action . '&amp;ip=' . $ip : false,
 				));
 			break;
 			// case 'ip_search' :
@@ -159,7 +164,7 @@ class acp_asacp
 						'USERNAME'			=> $row['username_full'],
 						'REPORTEE_USERNAME'	=> ($row['reportee_username'] && $row['user_id'] != $row['reportee_id']) ? $row['reportee_username_full'] : '',
 
-						'IP'				=> '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i={$this->p_name}&amp;mode=ip_search&amp;ip={$row['ip']}") . '">' . $row['ip'] . '</a>',
+						'IP'				=> '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i={$id}&amp;mode=ip_search&amp;ip={$row['ip']}") . '">' . $row['ip'] . '</a>',
 						'DATE'				=> $user->format_date($row['time']),
 						'ACTION'			=> $row['action'],
 						'DATA'				=> (sizeof($row['data'])) ? @vsprintf($user->lang[$row['operation'] . '_DATA'], $row['data']) : '',

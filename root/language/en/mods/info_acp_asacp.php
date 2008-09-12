@@ -31,9 +31,10 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ANTISPAM'					=> 'Anti-Spam',
+	'ASACP_IP_SEARCH'			=> 'IP Search',
 	'ASACP_SETTINGS'			=> 'Anti-Spam ACP Settings',
 	'ASACP_SPAM_LOG'			=> 'Spam Log',
-	'ASACP_IP_SEARCH' => 'IP Search',
+
 	'LOG_ASACP_SETTINGS'		=> 'Updated Anti-Spam ACP Settings',
 	'LOG_CLEAR_SPAM_LOG'		=> 'Cleared Spam Log',
 	'LOG_INCORRECT_CODE'		=> 'Entered in wrong confirm code.',
