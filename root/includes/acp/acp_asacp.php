@@ -59,6 +59,7 @@ class acp_asacp
 					'S_DISPLAY_INPUT'	=> ($ip) ? false : true,
 
 					'U_BACK'			=> ($type) ? $this->u_action . '&amp;ip=' . $ip : false,
+					'U_BACK_NONE'		=> $this->u_action,
 				));
 			break;
 			// case 'ip_search' :

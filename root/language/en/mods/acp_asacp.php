@@ -51,6 +51,7 @@ $lang = array_merge($lang, array(
 
 	'LATEST_VERSION'				=> 'Latest Version',
 
+	'NO_ITEMS'						=> 'No results from the given IP address.',
 	'NOT_AVAILABLE'					=> 'Not Available',
 
 	'VERSION'						=> 'Version',

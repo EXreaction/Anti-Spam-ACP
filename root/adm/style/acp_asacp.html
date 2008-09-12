@@ -72,6 +72,13 @@
 			<span>{ip_search.PAGINATION}</span>
 		</div>
 		<!-- ENDIF -->
+	<!-- BEGINELSE -->
+		<!-- IF not S_DISPLAY_INPUT -->
+		<div class="errorbox">
+			<h3>{L_WARNING}</h3>
+			<p>{L_NO_ITEMS}<br /><a href="{U_BACK_NONE}">&laquo; {L_BACK}</a></p>
+		</div>
+		<!-- ENDIF -->
 	<!-- END ip_search -->
 
 	<!-- IF S_DISPLAY_INPUT -->
