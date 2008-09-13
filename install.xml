@@ -87,6 +87,18 @@ require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
 // END Anti-Spam ACP]]></action>
 		</edit>
     </open>
+	<open src="posting.php">
+		<edit>
+			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message);]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			if (antispam::spam_words(array($data['message'], $post_data['post_subject'])))
+			{
+				$config['enable_queue_trigger'] = true;
+				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
+			}
+			// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
 	<diy-instructions lang="en">Add the ACP Module.</diy-instructions>
 </action-group>
 </mod>
