@@ -101,6 +101,15 @@
 
 <!-- IF S_SPAM_WORDS -->
 	<!-- IF S_SPAM_WORD_LIST -->
+		<form id="asacp_spam_words" method="post" action="{U_ACTION}">
+			<fieldset class="quick">
+				<input type="hidden" name="action" value="add" />
+				<input type="text" name="word_text" value="" />
+				<input class="button2" name="submit" type="submit" value="{L_ADD_WORD}" />
+				{S_FORM_TOKEN}
+			</fieldset>
+		</form>
+
 		<table cellspacing="1" cellpadding="0">
 			<tr>
 				<th style="width: 50%;">{L_SPAM_WORD_TEXT}</th>
@@ -121,6 +130,29 @@
 			<tr class="row1"><td colspan="4">{L_NO_SPAM_WORDS}</td></tr>
 			<!-- END spam_words -->
 		</table>
+	<!-- ELSE -->
+		<form id="asacp_spam_words" method="post" action="{U_WORD_ACTION}">
+			<fieldset>
+				<dl>
+					<dt><label for="word_text">{L_SPAM_WORD_TEXT}:</label></dt>
+					<dd><input id="word_text" type="text" size="25" name="word_text" value="{WORD_TEXT}" /></dd>
+				</dl>
+				<dl>
+					<dt><label for="word_regex">{L_REGEX}:</label><br /><span>{L_REGEX_EXPLAIN}</dt>
+					<dd><input type="radio" id="word_regex" name="word_regex" value="1" class="radio"<!-- IF WORD_REGEX --> checked="checked"<!-- ENDIF -->> {L_YES} &nbsp;<input type="radio" id="word_regex" name="word_regex" value="0" class="radio"<!-- IF not WORD_REGEX --> checked="checked"<!-- ENDIF -->> {L_NO}</dd>
+				</dl>
+				<dl>
+					<dt><label for="word_regex_auto">{L_REGEX_AUTO}:</label><br /><span>{L_REGEX_AUTO_EXPLAIN}</dt>
+					<dd><input type="radio" id="word_regex_auto" name="word_regex_auto" value="1" class="radio"<!-- IF WORD_REGEX_AUTO --> checked="checked"<!-- ENDIF -->> {L_YES} &nbsp;<input type="radio" id="word_regex_auto" name="word_regex_auto" value="0" class="radio"<!-- IF not WORD_REGEX_AUTO --> checked="checked"<!-- ENDIF -->> {L_NO}</dd>
+				</dl>
+			</fieldset>
+			<fieldset class="submit-buttons">
+				<legend>{L_SUBMIT}</legend>
+				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />
+				{S_HIDDEN_FIELDS}
+				{S_FORM_TOKEN}
+			</fieldset>
+		</form>
 	<!-- ENDIF -->
 <!-- ENDIF -->
 

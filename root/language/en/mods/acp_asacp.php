@@ -50,7 +50,16 @@ $lang = array_merge($lang, array(
 	'SPAM_WORD_TEXT' => 'Spam Word Text',
 	'NO_SPAM_WORDS' => 'No Spam Words in database.',
 	'REGEX' => 'Regular Expression',
+	'REGEX_EXPLAIN' => 'Select Yes to use a regular expression match from the given spam word text.',
 	'REGEX_AUTO' => 'Auto Regex',
+	'REGEX_AUTO_EXPLAIN' => 'Select Yes to have the system automatically create a regular expression match from the given spam word text.',
+	'NO_SPAM_WORD' => 'The selected word does not exist.',
+	'SPAM_WORD_ADD_SUCCESS' => 'Spam word added successfully.',
+	'SPAM_WORD_EDIT_SUCCESS' => 'Spam word edited successfully.',
+	'SPAM_WORD_DELETE_SUCCESS' => 'Spam word deleted successfully.',
+	'DELETE_SPAM_WORD' => 'Delete Spam Word',
+	'DELETE_SPAM_WORD_CONFIRM' => 'Are you sure you want to delete this spam word?',
+	'ADD_WORD' => 'Add Word',
 
 	'INSTALLED_VERSION'				=> 'Installed Version',
 

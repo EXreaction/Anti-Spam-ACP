@@ -46,13 +46,77 @@ class acp_asacp
 				$this->page_title = 'ASACP_SPAM_WORDS';
 
 				$word_id = request_var('w', 0);
+				$word_data = array(
+					'word_text'			=> utf8_normalize_nfc(request_var('word_text', '', true)),
+					'word_regex'		=> request_var('word_regex', 0),
+					'word_regex_auto'	=> request_var('word_regex_auto', 0),
+				);
 				switch ($action)
 				{
-					case 'add' :
 					case 'edit' :
+						if (!$word_id)
+						{
+							trigger_error('NO_SPAM_WORD');
+						}
+						$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE . ' WHERE word_id = ' . $word_id);
+						$word = $db->sql_fetchrow($result);
+						if (!$word)
+						{
+                            trigger_error('NO_SPAM_WORD');
+						}
+
+						if (!$submit)
+						{
+							$word_data = $word;
+						}
+					case 'add' :
+						$template->assign_vars(array(
+							'WORD_TEXT'			=> $word_data['word_text'],
+							'WORD_REGEX'		=> ($word_data['word_regex']) ? true : false,
+							'WORD_REGEX_AUTO'	=> ($word_data['word_regex_auto']) ? true : false,
+							'S_ADD'				=> ($action == 'add') ? true : false,
+							'U_WORD_ACTION'		=> $this->u_action . '&amp;action=' . $action . (($action == 'edit') ? '&amp;w=' . $word_id : ''),
+						));
+
+						if ($submit)
+						{
+							if ($action == 'add')
+							{
+								$db->sql_query('INSERT INTO ' . SPAM_WORDS_TABLE . ' ' . $db->sql_build_array('INSERT', $word_data));
+								$cache->destroy('_spam_words');
+								trigger_error($user->lang['SPAM_WORD_ADD_SUCCESS'] . adm_back_link($this->u_action));
+							}
+							else
+							{
+								$db->sql_query('UPDATE ' . SPAM_WORDS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $word_data) . ' WHERE word_id = ' . $word_id);
+								$cache->destroy('_spam_words');
+								trigger_error($user->lang['SPAM_WORD_EDIT_SUCCESS'] . adm_back_link($this->u_action));
+							}
+						}
 					break;
 
 					case 'delete' :
+						if (!$word_id)
+						{
+							trigger_error('NO_SPAM_WORD');
+						}
+						$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE . ' WHERE word_id = ' . $word_id);
+						$word = $db->sql_fetchrow($result);
+						if (!$word)
+						{
+                            trigger_error('NO_SPAM_WORD');
+						}
+
+						if (confirm_box(true))
+						{
+							$db->sql_query('DELETE FROM ' . SPAM_WORDS_TABLE . ' WHERE word_id = ' . $word_id);
+							$cache->destroy('_spam_words');
+							trigger_error($user->lang['SPAM_WORD_DELETE_SUCCESS'] . adm_back_link($this->u_action));
+						}
+						else
+						{
+							confirm_box(false, 'DELETE_SPAM_WORD');
+						}
 					break;
 
 					default :
