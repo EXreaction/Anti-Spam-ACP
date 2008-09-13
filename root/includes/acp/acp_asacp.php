@@ -41,6 +41,17 @@ class acp_asacp
 
 		switch ($mode)
 		{
+			case 'spam_words' :
+				$this->tpl_name = 'acp_asacp';
+				$this->page_title = 'ASACP_SPAM_WORDS';
+
+				$template->assign_vars(array(
+					'L_TITLE'			=> $user->lang['ASACP_SPAM_WORDS'],
+					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_SPAM_WORDS_EXPLAIN'],
+				));
+			break;
+			// case 'spam_words' :
+
 			case 'ip_search' :
 				$this->tpl_name = 'acp_asacp';
 				$this->page_title = 'ASACP_IP_SEARCH';
@@ -124,7 +135,7 @@ class acp_asacp
 							'sd'		=> $sort_dir,
 							'i'			=> $id,
 							'mode'		=> $mode,
-							'action'	=> $action))
+							'action'	=> $this->u_action))
 						);
 					}
 				}

@@ -8,7 +8,7 @@
 */
 
 /* DO NOT FORGET
-uncomment //trigger_error('TOO_MANY_REGISTERS');
+
 */
 
 if (!defined('IN_PHPBB'))
@@ -16,15 +16,15 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.1.3');
-//define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
+define('ASACP_VERSION', '0.1.4');
+define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('LOG_SPAM', 6);
 
 $user->add_lang('mods/asacp');
 
 if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
 {
-	antispam::update_db();
+	include($phpbb_root_path . 'includes/antispam/update_asacp.' . $phpEx);
 }
 
 class antispam
@@ -83,7 +83,7 @@ class antispam
 
 			if ($config['max_reg_attempts'] && $attempts > $config['max_reg_attempts'])
 			{
-				//trigger_error('TOO_MANY_REGISTERS');
+				trigger_error('TOO_MANY_REGISTERS');
 			}
 
 			$code = gen_rand_string(mt_rand(5, 8));
@@ -125,13 +125,27 @@ class antispam
 	//public static function ucp_register()
 
 	/**
+	* Spam Word Operations
+	*/
+	public static function spam_words($message)
+	{
+		global $config;
+
+		if (!$config['asacp_enable'])
+		{
+			return;
+		}
+	}
+	//public static function spam_words($message)
+
+	/**
 	* Add spam log event
 	*/
 	public static function add_log($action, $data = array())
 	{
 		global $config, $db, $user;
 
-		if (!$config['asacp_log'])
+		if (!$config['asacp_enable'] || !$config['asacp_log'])
 		{
 			return;
 		}
@@ -267,45 +281,5 @@ class antispam
 		return $version;
 	}
 	//public static function version_check()
-
-	/**
-	* Update/Install Database section
-	*/
-	public static function update_db()
-	{
-		global $cache, $config, $phpbb_root_path, $phpEx;
-
-		if (!class_exists('auth_admin'))
-		{
-			include($phpbb_root_path . 'includes/acp/auth.' . $phpEx);
-		}
-		$auth_admin = new auth_admin();
-
-		if (!isset($config['asacp_version']))
-		{
-			set_config('asacp_enable', true);
-			set_config('asacp_version', '0.1.0');
-		}
-
-		switch ($config['asacp_version'])
-		{
-			case '0.1.0' :
-				$auth_admin->acl_add_option(array(
-					'local'		=> array(),
-					'global'	=> array(
-						'a_asacp',
-					),
-				));
-			case '0.1.1' :
-				set_config('asacp_reg_captcha', true);
-			case '0.1.2' :
-				set_config('asacp_log', true);
-		}
-
-		set_config('asacp_version', ASACP_VERSION);
-
-		$cache->purge();
-	}
-	//public static function update_db()
 }
 ?>
