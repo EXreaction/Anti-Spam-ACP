@@ -99,4 +99,29 @@
 	<!-- ENDIF -->
 <!-- ENDIF -->
 
+<!-- IF S_SPAM_WORDS -->
+	<!-- IF S_SPAM_WORD_LIST -->
+		<table cellspacing="1" cellpadding="0">
+			<tr>
+				<th style="width: 50%;">{L_SPAM_WORD_TEXT}</th>
+				<th>{L_REGEX}</th>
+				<th>{L_REGEX_AUTO}</th>
+				<th>{L_ACTIONS}</th>
+			</tr>
+			<!-- BEGIN spam_words -->
+			<tr class="row<!-- IF spam_words.S_ROW_COUNT is even -->1<!-- ELSE -->2<!-- ENDIF -->">
+				<td>{spam_words.TEXT}</td>
+				<td><!-- IF spam_words.REGEX -->{L_YES}<!-- ELSE -->{L_NO}<!-- ENDIF --></td>
+				<td><!-- IF spam_words.REGEX_AUTO -->{L_YES}<!-- ELSE -->{L_NO}<!-- ENDIF --></td>
+				<td>
+					<a href="{spam_words.U_EDIT}">{L_EDIT}</a> | <a href="{spam_words.U_DELETE}">{L_DELETE}</a>
+				</td>
+			</tr>
+			<!-- BEGINELSE -->
+			<tr class="row1"><td colspan="4">{L_NO_SPAM_WORDS}</td></tr>
+			<!-- END spam_words -->
+		</table>
+	<!-- ENDIF -->
+<!-- ENDIF -->
+
 <!-- INCLUDE overall_footer.html -->

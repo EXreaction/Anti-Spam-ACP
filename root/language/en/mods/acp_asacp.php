@@ -47,6 +47,10 @@ $lang = array_merge($lang, array(
 	'ASACP_SETTINGS_UPDATED'		=> 'Anti-Spam ACP Settings have been updated successfully.',
 	'ASACP_VERSION'					=> 'Version Information',
 	'ASACP_SPAM_WORDS_EXPLAIN'		=> 'Enter and manage trigger words for the spam words system.',
+	'SPAM_WORD_TEXT' => 'Spam Word Text',
+	'NO_SPAM_WORDS' => 'No Spam Words in database.',
+	'REGEX' => 'Regular Expression',
+	'REGEX_AUTO' => 'Auto Regex',
 
 	'INSTALLED_VERSION'				=> 'Installed Version',
 

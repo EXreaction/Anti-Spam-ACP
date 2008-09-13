@@ -126,15 +126,29 @@ class antispam
 
 	/**
 	* Spam Word Operations
+	*
+	* Send a message or array of messages.  If the message (or any in the array of messages) are flagged as spam, true is returned.
 	*/
-	public static function spam_words($message)
+	public static function spam_words($data)
 	{
-		global $config;
+		global $cache, $config, $db;
 
 		if (!$config['asacp_enable'])
 		{
 			return;
 		}
+
+		if (!class_exists('spam_words'))
+		{
+			global $phpbb_root_path, $phpEx;
+			include($phpbb_root_path . 'includes/antispam/spam_words.' . $phpEx);
+		}
+
+		$spam_words = new spam_words();
+		$spam_words->messages = (!is_array($data)) ? array($data) : $data;
+		$spam_words->check_messages();
+
+		return $spam_words->is_spam;
 	}
 	//public static function spam_words($message)
 

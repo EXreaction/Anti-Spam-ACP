@@ -45,9 +45,38 @@ class acp_asacp
 				$this->tpl_name = 'acp_asacp';
 				$this->page_title = 'ASACP_SPAM_WORDS';
 
+				$word_id = request_var('w', 0);
+				switch ($action)
+				{
+					case 'add' :
+					case 'edit' :
+					break;
+
+					case 'delete' :
+					break;
+
+					default :
+						$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE);
+						while ($row = $db->sql_fetchrow($result))
+						{
+							$template->assign_block_vars('spam_words', array(
+								'TEXT'			=> $row['word_text'],
+								'REGEX'			=> $row['word_regex'],
+								'REGEX_AUTO'	=> $row['word_regex_auto'],
+								'U_DELETE'		=> append_sid($this->u_action . '&amp;action=delete&amp;w=' . $row['word_id']),
+								'U_EDIT'		=> append_sid($this->u_action . '&amp;action=edit&amp;w=' . $row['word_id']),
+							));
+						}
+						$db->sql_freeresult($result);
+						$template->assign_var('S_SPAM_WORD_LIST', true);
+					break;
+				}
+
 				$template->assign_vars(array(
 					'L_TITLE'			=> $user->lang['ASACP_SPAM_WORDS'],
 					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_SPAM_WORDS_EXPLAIN'],
+
+					'S_SPAM_WORDS'		=> true,
 				));
 			break;
 			// case 'spam_words' :

@@ -1,0 +1,121 @@
+<?php
+/**
+*
+* @package Anti-Spam ACP
+* @copyright (c) 2008 EXreaction
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*
+*/
+
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
+
+class spam_words
+{
+	public $messages = array();
+	public $spam_words = array();
+	public $is_spam = false;
+
+	public function __construct()
+	{
+		global $cache, $db;
+
+		$this->spam_words = false;//$cache->get('_spam_words');
+		if ($this->spam_words === false)
+		{
+			$this->spam_words = array();
+			$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE);
+			while ($row = $db->sql_fetchrow($result))
+			{
+				$this->spam_words[] = $row;
+			}
+			$db->sql_freeresult($result);
+			$cache->put('_spam_words', $this->spam_words);
+		}
+	}
+
+	public function check_messages()
+	{
+		foreach ($this->messages as $text)
+		{
+			foreach ($this->spam_words as $word)
+			{
+				if ($word['word_regex'])
+				{
+					if (preg_match($word['word_text'], $text))
+					{
+						$this->is_spam = true;
+						return;
+					}
+				}
+				else if ($word['word_regex_auto'])
+				{
+					$word['word_text'] = $this->build_regex($word['word_text']);
+					echo $word['word_text'];
+					if (preg_match($word['word_text'], $text))
+					{
+						$this->is_spam = true;
+						return;
+					}
+				}
+				else
+				{
+					if (strpos($text, $word['word_text']) !== false)
+					{
+						$this->is_spam = true;
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	public function build_regex($text)
+	{
+		$regex_ary = array(
+			'a'		=> 'aA4',
+			'b'		=> 'bB8',
+			'e'		=> 'eE3',
+			'i'		=> 'iI1!',
+			'l'		=> 'lL1',
+			'o'		=> 'oO0',
+			's'		=> 'sS$',
+			't'		=> 'tT7',
+			'0'		=> 'oO0',
+			'1'		=> 'iIlL1!',
+			'3'		=> 'eE3',
+			'4'		=> 'aA4',
+			'7'		=> 'tT7',
+			'8'		=> 'bB8',
+			'$'		=> 'sS$',
+			' '		=> '([\s-_\[\]{}\+]+)?',
+		);
+
+		$len = utf8_strlen($text);
+		$new_text = '';
+		for ($i = 0; $i < $len; $i++)
+		{
+			$char = utf8_strtolower(utf8_substr($text, $i, 1));
+
+			if (!isset($regex_ary[$char]))
+			{
+				$new_text .= '([' . $char . utf8_strtoupper($char) . ']+)';
+			}
+			else
+			{
+				$new_text .= (strpos($regex_ary[$char], '([') === false) ? '([' . $regex_ary[$char] . ']+)' : $regex_ary[$char];
+			}
+		}
+
+		return '#' . $new_text . '#';
+	}
+
+	public function reset()
+	{
+		$this->messages = array();
+		$this->spam = false;
+	}
+}
+?>
