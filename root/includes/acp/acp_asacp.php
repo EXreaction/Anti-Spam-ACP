@@ -290,6 +290,10 @@ class acp_asacp
 
 					'legend2'				=> 'ASACP_REGISTER_SETTINGS',
 					'asacp_reg_captcha'		=> array('lang' => 'ASACP_REG_CAPTCHA', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+
+					'legend3'						=> 'ASACP_SPAM_WORDS',
+					'asacp_spam_words_enable'		=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_spam_words_post_limit'	=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string',	'type' => 'text:40:255', 'explain' => true),
 				);
 
 				$template->assign_vars(array(

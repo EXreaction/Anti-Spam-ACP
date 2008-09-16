@@ -60,6 +60,10 @@ $lang = array_merge($lang, array(
 	'DELETE_SPAM_WORD' => 'Delete Spam Word',
 	'DELETE_SPAM_WORD_CONFIRM' => 'Are you sure you want to delete this spam word?',
 	'ADD_WORD' => 'Add Word',
+	'ASACP_SPAM_WORDS_ENABLE' => 'Enable Spam Words',
+	'ASACP_SPAM_WORDS_ENABLE_EXPLAIN' => 'Set to no to disable the entire Spam Words system.',
+	'ASACP_SPAM_WORDS_POST_LIMIT' => 'Post count',
+	'ASACP_SPAM_WORDS_POST_LIMIT_EXPLAIN' => 'If the user has a post count higher than submitted here the spam words check will not be used on that user.<br /><strong>If 0 is entered the spam words check will always run.</strong>',
 
 	'INSTALLED_VERSION'				=> 'Installed Version',
 
