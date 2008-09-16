@@ -89,6 +89,11 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 					// We supress the warning about inappropriate number of passed parameters here due to possible changes within LOG strings from one version to another.
 					$row['log_operation'] = @vsprintf($row['log_operation'], unserialize($row['log_data']));
 					$row['log_operation'] = bbcode_nl2br($row['log_operation']);
+
+					if ($row['log_type'] == LOG_SPAM)
+					{
+
+					}
 				}
 				unset($row['log_data']);
 

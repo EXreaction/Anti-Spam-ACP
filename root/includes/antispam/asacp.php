@@ -8,7 +8,7 @@
 */
 
 /* DO NOT FORGET
-
+$this->spam_words = false;//$cache->get('_spam_words');
 */
 
 if (!defined('IN_PHPBB'))
