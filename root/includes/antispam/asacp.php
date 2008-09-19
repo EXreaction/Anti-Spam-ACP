@@ -175,6 +175,11 @@ class antispam
 			return;
 		}
 
+		if (!is_array($data))
+		{
+			$data = array($data);
+		}
+
 		$sql_ary = array(
 			'log_type'		=> LOG_SPAM,
 			'user_id'		=> (empty($user->data)) ? ANONYMOUS : $user->data['user_id'],
@@ -280,6 +285,34 @@ class antispam
 		return;
 	}
 	//public static function view_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
+
+	/**
+	* Builds a single message for the spam log from multiple items
+	*
+	* Designed for the ucp_profile LOG_SPAM_PROFILE_DENIED section
+	*/
+	public function build_spam_log_message($data)
+	{
+		global $user;
+
+		$message = '';
+		foreach ($data as $name => $value)
+		{
+			if (isset($user->lang[strtoupper($name)]))
+			{
+				$message .= $user->lang[strtoupper($name)] . '<br />';
+			}
+			else
+			{
+				$message .= strtoupper($name) . '<br />';
+			}
+
+			$message .= $value . '<br /><br />';
+		}
+
+		return $message;
+	}
+	//public function build_spam_log_message($data)
 
 	/**
 	* Get the latest version number from Lithium Studios
