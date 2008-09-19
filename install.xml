@@ -40,11 +40,13 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 						$error[] = 'FORM_INVALID';
 					}]]></find>
 			<action type="after-add"><![CDATA[					// START Anti-Spam ACP
-					if (antispam::spam_words(array($data['icq'], $data['aim'], $data['msn'], $data['yim'], $data['jabber'], $data['website'], $data['location'], $data['occupation'], $data['interests'])))
+					if (antispam::spam_words($data))
 					{
 						switch ($config['asacp_spam_words_posting_action'])
 						{
 							case 1 :
+								$spam_message = antispam::build_spam_log_message($data);
+								antispam::add_log('LOG_SPAM_PROFILE_DENIED', $spam_message);
 								$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 							break;
 						}
@@ -57,11 +59,12 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 							$error[] = 'FORM_INVALID';
 						}]]></find>
 			<action type="after-add"><![CDATA[						// START Anti-Spam ACP
-						if (antispam::spam_words(array($message_parser->message)))
+						if (antispam::spam_words($message_parser->message))
 						{
 							switch ($config['asacp_spam_words_posting_action'])
 							{
 								case 1 :
+									antispam::add_log('LOG_SPAM_SIGNATURE_DENIED', $message_parser->message);
 									$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 								break;
 							}
@@ -126,23 +129,24 @@ require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
 	<open src="posting.php">
 		<edit>
 			<find><![CDATA[// Store message, sync counters]]></find>
-			<action type="before-add"><![CDATA[		// START Anti-Spam ACP
-		$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
-		if (antispam::spam_words(array($sc_title, $message_parser->message)))
+			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
+	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
+	if (antispam::spam_words(array($sc_title, $message_parser->message)))
+	{
+		switch ($config['asacp_spam_words_posting_action'])
 		{
-			switch ($config['asacp_spam_words_posting_action'])
-			{
-				case 1 :
-					$error[] = $user->lang['SPAM_DENIED'];
-				break;
+			case 1 :
+				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $message_parser->message));
+				$error[] = $user->lang['SPAM_DENIED'];
+			break;
 
-				case 2 :
-					$config['enable_queue_trigger'] = true;
-					$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
-				break;
-			}
+			case 2 :
+				$config['enable_queue_trigger'] = true;
+				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
+			break;
 		}
-		// END Anti-Spam ACP]]></action>
+	}
+	// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
 	<diy-instructions lang="en">Add the ACP Module.</diy-instructions>
