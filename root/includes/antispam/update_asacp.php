@@ -58,6 +58,10 @@ switch ($config['asacp_version'])
 	case '0.1.4' :
 		set_config('asacp_spam_words_enable', true);
 		set_config('asacp_spam_words_post_limit', 5);
+	case '0.1.5' :
+		set_config('asacp_spam_words_flag_limit', 1);
+	case '0.1.6' :
+		set_config('asacp_spam_words_posting_action', 2);
 }
 
 set_config('asacp_version', ASACP_VERSION);

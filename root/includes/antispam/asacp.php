@@ -16,7 +16,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.1.5');
+define('ASACP_VERSION', '0.1.7');
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('LOG_SPAM', 6);
 
@@ -131,10 +131,11 @@ class antispam
 	*
 	* @param string|array $data The message or array of messages to check
 	* @param int|bool $post_count The post count that you would like to use (for example, if the check is ran for a different user).  Leave as false to use $user->data['user_posts']
+	* @param int|bool $flag_limit The flag limit to see if we will flag a message as spam.  Leave as false to use $config['asacp_spam_words_flag_limit']
 	*
 	* @return bool True if the message(s) are flagged as spam, false if not
 	*/
-	public static function spam_words($data, $post_count = false)
+	public static function spam_words($data, $post_count = false, $flag_limit = false)
 	{
 		global $cache, $config, $db, $user;
 
@@ -158,7 +159,8 @@ class antispam
 		$spam_words->messages = (!is_array($data)) ? array($data) : $data;
 		$spam_words->check_messages();
 
-		return $spam_words->is_spam;
+		$flag_limit = (is_numeric($flag_limit) && $flag_limit > 0) ? $flag_limit : $config['asacp_spam_words_flag_limit'];
+		return ($spam_words->spam_flags >= $flag_limit) ? true : false;
 	}
 	//public static function spam_words($data, $post_count = false)
 

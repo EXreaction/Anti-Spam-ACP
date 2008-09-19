@@ -16,7 +16,7 @@ class spam_words
 {
 	public $messages = array();
 	public $spam_words = array();
-	public $is_spam = false;
+	public $spam_flags = 0; // number of times a message is flagged as spam
 
 	public function __construct()
 	{
@@ -46,27 +46,20 @@ class spam_words
 				{
 					if (preg_match($word['word_text'], $text))
 					{
-						$this->is_spam = true;
-						return;
+						$this->spam_flags++;
 					}
 				}
 				else if ($word['word_regex_auto'])
 				{
 					$word['word_text'] = $this->build_regex($word['word_text']);
-					echo $word['word_text'];
 					if (preg_match($word['word_text'], $text))
 					{
-						$this->is_spam = true;
-						return;
+						$this->spam_flags++;
 					}
 				}
 				else
 				{
-					if (strpos($text, $word['word_text']) !== false)
-					{
-						$this->is_spam = true;
-						return;
-					}
+					$this->spam_flags += substr_count($text, $word['word_text']);
 				}
 			}
 		}
