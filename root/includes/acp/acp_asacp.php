@@ -296,6 +296,7 @@ class acp_asacp
 					'asacp_spam_words_post_limit'		=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
 					'asacp_spam_words_flag_limit'		=> array('lang' => 'ASACP_SPAM_WORDS_FLAG_LIMIT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true),
 					'asacp_spam_words_posting_action'	=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_post_action', 'explain' => true),
+					'asacp_spam_words_profile_action'	=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_profile_action', 'explain' => true),
 				);
 
 				$template->assign_vars(array(
@@ -331,8 +332,19 @@ class acp_asacp
 		$key2	= ($value == 2) ? ' checked="checked"' : '';
 
 		return '<label><input type="radio" name="config[' . $key . ']" value="0"' . $key0 . ' class="radio" /> ' . $user->lang['NOTHING'] . '</label>
-<label><input type="radio" name="config[' . $key . ']" value="1"' . $key1 . ' class="radio" /> ' . $user->lang['DENY_MESSAGE'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="1"' . $key1 . ' class="radio" /> ' . $user->lang['DENY_SUBMISSION'] . '</label>
 <label><input type="radio" name="config[' . $key . ']" value="2"' . $key2 . ' class="radio" /> ' . $user->lang['REQUIRE_APPROVAL'] . '</label>';
+	}
+
+	function spam_words_profile_action($value, $key)
+	{
+		global $user;
+
+		$key0	= ($value == 0) ? ' checked="checked"' : '';
+		$key1	= ($value == 1) ? ' checked="checked"' : '';
+
+		return '<label><input type="radio" name="config[' . $key . ']" value="0"' . $key0 . ' class="radio" /> ' . $user->lang['NOTHING'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="1"' . $key1 . ' class="radio" /> ' . $user->lang['DENY_SUBMISSION'] . '</label>';
 	}
 
     function asacp_latest_version()

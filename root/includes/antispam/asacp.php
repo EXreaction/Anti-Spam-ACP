@@ -8,7 +8,6 @@
 */
 
 /* DO NOT FORGET
-$this->spam_words = false;//$cache->get('_spam_words');
 */
 
 if (!defined('IN_PHPBB'))
@@ -16,7 +15,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.1.7');
+define('ASACP_VERSION', '0.1.8');
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('LOG_SPAM', 6);
 

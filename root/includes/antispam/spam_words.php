@@ -22,7 +22,7 @@ class spam_words
 	{
 		global $cache, $db;
 
-		$this->spam_words = false;//$cache->get('_spam_words');
+		$this->spam_words = $cache->get('_spam_words');
 		if ($this->spam_words === false)
 		{
 			$this->spam_words = array();
@@ -38,6 +38,11 @@ class spam_words
 
 	public function check_messages()
 	{
+		if (!sizeof($this->spam_words))
+		{
+			return;
+		}
+
 		foreach ($this->messages as $text)
 		{
 			foreach ($this->spam_words as $word)
