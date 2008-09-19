@@ -295,19 +295,24 @@ class antispam
 	{
 		global $user;
 
+		$skip = array('bday_year', 'bday_month', 'bday_day', 'user_birthday');
+
 		$message = '';
 		foreach ($data as $name => $value)
 		{
-			if (isset($user->lang[strtoupper($name)]))
+			if (!in_array($name, $skip) && $value)
 			{
-				$message .= $user->lang[strtoupper($name)] . '<br />';
-			}
-			else
-			{
-				$message .= strtoupper($name) . '<br />';
-			}
+				if (isset($user->lang[strtoupper($name)]))
+				{
+					$message .= $user->lang[strtoupper($name)] . '<br />';
+				}
+				else
+				{
+					$message .= strtoupper($name) . '<br />';
+				}
 
-			$message .= $value . '<br /><br />';
+				$message .= $value . '<br /><br />';
+			}
 		}
 
 		return $message;
