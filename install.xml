@@ -24,7 +24,7 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 
 	<installation>
 		<level>easy</level>
-		<time>180</time>
+		<time>300</time>
 		<target-version>3.0.2</target-version>
 	</installation>
 </header>
@@ -33,6 +33,25 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 	<copy>
 		<file from="root/*.*" to="*.*" />
 	</copy>
+	<open src="includes/ucp/ucp_profile.php">
+		<edit>
+			<find><![CDATA[					if (!check_form_key('ucp_profile_info'))
+					{
+						$error[] = 'FORM_INVALID';
+					}]]></find>
+			<action type="after-add"><![CDATA[					// START Anti-Spam ACP
+					if (antispam::spam_words(array($data['icq'], $data['aim'], $data['msn'], $data['yim'], $data['jabber'], $data['website'], $data['location'], $data['occupation'], $data['interests'])))
+					{
+						switch ($config['asacp_spam_words_posting_action'])
+						{
+							case 1 :
+								$error[] = $user->lang['PROFILE_SPAM_DENIED'];
+							break;
+						}
+					}
+					// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
 	<open src="includes/ucp/ucp_register.php">
 		<edit>
 			<find><![CDATA[include($phpbb_root_path . 'includes/functions_profile_fields.' . $phpEx);]]></find>
@@ -97,7 +116,6 @@ require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
 			switch ($config['asacp_spam_words_posting_action'])
 			{
 				case 1 :
-					$submit = false;
 					$error[] = $user->lang['SPAM_DENIED'];
 				break;
 
