@@ -35,14 +35,14 @@ $lang = array_merge($lang, array(
 	'ASACP_SETTINGS'			=> 'Anti-Spam ACP Settings',
 	'ASACP_SPAM_LOG'			=> 'Spam Log',
 	'ASACP_SPAM_WORDS'			=> 'Spam Words',
-	'LOG_SPAM_POST_DENIED' => 'A post was flagged as spam and denied from posting.<br />The message subject was:<br />%s<br /><br />The message was:<br />%s',
-	'LOG_SPAM_SIGNATURE_DENIED' => 'Signature was flagged as spam.<br />The signature was:<br />%s',
-	'LOG_SPAM_PROFILE_DENIED' => 'One or more profile fields entered were flagged as spam.<br />The information submitted:<br /><br />%s',
 
 	'LOG_ASACP_SETTINGS'		=> 'Updated Anti-Spam ACP Settings',
 	'LOG_CLEAR_SPAM_LOG'		=> 'Cleared Spam Log',
 	'LOG_INCORRECT_CODE'		=> 'Entered in wrong confirm code.',
 	'LOG_INCORRECT_CODE_DATA'	=> 'Code Shown: "%s"<br />Code Entered: "%s"',
+	'LOG_SPAM_POST_DENIED'		=> 'A post was flagged as spam and denied from posting.<br />The message subject was:<br />%s<br /><br />The message was:<br />%s',
+	'LOG_SPAM_PROFILE_DENIED'	=> 'One or more profile fields entered were flagged as spam.<br />The information submitted:<br /><br />%s',
+	'LOG_SPAM_SIGNATURE_DENIED'	=> 'Signature was flagged as spam.<br />The signature was:<br />%s',
 ));
 
 ?>
