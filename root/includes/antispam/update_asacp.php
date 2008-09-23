@@ -64,6 +64,8 @@ switch ($config['asacp_version'])
 		set_config('asacp_spam_words_posting_action', 2);
 	case '0.1.7' :
 		set_config('asacp_spam_words_profile_action', 1);
+	case '0.1.8' :
+		set_config('asacp_spam_words_pm_action', 1);
 }
 
 set_config('asacp_version', ASACP_VERSION);

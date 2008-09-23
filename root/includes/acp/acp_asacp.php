@@ -295,8 +295,9 @@ class acp_asacp
 					'asacp_spam_words_enable'			=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_spam_words_post_limit'		=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
 					'asacp_spam_words_flag_limit'		=> array('lang' => 'ASACP_SPAM_WORDS_FLAG_LIMIT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true),
-					'asacp_spam_words_posting_action'	=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_post_action', 'explain' => true),
-					'asacp_spam_words_profile_action'	=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_profile_action', 'explain' => true),
+					'asacp_spam_words_posting_action'	=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_approval_action', 'explain' => true),
+					'asacp_spam_words_pm_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
+					'asacp_spam_words_profile_action'	=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 				);
 
 				$template->assign_vars(array(
@@ -323,7 +324,7 @@ class acp_asacp
 		));
 	}
 
-	function spam_words_post_action($value, $key)
+	function spam_words_nothing_deny_approval_action($value, $key)
 	{
 		global $user;
 
@@ -336,7 +337,7 @@ class acp_asacp
 <label><input type="radio" name="config[' . $key . ']" value="2"' . $key2 . ' class="radio" /> ' . $user->lang['REQUIRE_APPROVAL'] . '</label>';
 	}
 
-	function spam_words_profile_action($value, $key)
+	function spam_words_nothing_deny_action($value, $key)
 	{
 		global $user;
 
