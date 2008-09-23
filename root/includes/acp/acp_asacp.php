@@ -279,6 +279,56 @@ class acp_asacp
 			break;
 			// case 'log' :
 
+			case 'profile_fields' :
+				$user->add_lang('ucp');
+				$this->tpl_name = 'acp_asacp';
+				$this->page_title = 'ASACP_PROFILE_FIELDS';
+
+				$options = array(
+					'legend1'				=> 'ASACP_PROFILE_FIELDS',
+				);
+
+				$cfg_array = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $config;
+				foreach (antispam::$profile_fields as $field => $ary)
+				{
+					if ($submit)
+					{
+						switch ($cfg_array['asacp_profile_' . $field])
+						{
+							case 1 :
+								// Required
+							break;
+
+							case 2 :
+								// Normal
+							break;
+
+							case 3 :
+								// Never allowed
+								$sql = 'UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', array($ary['db'] => ''));
+								$db->sql_query($sql);
+							break;
+
+							case 4 :
+								// Post Count
+								$sql = 'UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', array($ary['db'] => '')) . '
+									WHERE user_posts < ' . (int) $cfg_array['asacp_profile_' . $field . '_post_limit'];
+								$db->sql_query($sql);
+							break;
+						}
+					}
+
+					$options['asacp_profile_' . $field] = array('lang' => $ary['lang'], 'validate' => 'int:1:4', 'type' => 'custom', 'method' => 'profile_fields_select', 'explain' => false);
+					$options['asacp_profile_' . $field . '_post_limit'] = array('lang' => $ary['lang'] . '_POST_COUNT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true);
+				}
+
+				$template->assign_vars(array(
+					'L_TITLE'			=> $user->lang['ASACP_PROFILE_FIELDS'],
+					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_PROFILE_FIELDS_EXPLAIN'],
+				));
+			break;
+			//case 'profile_fields' :
+
 			default :
 				$this->tpl_name = 'acp_asacp';
 				$this->page_title = 'ASACP_SETTINGS';
@@ -322,6 +372,21 @@ class acp_asacp
 			'ERROR'			=> implode('<br />', $error),
 			'U_ACTION'		=> $this->u_action,
 		));
+	}
+
+	function profile_fields_select($value, $key)
+	{
+		global $user;
+
+		$key1	= ($value == 1) ? ' checked="checked"' : '';
+		$key2	= ($value == 2) ? ' checked="checked"' : '';
+		$key3	= ($value == 3) ? ' checked="checked"' : '';
+		$key4	= ($value == 4) ? ' checked="checked"' : '';
+
+		return '<label><input type="radio" name="config[' . $key . ']" value="1"' . $key1 . ' class="radio" /> ' . $user->lang['REQUIRE_FIELD'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="2"' . $key2 . ' class="radio" /> ' . $user->lang['ALLOW_FIELD'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="3"' . $key3 . ' class="radio" /> ' . $user->lang['DENY_FIELD'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="4"' . $key4 . ' class="radio" /> ' . $user->lang['POST_COUNT'] . '</label>';
 	}
 
 	function spam_words_nothing_deny_approval_action($value, $key)

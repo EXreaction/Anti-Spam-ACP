@@ -66,6 +66,25 @@ switch ($config['asacp_version'])
 		set_config('asacp_spam_words_profile_action', 1);
 	case '0.1.8' :
 		set_config('asacp_spam_words_pm_action', 1);
+	case '0.1.9' :
+		set_config('asacp_profile_icq', 2);
+		set_config('asacp_profile_icq_post_limit', 5);
+		set_config('asacp_profile_aim', 2);
+		set_config('asacp_profile_aim_post_limit', 5);
+		set_config('asacp_profile_msn', 2);
+		set_config('asacp_profile_msn_post_limit', 5);
+		set_config('asacp_profile_yim', 2);
+		set_config('asacp_profile_yim_post_limit', 5);
+		set_config('asacp_profile_jabber', 2);
+		set_config('asacp_profile_jabber_post_limit', 5);
+		set_config('asacp_profile_website', 2);
+		set_config('asacp_profile_website_post_limit', 5);
+		set_config('asacp_profile_location', 2);
+		set_config('asacp_profile_location_post_limit', 5);
+		set_config('asacp_profile_occupation', 2);
+		set_config('asacp_profile_occupation_post_limit', 5);
+		set_config('asacp_profile_interests', 2);
+		set_config('asacp_profile_interests_post_limit', 5);
 }
 
 set_config('asacp_version', ASACP_VERSION);

@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.1.9');
+define('ASACP_VERSION', '0.1.10');
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('LOG_SPAM', 6);
 
@@ -28,6 +28,19 @@ if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSIO
 
 class antispam
 {
+	// Profile Fields name => language
+	public static $profile_fields = array(
+		'icq'			=> array('lang' => 'UCP_ICQ', 'db' => 'user_icq'),
+		'aim'			=> array('lang' => 'UCP_AIM', 'db' => 'user_aim'),
+		'msn'			=> array('lang' => 'UCP_MSNM', 'db' => 'user_msnm'),
+		'yim'			=> array('lang' => 'UCP_YIM', 'db' => 'user_yim'),
+		'jabber'		=> array('lang' => 'UCP_JABBER', 'db' => 'user_jabber'),
+		'website'		=> array('lang' => 'WEBSITE', 'db' => 'user_website'),
+		'location'		=> array('lang' => 'LOCATION', 'db' => 'user_from'),
+		'occupation'	=> array('lang' => 'OCCUPATION', 'db' => 'user_occ'),
+		'interests'		=> array('lang' => 'INTERESTS', 'db' => 'user_interests'),
+	);
+
 	/**
 	* UCP Register Operations
 	*/
@@ -124,6 +137,120 @@ class antispam
 	//public static function ucp_register()
 
 	/**
+	* UCP Profile Fields Operations
+	*/
+	public static function ucp_profile($data, &$error)
+	{
+		global $config, $user;
+
+		if (!$config['asacp_enable'])
+		{
+			return;
+		}
+
+		if ($config['asacp_spam_words_posting_action'] && self::spam_words($data))
+		{
+			$spam_message = antispam::build_spam_log_message($data);
+			antispam::add_log('LOG_SPAM_PROFILE_DENIED', $spam_message);
+			$error[] = $user->lang['PROFILE_SPAM_DENIED'];
+		}
+
+		foreach (self::$profile_fields as $field => $ary)
+		{
+			switch ($config['asacp_profile_' . $field])
+			{
+				case 1 :
+					// Required
+					if (!$data[$field])
+					{
+						$error[] = sprintf($user->lang['FIELD_REQUIRED'], $user->lang[$ary['lang']]);
+					}
+				break;
+
+				case 2 :
+					// Normal
+				break;
+
+				case 3 :
+					// Never allowed
+					if ($data[$field])
+					{
+						$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang[$ary['lang']], 0);
+					}
+				break;
+
+				case 4 :
+					// Post Count
+					if ($user->data['user_posts'] < $config['asacp_profile_' . $field . '_post_limit'])
+					{
+						if ($data[$field])
+						{
+							$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang[$ary['lang']], 0);
+						}
+					}
+				break;
+			}
+		}
+	}
+	//public static function ucp_profile($data, &$error)
+
+	public static function ucp_profile_display()
+	{
+		global $config, $user, $template;
+
+		if (!$config['asacp_enable'])
+		{
+			return;
+		}
+
+		foreach (self::$profile_fields as $field => $lang)
+		{
+			switch ($config['asacp_profile_' . $field])
+			{
+				case 1 :
+					// Required
+					$template->assign_var('S_' . strtoupper($field) . '_REQUIRED', true);
+				break;
+
+				case 2 :
+					// Normal
+				break;
+
+				case 3 :
+					// Never allowed
+					$template->assign_var('S_' . strtoupper($field) . '_DISABLED', true);
+				break;
+
+				case 4 :
+					// Post Count
+					if ($user->data['user_posts'] < $config['asacp_profile_' . $field . '_post_limit'])
+					{
+						$template->assign_var('S_' . strtoupper($field) . '_DISABLED', true);
+					}
+				break;
+			}
+		}
+	}
+	//public static function ucp_profile_display()
+
+	public static function ucp_signature($signature, &$error)
+	{
+		global $config, $user;
+
+		if (!$config['asacp_enable'])
+		{
+			return;
+		}
+
+		if ($config['asacp_spam_words_posting_action'] && self::spam_words($signature))
+		{
+			antispam::add_log('LOG_SPAM_SIGNATURE_DENIED', $signature);
+			$error[] = $user->lang['PROFILE_SPAM_DENIED'];
+		}
+	}
+	//public static function ucp_signature()
+
+	/**
 	* Spam Word Operations
 	*
 	* Send a message or array of messages.  If the message (or any in the array of messages) are flagged as spam, true is returned.
@@ -138,14 +265,14 @@ class antispam
 	{
 		global $cache, $config, $db, $user;
 
-		if ($post_count === false)
-		{
-			$post_count = $user->data['user_posts'];
-		}
-
 		if (!$config['asacp_enable'] || !$config['asacp_spam_words_enable'] || ($post_count > $config['asacp_spam_words_post_limit'] && $config['asacp_spam_words_post_limit'] > 0))
 		{
 			return false;
+		}
+
+		if ($post_count === false)
+		{
+			$post_count = $user->data['user_posts'];
 		}
 
 		if (!class_exists('spam_words'))
