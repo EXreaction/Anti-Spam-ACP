@@ -23,8 +23,8 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 	<mod-version>0.1.X</mod-version>
 
 	<installation>
-		<level>easy</level>
-		<time>300</time>
+		<level>intermediate</level>
+		<time>900</time>
 		<target-version>3.0.2</target-version>
 	</installation>
 </header>
@@ -33,6 +33,18 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 	<copy>
 		<file from="root/*.*" to="*.*" />
 	</copy>
+	<open src="includes/ucp/ucp_pm_compose.php">
+		<edit>
+			<find><![CDATA[// Store message, sync counters]]></find>
+			<action type="before-add"><![CDATA[		// START Anti-Spam ACP
+		if ($config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
+		{
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
 	<open src="includes/ucp/ucp_profile.php">
 		<edit>
 			<find><![CDATA[					if (!check_form_key('ucp_profile_info'))
@@ -40,18 +52,14 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 						$error[] = 'FORM_INVALID';
 					}]]></find>
 			<action type="after-add"><![CDATA[					// START Anti-Spam ACP
-					if (antispam::spam_words($data))
-					{
-						switch ($config['asacp_spam_words_posting_action'])
-						{
-							case 1 :
-								$spam_message = antispam::build_spam_log_message($data);
-								antispam::add_log('LOG_SPAM_PROFILE_DENIED', $spam_message);
-								$error[] = $user->lang['PROFILE_SPAM_DENIED'];
-							break;
-						}
-					}
+					antispam::ucp_profile($data, $error);
 					// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[// Get additional profile fields and assign them to the template block var 'profile_fields']]></find>
+			<action type="before-add"><![CDATA[				// START Anti-Spam ACP
+				antispam::ucp_profile_display();
+				// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[						if (!check_form_key('ucp_sig'))
@@ -59,16 +67,7 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 							$error[] = 'FORM_INVALID';
 						}]]></find>
 			<action type="after-add"><![CDATA[						// START Anti-Spam ACP
-						if (antispam::spam_words($message_parser->message))
-						{
-							switch ($config['asacp_spam_words_posting_action'])
-							{
-								case 1 :
-									antispam::add_log('LOG_SPAM_SIGNATURE_DENIED', $message_parser->message);
-									$error[] = $user->lang['PROFILE_SPAM_DENIED'];
-								break;
-							}
-						}
+						antispam::ucp_signature($message_parser->message, $error);
 						// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
@@ -118,6 +117,151 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 			<action type="before-add"><![CDATA[		<br />{L_ASACP_CREDITS}]]></action>
 		</edit>
     </open>
+	<open src="styles/prosilver/template/ucp_profile_profile_info.html">
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="icq">{L_UCP_ICQ}:</label></dt>
+		<dd><input type="text" name="icq" id="icq" maxlength="15" value="{ICQ}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_ICQ_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="icq">{L_UCP_ICQ}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_ICQ_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="aim">{L_UCP_AIM}:</label></dt>
+		<dd><input type="text" name="aim" id="aim" maxlength="255" value="{AIM}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_AIM_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="aim">{L_UCP_AIM}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_AIM_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="msn">{L_UCP_MSNM}:</label></dt>
+		<dd><input type="text" name="msn" id="msn" maxlength="255" value="{MSN}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_MSN_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="msn">{L_UCP_MSNM}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_MSN_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="yim">{L_UCP_YIM}:</label></dt>
+		<dd><input type="text" name="yim" id="yim" maxlength="255" value="{YIM}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_YIM_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="yim">{L_UCP_YIM}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_YIM_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="jabber">{L_UCP_JABBER}:</label></dt>
+		<dd><input type="text" name="jabber" id="jabber" maxlength="255" value="{JABBER}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_JABBER_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="jabber">{L_UCP_JABBER}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_JABBER_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="website">{L_WEBSITE}:</label></dt>
+		<dd><input type="text" name="website" id="website" maxlength="255" value="{WEBSITE}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_WEBSITE_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="website">{L_WEBSITE}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_WEBSITE_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="location">{L_LOCATION}:</label></dt>
+		<dd><input type="text" name="location" id="location" maxlength="255" value="{LOCATION}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_LOCATION_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="location">{L_LOCATION}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_LOCATION_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="occupation">{L_OCCUPATION}:</label></dt>
+		<dd><textarea name="occupation" id="occupation" class="inputbox" rows="3" cols="30">{OCCUPATION}</textarea></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_OCCUPATION_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="occupation">{L_OCCUPATION}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_OCCUPATION_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="interests">{L_INTERESTS}:</label></dt>
+		<dd><textarea name="interests" id="interests" class="inputbox" rows="3" cols="30">{INTERESTS}</textarea></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_INTERESTS_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="interests">{L_INTERESTS}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_INTERESTS_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+    </open>
+	<open src="common.php">
+		<edit>
+			<find><![CDATA[?>]]></find>
+			<action type="before-add"><![CDATA[// START Anti-Spam ACP
+require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
+// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
 	<open src="common.php">
 		<edit>
 			<find><![CDATA[?>]]></find>
@@ -131,7 +275,7 @@ require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
 			<find><![CDATA[// Store message, sync counters]]></find>
 			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
 	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
-	if (antispam::spam_words(array($sc_title, $message_parser->message)))
+	if ($config['asacp_spam_words_posting_action'] && antispam::spam_words(array($sc_title, $message_parser->message)))
 	{
 		switch ($config['asacp_spam_words_posting_action'])
 		{
