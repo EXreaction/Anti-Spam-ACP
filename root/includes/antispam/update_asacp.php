@@ -39,7 +39,7 @@ switch ($config['asacp_version'])
 			),
 		));
 	case '0.1.1' :
-		set_config('asacp_reg_captcha', true);
+		set_config('asacp_reg_captcha', false);
 	case '0.1.2' :
 		set_config('asacp_log', true);
 	case '0.1.3' :
@@ -56,7 +56,7 @@ switch ($config['asacp_version'])
 		);
 		$db->sql_query(create_tables($schema_data, $dbms));
 	case '0.1.4' :
-		set_config('asacp_spam_words_enable', true);
+		set_config('asacp_spam_words_enable', false);
 		set_config('asacp_spam_words_post_limit', 5);
 	case '0.1.5' :
 		set_config('asacp_spam_words_flag_limit', 1);
