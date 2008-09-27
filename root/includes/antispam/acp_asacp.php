@@ -77,25 +77,33 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$db->sql_query('SELECT count(log_id) AS total FROM ' . LOG_TABLE . '
 				WHERE log_ip = \'' . $sql_ip . '\'');
 			$total = $db->sql_fetchfield('total');
-			$sql = 'SELECT * FROM ' . LOG_TABLE . '
+			$sql = 'SELECT l.log_id, l.log_type, l.user_id, u.username, u.user_colour, l.log_time, l.forum_id, l.topic_id, l.reportee_id, l.log_operation, l.log_data
+				FROM ' . LOG_TABLE . ' l, ' . USERS_TABLE . ' u
 				WHERE log_ip = \'' . $sql_ip . '\'
+				AND u.user_id = l.user_id
 				ORDER BY log_time desc';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
-				$row['log_operation'] = (isset($user->lang[$row['log_operation']])) ? $user->lang[$row['log_operation']] : '{' . ucfirst(str_replace('_', ' ', $row['log_operation'])) . '}';
+				$row['log_action'] = (isset($user->lang[$row['log_operation']])) ? $user->lang[$row['log_operation']] : '{' . ucfirst(str_replace('_', ' ', $row['log_operation'])) . '}';
 				if (!empty($row['log_data']))
 				{
 					// We supress the warning about inappropriate number of passed parameters here due to possible changes within LOG strings from one version to another.
-					$row['log_operation'] = @vsprintf($row['log_operation'], unserialize($row['log_data']));
-					$row['log_operation'] = bbcode_nl2br($row['log_operation']);
+					$row['log_action'] = @vsprintf($row['log_action'], unserialize($row['log_data']));
+					$row['log_action'] = bbcode_nl2br($row['log_action']);
 
 					if ($row['log_type'] == LOG_SPAM)
 					{
-
+						if (isset($user->lang[$row['log_operation'] . '_DATA']))
+						{
+							// We supress the warning about inappropriate number of passed parameters here due to possible changes within LOG strings from one version to another.
+							$row['log_action'] .= '<br />' . @vsprintf($user->lang[$row['log_operation'] . '_DATA'], unserialize($row['log_data']));
+						}
 					}
 				}
-				unset($row['log_data']);
+				$row['username'] = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
+
+				unset($row['user_id'], $row['user_colour'], $row['log_operation'], $row['log_data']);
 
 				$cnt++;
 				if ($cnt == 1)
@@ -138,16 +146,16 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$db->sql_query('SELECT count(post_id) AS total FROM ' . POSTS_TABLE . '
 				WHERE poster_ip = \'' . $sql_ip . '\'');
 			$total = $db->sql_fetchfield('total');
-			$sql = 'SELECT p.topic_id, p.post_id, p.poster_id, u.username, u.user_colour, p.post_username, p.post_time, p.post_subject FROM ' . POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
+			$sql = 'SELECT p.post_subject, p.topic_id, p.post_id, p.poster_id, u.username, u.user_colour, p.post_username, p.post_time FROM ' . POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 				WHERE poster_ip = \'' . $sql_ip . '\'
 				AND u.user_id = p.poster_id
 				ORDER BY post_time desc';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
-				$row['post_subject'] = '<a href="' . append_sid("{$phpbb_root_path}viewtopic.$phpEx", 't=' . $row['topic_id']) . '">' . $row['post_subject'] . '</a>';
+				$row['post_subject'] = '<a href="' . append_sid("{$phpbb_root_path}viewtopic.$phpEx", "t={$row['topic_id']}&amp;p={$row['post_id']}#p{$row['post_id']}") . '">' . $row['post_subject'] . '</a>';
 				$row['username'] = get_username_string('full', $row['poster_id'], $row['username'], $row['user_colour'], $row['post_username']);
-				unset($row['topic_id'], $row['user_colour'], $row['post_username']);
+				unset($row['poster_id'], $row['post_id'], $row['topic_id'], $row['user_colour'], $row['post_username']);
 
 				$cnt++;
 				if ($cnt == 1)
@@ -155,8 +163,6 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 					$output .= asacp_display_table_head($row);
 				}
 
-				$row['post_id'] = '<a href="' . append_sid("{$phpbb_root_path}viewtopic.$phpEx", 'p=' . $row['post_id']) . '">' . $row['post_id'] . '</a>';
-				$row['poster_id'] = '<a href="' . append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . $row['poster_id']) . '">' . $row['poster_id'] . '</a>';
 				$row['post_time'] = $user->format_date($row['post_time']);
 				$output .= asacp_display_table_row($row, $cnt);
 			}
@@ -176,7 +182,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			while ($row = $db->sql_fetchrow($result))
 			{
 				$row['username'] = get_username_string('full', $row['author_id'], $row['username'], $row['user_colour']);
-				unset($row['user_colour']);
+				unset($row['author_id'], $row['user_colour']);
 
 				$cnt++;
 				if ($cnt == 1)
@@ -184,7 +190,6 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 					$output .= asacp_display_table_head($row);
 				}
 
-				$row['author_id'] = '<a href="' . append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile&amp;u=' . $row['author_id']) . '">' . $row['author_id'] . '</a>';
 				$row['message_time'] = $user->format_date($row['message_time']);
 				$output .= asacp_display_table_row($row, $cnt);
 			}
