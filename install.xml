@@ -253,7 +253,7 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
     </open>
 	<open src="styles/prosilver/template/ucp_profile_signature.html">
 		<edit>
-			<find><![CDATA[<p>{L_SIGNATURE_EXPLAIN}</p><!-- ENDIF -->]]></find>
+			<find><![CDATA[<p>{L_SIGNATURE_EXPLAIN}</p>]]></find>
 			<action type="before-add"><![CDATA[<!-- IF not S_SIGNATURE_DISABLED -->]]></action>
 		</edit>
 		<edit>
@@ -261,14 +261,6 @@ Support will only be given at my website - http://www.lithiumstudios.org.</autho
 			<action type="after-add"><![CDATA[<!-- ELSE -->
 	<p class="error">{L_SIGNATURE_DISABLED}</p>
 <!-- ENDIF -->]]></action>
-		</edit>
-    </open>
-	<open src="common.php">
-		<edit>
-			<find><![CDATA[?>]]></find>
-			<action type="before-add"><![CDATA[// START Anti-Spam ACP
-require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
-// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
 	<open src="common.php">
