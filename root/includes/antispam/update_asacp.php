@@ -12,7 +12,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.1.11');
+define('ASACP_VERSION', '0.3.0');
 
 if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
 {
@@ -92,6 +92,7 @@ if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSIO
 		case '0.1.10' :
 			set_config('asacp_profile_signature', 2);
 			set_config('asacp_profile_signature_post_limit', 5);
+		case '0.1.11' :
 	}
 
 	set_config('asacp_version', ASACP_VERSION);
