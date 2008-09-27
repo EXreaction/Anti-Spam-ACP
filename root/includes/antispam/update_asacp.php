@@ -48,17 +48,15 @@ if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSIO
 			set_config('asacp_log', true);
 		case '0.1.3' :
 			$schema_data = array(
-				SPAM_WORDS_TABLE	=> array(
-					'COLUMNS'		=> array(
-						'word_id'			=> array('UINT', NULL, 'auto_increment'),
-						'word_text'			=> array('VCHAR_UNI', ''),
-						'word_regex'		=> array('BOOL', 0),
-						'word_regex_auto'	=> array('BOOL', 0),
-					),
-					'PRIMARY_KEY'	=> 'word_id',
+				'COLUMNS'		=> array(
+					'word_id'			=> array('UINT', NULL, 'auto_increment'),
+					'word_text'			=> array('VCHAR_UNI', ''),
+					'word_regex'		=> array('BOOL', 0),
+					'word_regex_auto'	=> array('BOOL', 0),
 				),
+				'PRIMARY_KEY'	=> 'word_id',
 			);
-			$db->sql_query(create_tables($schema_data, $dbms));
+			create_tables(SPAM_WORDS_TABLE, $schema_data);
 		case '0.1.4' :
 			set_config('asacp_spam_words_enable', false);
 			set_config('asacp_spam_words_post_limit', 5);
@@ -96,6 +94,7 @@ if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSIO
 	}
 
 	set_config('asacp_version', ASACP_VERSION);
+
 
 	$cache->purge();
 }
