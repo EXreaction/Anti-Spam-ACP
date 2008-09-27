@@ -49,7 +49,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 
 	$sql_ip = $db->sql_escape($ip);
 	$start = (int) $start;
-	$limit = 10;
+	$limit = request_var('limit', 10);
 
 	$cnt = $total = 0;
 	$output = '';
@@ -240,7 +240,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 		$template->assign_block_vars('ip_search', array(
 			'TITLE'			=> (isset($user->lang['ASACP_IP_SEARCH_' . strtoupper($type)])) ? $user->lang['ASACP_IP_SEARCH_' . strtoupper($type)] : 'ASACP_IP_SEARCH_' . strtoupper($type),
 			'DATA'			=> $output,
-			'PAGINATION'	=> ($total) ? generate_pagination($url . '&amp;type=' . $type, $total, $limit, $start, true, 'ip_search') : '',
+			'PAGINATION'	=> ($total) ? generate_pagination($url . "&amp;type=$type&amp;limit=$limit", $total, $limit, $start, true, 'ip_search') : '',
 		));
 	}
 }
