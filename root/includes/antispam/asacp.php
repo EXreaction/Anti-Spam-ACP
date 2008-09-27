@@ -15,16 +15,12 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.1.11');
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('LOG_SPAM', 6);
 
 $user->add_lang('mods/asacp');
 
-if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
-{
-	include($phpbb_root_path . 'includes/antispam/update_asacp.' . $phpEx);
-}
+include($phpbb_root_path . 'includes/antispam/update_asacp.' . $phpEx);
 
 class antispam
 {
@@ -264,7 +260,7 @@ class antispam
 			$template->assign_var('S_SIGNATURE_DISABLED', true);
 		}
 	}
-	//public static function ucp_signature()
+	//public static function ucp_signature($signature, &$error)
 
 	/**
 	* Spam Word Operations
