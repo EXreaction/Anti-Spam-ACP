@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.1.10');
+define('ASACP_VERSION', '0.1.11');
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('LOG_SPAM', 6);
 
@@ -39,6 +39,7 @@ class antispam
 		'location'		=> array('lang' => 'LOCATION', 'db' => 'user_from'),
 		'occupation'	=> array('lang' => 'OCCUPATION', 'db' => 'user_occ'),
 		'interests'		=> array('lang' => 'INTERESTS', 'db' => 'user_interests'),
+		'signature'		=> array('lang' => 'SIGNATURE', 'db' => 'user_sig'),
 	);
 
 	/**
@@ -235,17 +236,32 @@ class antispam
 
 	public static function ucp_signature($signature, &$error)
 	{
-		global $config, $user;
+		global $config, $template, $user;
 
 		if (!$config['asacp_enable'])
 		{
 			return;
 		}
 
-		if ($config['asacp_spam_words_posting_action'] && self::spam_words($signature))
+		$submit = (isset($_POST['submit'])) ? true : false;
+
+		if ($submit)
 		{
-			antispam::add_log('LOG_SPAM_SIGNATURE_DENIED', $signature);
-			$error[] = $user->lang['PROFILE_SPAM_DENIED'];
+			if ($config['asacp_profile_signature'] == 3 || ($config['asacp_profile_signature'] == 4 && $user->data['user_posts'] < $config['asacp_profile_signature_post_limit']))
+			{
+				$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang['SIGNATURE'], 0);
+			}
+
+			if ($config['asacp_spam_words_posting_action'] && self::spam_words($signature))
+			{
+				antispam::add_log('LOG_SPAM_SIGNATURE_DENIED', $signature);
+				$error[] = $user->lang['PROFILE_SPAM_DENIED'];
+			}
+		}
+
+		if ($config['asacp_profile_signature'] == 3 || ($config['asacp_profile_signature'] == 4 && $user->data['user_posts'] < $config['asacp_profile_signature_post_limit']))
+		{
+			$template->assign_var('S_SIGNATURE_DISABLED', true);
 		}
 	}
 	//public static function ucp_signature()

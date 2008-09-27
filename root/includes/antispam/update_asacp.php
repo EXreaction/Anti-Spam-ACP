@@ -85,6 +85,9 @@ switch ($config['asacp_version'])
 		set_config('asacp_profile_occupation_post_limit', 5);
 		set_config('asacp_profile_interests', 2);
 		set_config('asacp_profile_interests_post_limit', 5);
+	case '0.1.10' :
+		set_config('asacp_profile_signature', 2);
+		set_config('asacp_profile_signature_post_limit', 5);
 }
 
 set_config('asacp_version', ASACP_VERSION);

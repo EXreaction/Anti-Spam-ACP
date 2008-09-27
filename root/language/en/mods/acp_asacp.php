@@ -85,6 +85,8 @@ $lang = array_merge($lang, array(
 
 	'OCCUPATION_POST_COUNT'						=> 'Occupation Post Count',
 	'OCCUPATION_POST_COUNT_EXPLAIN'				=> 'If Occupation is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
+	'SIGNATURE_POST_COUNT'						=> 'Signature Post Count',
+	'SIGNATURE_POST_COUNT_EXPLAIN'				=> 'If Signature is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
 
 	'POST_COUNT'								=> 'Post Count',
 
