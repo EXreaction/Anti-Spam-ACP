@@ -30,6 +30,8 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'CLICK_CHECK_NEW_VERSION' => 'Click %shere%s to check for a new version.',
+'CLICK_GET_NEW_VERSION' => 'Click %shere%s to get the new version.',
 	'ADD_WORD'									=> 'Add Word',
 	'ALLOW_FIELD'								=> 'Allow',
 	'ASACP_ENABLE'								=> 'Enable Anti-Spam ACP',
