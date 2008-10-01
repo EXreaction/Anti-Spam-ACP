@@ -30,8 +30,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'CLICK_CHECK_NEW_VERSION' => 'Click %shere%s to check for a new version.',
-'CLICK_GET_NEW_VERSION' => 'Click %shere%s to get the new version.',
 	'ADD_WORD'									=> 'Add Word',
 	'ALLOW_FIELD'								=> 'Allow',
 	'ASACP_ENABLE'								=> 'Enable Anti-Spam ACP',
@@ -66,6 +64,9 @@ $lang = array_merge($lang, array(
 	'ASACP_SPAM_WORDS_PROFILE_ACTION_EXPLAIN'	=> 'Select the action you would like performed when information entered into a user\'s profile is flagged as spam.',
 	'ASACP_VERSION'								=> 'Version Information',
 
+	'CLICK_CHECK_NEW_VERSION'					=> 'Click %shere%s to check for a new version.',
+	'CLICK_GET_NEW_VERSION'						=> 'Click %shere%s to get the new version.',
+
 	'DELETE_SPAM_WORD'							=> 'Delete Spam Word',
 	'DELETE_SPAM_WORD_CONFIRM'					=> 'Are you sure you want to delete this spam word?',
 	'DENY_FIELD'								=> 'Deny',
@@ -87,8 +88,6 @@ $lang = array_merge($lang, array(
 
 	'OCCUPATION_POST_COUNT'						=> 'Occupation Post Count',
 	'OCCUPATION_POST_COUNT_EXPLAIN'				=> 'If Occupation is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
-	'SIGNATURE_POST_COUNT'						=> 'Signature Post Count',
-	'SIGNATURE_POST_COUNT_EXPLAIN'				=> 'If Signature is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
 
 	'POST_COUNT'								=> 'Post Count',
 
@@ -99,6 +98,8 @@ $lang = array_merge($lang, array(
 	'REQUIRE_APPROVAL'							=> 'Require moderator approval',
 	'REQUIRE_FIELD'								=> 'Require',
 
+	'SIGNATURE_POST_COUNT'						=> 'Signature Post Count',
+	'SIGNATURE_POST_COUNT_EXPLAIN'				=> 'If Signature is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
 	'SPAM_WORD_ADD_SUCCESS'						=> 'Spam word added successfully.',
 	'SPAM_WORD_DELETE_SUCCESS'					=> 'Spam word deleted successfully.',
 	'SPAM_WORD_EDIT_SUCCESS'					=> 'Spam word edited successfully.',

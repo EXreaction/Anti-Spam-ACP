@@ -34,8 +34,8 @@ $lang = array_merge($lang, array(
 
 	'PROFILE_SPAM_DENIED'	=> 'One or more of the fields entered was marked as spam.',
 
-	'SPAM_DENIED'			=> 'This message was flagged as spam and has been denied.',
 	'SIGNATURE_DISABLED'	=> 'You are not allowed to use a signature.',
+	'SPAM_DENIED'			=> 'This message was flagged as spam and has been denied.',
 ));
 
 ?>
