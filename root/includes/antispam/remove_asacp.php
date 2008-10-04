@@ -39,6 +39,9 @@ if ($umif->confirm_box(true))
 {
 	$umif->display_stages(array('CONFIRM', 'UNINSTALL'), 2);
 
+	$umif->table_column_remove(USERS_TABLE, 'user_flagged');
+	$umif->display_results();
+
 	$umif->config_remove('asacp_profile_signature');
 	$umif->display_results();
 	$umif->config_remove('asacp_profile_signature_post_limit');

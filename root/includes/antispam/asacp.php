@@ -17,10 +17,14 @@ if (!defined('IN_PHPBB'))
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('LOG_SPAM', 6);
+define('ASACP_VERSION', '0.3.1'); // Do not forget to update in update_asacp.php
 
 $user->add_lang('mods/asacp');
 
-include($phpbb_root_path . 'includes/antispam/update_asacp.' . $phpEx);
+if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
+{
+	include($phpbb_root_path . 'includes/antispam/update_asacp.' . $phpEx);
+}
 
 class antispam
 {
