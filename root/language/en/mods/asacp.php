@@ -32,14 +32,17 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ASACP_CREDITS'			=> 'Protected by <a href="http://www.lithiumstudios.org" target="_blank">Anti-Spam ACP</a>',
 
+	'CLEARING_SPAM_LOG'		=> 'Clearing Spam Log Entries from Log Table.',
+
+	'FOUNDER_ONLY'			=> 'You must be a Board Founder to access this page.',
+
 	'PROFILE_SPAM_DENIED'	=> 'One or more of the fields entered was marked as spam.',
+
+	'REMOVE_ASACP'			=> 'Remove Anti-Spam ACP',
+	'REMOVE_ASACP_CONFIRM'	=> 'Are you sure you want to remove the database alterations made by the Anti-Spam ACP Mod?<br /><br />Before you do this make sure you remove the mod edits from the files or the database section will automatically get added again.',
 
 	'SIGNATURE_DISABLED'	=> 'You are not allowed to use a signature.',
 	'SPAM_DENIED'			=> 'This message was flagged as spam and has been denied.',
-	'REMOVE_ASACP' => 'Remove Anti-Spam ACP',
-	'REMOVE_ASACP_CONFIRM' => 'Are you sure you want to remove the database alterations made by the Anti-Spam ACP Mod?<br /><br />Before you do this make sure you remove the mod edits from the files or the database section will automatically get added again.',
-	'FOUNDER_ONLY' => 'You must be a Board Founder to access this page.',
-	'CLEARING_SPAM_LOG' => 'Clearing Spam Log Entries from Log Table.',
 ));
 
 ?>
