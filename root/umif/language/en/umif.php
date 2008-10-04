@@ -43,8 +43,9 @@ $lang = array_merge($lang, array(
 	'IMAGESET_CACHE_PURGE'			=> 'Refreshing the %s imageset',
 	'INSTALL'						=> 'Install',
 
-	'MODULE_ADD'					=> 'Adding a new module: %s',
-	'MODULE_REMOVE'					=> 'Removing a new module: %s',
+	'MODULE_ADD'					=> 'Adding %1$s module: %2$s',
+	'MODULE_NOT_EXIST'				=> 'ERROR: Module does not exist.',
+	'MODULE_REMOVE'					=> 'Removing %1$s module: %2$s',
 
 	'PERMISSION_ADD'				=> 'Adding new permission option: %s',
 	'PERMISSION_ALREADY_EXISTS'		=> 'ERROR: Permission option %s already exists.',

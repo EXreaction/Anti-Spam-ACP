@@ -84,7 +84,7 @@ class umif
 		{*/
 			// Include the umif language file.  First we check if the language file for the user's language is available, if not we check if the board's default language is available, if not we use the english file.
 			$path = './../../umif/language/';
-			if (file_exists("{$phpbb_root_path}umif/language/{$user->data['user_lang']}/umif.$phpEx"))
+			if (isset($user->data['user_lang']) && file_exists("{$phpbb_root_path}umif/language/{$user->data['user_lang']}/umif.$phpEx"))
 			{
 				$path .= $user->data['user_lang'];
 			}
@@ -690,12 +690,12 @@ class umif
 
 		if (!isset($data['module_langname']))
 		{
-			$this->umif_start('MODULE_ADD', $user->lang['UNKNOWN']);
+			$this->umif_start('MODULE_ADD', $class, $user->lang['UNKNOWN']);
 			$this->result = $user->lang['FAIL'];
 			return $this->umif_end();
 		}
 
-		$this->umif_start('MODULE_ADD', ((isset($user->lang[$data['module_langname']])) ? $user->lang[$data['module_langname']] : $data['module_langname']));
+		$this->umif_start('MODULE_ADD', $class, ((isset($user->lang[$data['module_langname']])) ? $user->lang[$data['module_langname']] : $data['module_langname']));
 
 		$class = $db->sql_escape($class);
 
@@ -780,8 +780,8 @@ class umif
 
 			if (!$row)
 			{
-				$this->umif_start('MODULE_REMOVE', $user->lang['UNKNOWN']);
-				$this->result = $user->lang['FAIL'];
+				$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module])) ? $user->lang[$module] : $module));
+				$this->result = $user->lang['MODULE_NOT_EXIST'];
 				return $this->umif_end();
 			}
 			$module_id = (int) $row['module_id'];
@@ -799,15 +799,15 @@ class umif
 
 			if (!$row)
 			{
-				$this->umif_start('MODULE_REMOVE', $user->lang['UNKNOWN']);
-				$this->result = $user->lang['FAIL'];
+				$this->umif_start('MODULE_REMOVE', $class, $user->lang['UNKNOWN']);
+				$this->result = $user->lang['MODULE_NOT_EXIST'];
 				return $this->umif_end();
 			}
 			$module_id = $module;
 			$module_name = $row['module_langname'];
 		}
 
-		$this->umif_start('MODULE_REMOVE', ((isset($user->lang[$module_name])) ? $user->lang[$module_name] : $module_name));
+		$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module_name])) ? $user->lang[$module_name] : $module_name));
 
 		if (!class_exists('acp_modules'))
 		{

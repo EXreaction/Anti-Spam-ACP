@@ -14,6 +14,7 @@ include($phpbb_root_path . 'common.' . $phpEx);
 $user->session_begin();
 $auth->acl($user->data);
 $user->setup('mods/asacp');
+$user->add_lang('mods/info_acp_asacp');
 
 if (!$user->data['is_registered'])
 {
@@ -32,7 +33,7 @@ if (!defined('SPAM_WORDS_TABLE'))
 }
 
 include($phpbb_root_path . 'umif/umif_frontend.' . $phpEx);
-$umif = new umif_frontend();
+$umif = new umif_frontend('REMOVE_ASACP');
 
 if ($umif->confirm_box(true))
 {
@@ -112,6 +113,21 @@ if ($umif->confirm_box(true))
 	$umif->config_remove('asacp_version');
 	$umif->display_results();
 
+	// Remove the Modules
+	$umif->module_remove('acp', 'ASACP_SETTINGS');
+	$umif->display_results();
+	$umif->module_remove('acp', 'ASACP_SPAM_LOG');
+	$umif->display_results();
+	$umif->module_remove('acp', 'ASACP_IP_SEARCH');
+	$umif->display_results();
+	$umif->module_remove('acp', 'ASACP_SPAM_WORDS');
+	$umif->display_results();
+	$umif->module_remove('acp', 'ASACP_PROFILE_FIELDS');
+	$umif->display_results();
+	$umif->module_remove('acp', 'ANTISPAM');
+	$umif->display_results();
+
+	// Clear the log from spam entries
 	$db->sql_query('DELETE FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM);
 	$umif->display_results('CLEARING_SPAM_LOG', 'SUCCESS');
 
