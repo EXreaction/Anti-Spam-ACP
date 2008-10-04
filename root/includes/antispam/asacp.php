@@ -15,9 +15,11 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+define('ASACP_VERSION', '0.3.2'); // Do not forget to update in update_asacp.php
+
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
-define('LOG_SPAM', 6);
-define('ASACP_VERSION', '0.3.1'); // Do not forget to update in update_asacp.php
+define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
+define('LOG_SPAM', 6); // Removed as of 0.3.2, keeping for updates
 
 $user->add_lang('mods/asacp');
 
@@ -308,10 +310,12 @@ class antispam
 
 	/**
 	* Add spam log event
+	*
+	* @param string $type The type of log.  spam for the normal spam log, user_flag for an event by a flagged user.
 	*/
-	public static function add_log($action, $data = array())
+	public static function add_log($action, $data = array(), $type = 'spam')
 	{
-		global $config, $db, $user;
+		global $config, $db, $user, $forum_id, $topic_id;
 
 		if (!$config['asacp_enable'] || !$config['asacp_log'])
 		{
@@ -324,24 +328,28 @@ class antispam
 		}
 
 		$sql_ary = array(
-			'log_type'		=> LOG_SPAM,
-			'user_id'		=> (empty($user->data)) ? ANONYMOUS : $user->data['user_id'],
+			'log_type'		=> ($type == 'spam') ? 1 : 2,
+			'user_id'		=> (int) (empty($user->data)) ? ANONYMOUS : $user->data['user_id'],
+			'forum_id'		=> ($forum_id) ? (int) $forum_id : request_var('f', 0),
+			'topic_id'		=> ($topic_id) ? (int) $topic_id : request_var('t', 0),
 			'log_ip'		=> $user->ip,
 			'log_time'		=> time(),
 			'log_operation'	=> $action,
 			'log_data'		=> serialize($data),
 		);
 
-		$db->sql_query('INSERT INTO ' . LOG_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary));
+		$db->sql_query('INSERT INTO ' . SPAM_LOG_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary));
 
 		return $db->sql_nextid();
 	}
-	//public static function add_log($mode, $action, $data = '')
+	//public static function add_log($action, $data = array(), $type = 'spam')
 
 	/**
 	* View log
+	*
+	* @param string $type The type of log.  spam for the normal spam log, user_flag for an event by a flagged user.
 	*/
-	public static function view_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
+	public static function view_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
 	{
 		global $db, $user, $auth, $phpEx, $phpbb_root_path, $phpbb_admin_path;
 
@@ -350,8 +358,8 @@ class antispam
 		$profile_url = (defined('IN_ADMIN')) ? append_sid("{$phpbb_admin_path}index.$phpEx", 'i=users&amp;mode=overview') : append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile');
 
 		$sql = "SELECT l.*, u.username, u.username_clean, u.user_colour
-			FROM " . LOG_TABLE . " l, " . USERS_TABLE . " u
-			WHERE l.log_type = " . LOG_SPAM . "
+			FROM " . SPAM_LOG_TABLE . " l, " . USERS_TABLE . " u
+			WHERE l.log_type = " . (($type == 'spam') ? 1 : 2) . "
 				AND u.user_id = l.user_id
 				" . (($limit_days) ? "AND l.log_time >= $limit_days" : '') . "
 			ORDER BY $sort_by";
@@ -427,7 +435,7 @@ class antispam
 
 		return;
 	}
-	//public static function view_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
+	//public static function view_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
 
 	/**
 	* Builds a single message for the spam log from multiple items

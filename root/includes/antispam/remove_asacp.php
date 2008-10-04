@@ -29,7 +29,8 @@ if ($user->data['user_type'] != USER_FOUNDER)
 if (!defined('SPAM_WORDS_TABLE'))
 {
 	define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
-	define('LOG_SPAM', 6);
+	define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
+	define('LOG_SPAM', 6); // Removed as of 0.3.2, keeping for updates
 }
 
 include($phpbb_root_path . 'umif/umif_frontend.' . $phpEx);
@@ -38,6 +39,9 @@ $umif = new umif_frontend('REMOVE_ASACP');
 if ($umif->confirm_box(true))
 {
 	$umif->display_stages(array('CONFIRM', 'UNINSTALL'), 2);
+
+	$umif->table_remove(SPAM_LOG_TABLE);
+	$umif->display_results();
 
 	$umif->table_column_remove(USERS_TABLE, 'user_flagged');
 	$umif->display_results();
@@ -113,6 +117,9 @@ if ($umif->confirm_box(true))
 	$umif->permission_remove('a_asacp', 'global');
 	$umif->display_results();
 
+	$umif->config_remove('asacp_enable');
+	$umif->display_results();
+
 	$umif->config_remove('asacp_version');
 	$umif->display_results();
 
@@ -129,10 +136,6 @@ if ($umif->confirm_box(true))
 	$umif->display_results();
 	$umif->module_remove('acp', 'ANTISPAM');
 	$umif->display_results();
-
-	// Clear the log from spam entries
-	$db->sql_query('DELETE FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM);
-	$umif->display_results('CLEARING_SPAM_LOG', 'SUCCESS');
 
 	$umif->purge_cache();
 	$umif->display_results();

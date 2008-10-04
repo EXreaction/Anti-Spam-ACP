@@ -13,7 +13,7 @@ if (!defined('IN_PHPBB'))
 }
 
 // To prevent issues in case the user forgets to upload the update file
-define('ASACP_UPDATE_VERSION', '0.3.1');
+define('ASACP_UPDATE_VERSION', '0.3.2');
 
 if (!class_exists('umif'))
 {
@@ -36,7 +36,7 @@ switch ($config['asacp_version'])
 	case '0.1.2' :
 		$umif->config_add('asacp_log', true);
 	case '0.1.3' :
-		$schema_data = array(
+		$umif->table_add(SPAM_WORDS_TABLE, array(
 			'COLUMNS'		=> array(
 				'word_id'			=> array('UINT', NULL, 'auto_increment'),
 				'word_text'			=> array('VCHAR_UNI', ''),
@@ -44,8 +44,7 @@ switch ($config['asacp_version'])
 				'word_regex_auto'	=> array('BOOL', 0),
 			),
 			'PRIMARY_KEY'	=> 'word_id',
-		);
-		$umif->table_add(SPAM_WORDS_TABLE, $schema_data);
+		));
 	case '0.1.4' :
 		$umif->config_add('asacp_spam_words_enable', false);
 		$umif->config_add('asacp_spam_words_post_limit', 5);
@@ -82,6 +81,46 @@ switch ($config['asacp_version'])
 	case '0.1.11' :
 	case '0.3.0' :
 		$umif->table_column_add(USERS_TABLE, 'user_flagged', array('BOOL', 0));
+	case '0.3.1' :
+		$umif->table_add(SPAM_LOG_TABLE, array(
+			'COLUMNS'		=> array(
+				'log_id'				=> array('UINT', NULL, 'auto_increment'),
+				'log_type'				=> array('TINT:4', 1),
+				'user_id'				=> array('UINT', 0),
+				'forum_id'				=> array('UINT', 0),
+				'topic_id'				=> array('UINT', 0),
+				'reportee_id'			=> array('UINT', 0),
+				'log_ip'				=> array('VCHAR:40', ''),
+				'log_time'				=> array('TIMESTAMP', 0),
+				'log_operation'			=> array('TEXT_UNI', ''),
+				'log_data'				=> array('MTEXT_UNI', ''),
+			),
+			'PRIMARY_KEY'	=> 'log_id',
+			'KEYS'			=> array(
+				'log_type'				=> array('INDEX', 'log_type'),
+				'forum_id'				=> array('INDEX', 'forum_id'),
+				'topic_id'				=> array('INDEX', 'topic_id'),
+				'reportee_id'			=> array('INDEX', 'reportee_id'),
+				'user_id'				=> array('INDEX', 'user_id'),
+			),
+		));
+
+		// Moving the Spam log from the Log table to the Spam Log table.
+		$sql = 'SELECT * FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM;
+		$result = $db->sql_query($sql);
+		$insert_ary = array();
+		while ($row = $db->sql_fetchrow($result))
+		{
+			unset($row['log_id']);
+
+			$row['log_type'] = 1;
+			$insert_ary[] = $row;
+		}
+		$db->sql_freeresult($result);
+
+		$db->sql_multi_insert(SPAM_LOG_TABLE, $insert_ary);
+
+		$db->sql_query('DELETE FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM);
 }
 
 $umif->config_update('asacp_version', ASACP_UPDATE_VERSION);

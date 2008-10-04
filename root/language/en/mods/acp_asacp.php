@@ -63,6 +63,7 @@ $lang = array_merge($lang, array(
 	'ASACP_SPAM_WORDS_PROFILE_ACTION'			=> 'Action for Spam Profile Information',
 	'ASACP_SPAM_WORDS_PROFILE_ACTION_EXPLAIN'	=> 'Select the action you would like performed when information entered into a user\'s profile is flagged as spam.',
 	'ASACP_VERSION'								=> 'Version Information',
+	'ASACP_IP_SEARCH_SPAM_LOG' => 'Spam Log',
 
 	'CLICK_CHECK_NEW_VERSION'					=> 'Click %shere%s to check for a new version.',
 	'CLICK_GET_NEW_VERSION'						=> 'Click %shere%s to get the new version.',

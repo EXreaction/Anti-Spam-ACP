@@ -205,8 +205,8 @@ class acp_asacp
 
 						if ($where_sql || $deleteall)
 						{
-							$sql = 'DELETE FROM ' . LOG_TABLE . '
-								WHERE log_type = ' . LOG_SPAM .
+							$sql = 'DELETE FROM ' . SPAM_LOG_TABLE . '
+								WHERE log_type = 1' .
 								$where_sql;
 							$db->sql_query($sql);
 
@@ -242,13 +242,13 @@ class acp_asacp
 				gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
 
 				// Define where and sort sql for use in displaying logs
-				$sql_where = ($sort_days) ? (time() - ($sort_days * 86400)) : 0;
+				$sql_days = ($sort_days) ? (time() - ($sort_days * 86400)) : 0;
 				$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
 
 				// Grab log data
 				$log_data = array();
 				$log_count = 0;
-				antispam::view_log($log_data, $log_count, $config['topics_per_page'], $start, $sql_where, $sql_sort);
+				antispam::view_log('spam', $log_data, $log_count, $config['topics_per_page'], $start, $sql_days, $sql_sort);
 
 				$template->assign_vars(array(
 					'L_TITLE'		=> $user->lang['ASACP_SPAM_LOG'],

@@ -32,8 +32,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ASACP_CREDITS'			=> 'Protected by <a href="http://www.lithiumstudios.org" target="_blank">Anti-Spam ACP</a>',
 
-	'CLEARING_SPAM_LOG'		=> 'Clearing Spam Log Entries from Log Table.',
-
 	'FOUNDER_ONLY'			=> 'You must be a Board Founder to access this page.',
 
 	'PROFILE_SPAM_DENIED'	=> 'One or more of the fields entered was marked as spam.',
