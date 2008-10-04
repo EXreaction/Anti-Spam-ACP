@@ -99,7 +99,7 @@ class spam_words
 
 			if (!isset($regex_ary[$char]))
 			{
-				$new_text .= '([' . utf8_strtolower($char) . utf8_strtoupper($char) . ']+)';
+				$new_text .= '([' . $char . utf8_strtoupper($char) . ']+)';
 			}
 			else
 			{
