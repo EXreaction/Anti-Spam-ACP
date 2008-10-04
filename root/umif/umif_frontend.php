@@ -191,7 +191,9 @@ class umif_frontend extends umif
 		global $template, $user;
 
 		$command = ($command) ? $command : $this->command;
+		$command = (isset($user->lang[$command])) ? $user->lang[$command] : $command;
 		$result = ($result) ? $result : $this->result;
+		$result = (isset($user->lang[$result])) ? $user->lang[$result] : $result;
 
 		$template->assign_block_vars('results', array(
 			'COMMAND'	=> $command,

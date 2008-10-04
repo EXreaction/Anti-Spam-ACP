@@ -16,36 +16,26 @@ define('ASACP_VERSION', '0.3.0');
 
 if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
 {
-	if (!class_exists('auth_admin'))
+	if (!class_exists('umif'))
 	{
-		include($phpbb_root_path . 'includes/acp/auth.' . $phpEx);
+		include($phpbb_root_path . 'umif/umif.' . $phpEx);
 	}
-	$auth_admin = new auth_admin();
-
-	if (!function_exists('create_tables'))
-	{
-		include($phpbb_root_path . 'includes/antispam/create_tables.' . $phpEx);
-	}
+	$umif = new umif();
 
 	if (!isset($config['asacp_version']))
 	{
-		set_config('asacp_enable', true);
-		set_config('asacp_version', '0.1.0');
+		$umif->config_add('asacp_enable', true);
+		$umif->config_add('asacp_version', '0.1.0');
 	}
 
 	switch ($config['asacp_version'])
 	{
 		case '0.1.0' :
-			$auth_admin->acl_add_option(array(
-				'local'		=> array(),
-				'global'	=> array(
-					'a_asacp',
-				),
-			));
+			$umif->permission_add('a_asacp', true);
 		case '0.1.1' :
-			set_config('asacp_reg_captcha', false);
+			$umif->config_add('asacp_reg_captcha', true);
 		case '0.1.2' :
-			set_config('asacp_log', true);
+			$umif->config_add('asacp_log', true);
 		case '0.1.3' :
 			$schema_data = array(
 				'COLUMNS'		=> array(
@@ -56,44 +46,44 @@ if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSIO
 				),
 				'PRIMARY_KEY'	=> 'word_id',
 			);
-			create_tables(SPAM_WORDS_TABLE, $schema_data);
+			$umif->table_add(SPAM_WORDS_TABLE, $schema_data);
 		case '0.1.4' :
-			set_config('asacp_spam_words_enable', false);
-			set_config('asacp_spam_words_post_limit', 5);
+			$umif->config_add('asacp_spam_words_enable', false);
+			$umif->config_add('asacp_spam_words_post_limit', 5);
 		case '0.1.5' :
-			set_config('asacp_spam_words_flag_limit', 1);
+			$umif->config_add('asacp_spam_words_flag_limit', 1);
 		case '0.1.6' :
-			set_config('asacp_spam_words_posting_action', 2);
+			$umif->config_add('asacp_spam_words_posting_action', 2);
 		case '0.1.7' :
-			set_config('asacp_spam_words_profile_action', 1);
+			$umif->config_add('asacp_spam_words_profile_action', 1);
 		case '0.1.8' :
-			set_config('asacp_spam_words_pm_action', 1);
+			$umif->config_add('asacp_spam_words_pm_action', 1);
 		case '0.1.9' :
-			set_config('asacp_profile_icq', 2);
-			set_config('asacp_profile_icq_post_limit', 5);
-			set_config('asacp_profile_aim', 2);
-			set_config('asacp_profile_aim_post_limit', 5);
-			set_config('asacp_profile_msn', 2);
-			set_config('asacp_profile_msn_post_limit', 5);
-			set_config('asacp_profile_yim', 2);
-			set_config('asacp_profile_yim_post_limit', 5);
-			set_config('asacp_profile_jabber', 2);
-			set_config('asacp_profile_jabber_post_limit', 5);
-			set_config('asacp_profile_website', 2);
-			set_config('asacp_profile_website_post_limit', 5);
-			set_config('asacp_profile_location', 2);
-			set_config('asacp_profile_location_post_limit', 5);
-			set_config('asacp_profile_occupation', 2);
-			set_config('asacp_profile_occupation_post_limit', 5);
-			set_config('asacp_profile_interests', 2);
-			set_config('asacp_profile_interests_post_limit', 5);
+			$umif->config_add('asacp_profile_icq', 2);
+			$umif->config_add('asacp_profile_icq_post_limit', 5);
+			$umif->config_add('asacp_profile_aim', 2);
+			$umif->config_add('asacp_profile_aim_post_limit', 5);
+			$umif->config_add('asacp_profile_msn', 2);
+			$umif->config_add('asacp_profile_msn_post_limit', 5);
+			$umif->config_add('asacp_profile_yim', 2);
+			$umif->config_add('asacp_profile_yim_post_limit', 5);
+			$umif->config_add('asacp_profile_jabber', 2);
+			$umif->config_add('asacp_profile_jabber_post_limit', 5);
+			$umif->config_add('asacp_profile_website', 2);
+			$umif->config_add('asacp_profile_website_post_limit', 5);
+			$umif->config_add('asacp_profile_location', 2);
+			$umif->config_add('asacp_profile_location_post_limit', 5);
+			$umif->config_add('asacp_profile_occupation', 2);
+			$umif->config_add('asacp_profile_occupation_post_limit', 5);
+			$umif->config_add('asacp_profile_interests', 2);
+			$umif->config_add('asacp_profile_interests_post_limit', 5);
 		case '0.1.10' :
-			set_config('asacp_profile_signature', 2);
-			set_config('asacp_profile_signature_post_limit', 5);
+			$umif->config_add('asacp_profile_signature', 2);
+			$umif->config_add('asacp_profile_signature_post_limit', 5);
 		case '0.1.11' :
 	}
 
-	set_config('asacp_version', ASACP_VERSION);
+	$umif->config_update('asacp_version', ASACP_VERSION);
 
 
 	$cache->purge();
