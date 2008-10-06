@@ -164,7 +164,7 @@ class antispam
 			{
 				case 1 :
 					// Required
-					if (!$data[$field])
+					if (isset($data[$field]) && !$data[$field])
 					{
 						$error[] = sprintf($user->lang['FIELD_REQUIRED'], $user->lang[$ary['lang']]);
 					}
@@ -176,7 +176,7 @@ class antispam
 
 				case 3 :
 					// Never allowed
-					if ($data[$field])
+					if (isset($data[$field]) && $data[$field])
 					{
 						$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang[$ary['lang']], 0);
 					}
@@ -186,7 +186,7 @@ class antispam
 					// Post Count
 					if ($user->data['user_posts'] < $config['asacp_profile_' . $field . '_post_limit'])
 					{
-						if ($data[$field])
+						if (isset($data[$field]) && $data[$field])
 						{
 							$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang[$ary['lang']], 0);
 						}
