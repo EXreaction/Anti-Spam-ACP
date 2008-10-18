@@ -269,7 +269,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<edit>
 			<find><![CDATA[?>]]></find>
 			<action type="before-add"><![CDATA[// START Anti-Spam ACP
-require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
+require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 // END Anti-Spam ACP]]></action>
 		</edit>
     </open>
@@ -296,8 +296,20 @@ require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
 	// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
-	<diy-instructions lang="en">Add the ACP modules.
-
-Configure the Anti-Spam Settings in the ACP->.MODS->Anti-Spam</diy-instructions>
+	<open src="viewtopic.php">
+		<edit>
+			<find><![CDATA['search'		=> ($auth->acl_get('u_search')) ? append_sid("{$phpbb_root_path}search.$phpEx", 'search_author=' . urlencode($row['username']) .'&amp;sr=posts') : '',]]></find>
+			<action type="after-add"><![CDATA[				// START Anti-Spam ACP
+				'user_flagged'	=> $row['user_flagged'] ? true : false,
+				// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[$template->assign_block_vars('postrow', $postrow);]]></find>
+			<action type="after-add"><![CDATA[	// START Anti-Spam ACP
+	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id]);
+	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<diy-instructions lang="en">Configure the Anti-Spam Settings in the ACP->.MODS->Anti-Spam</diy-instructions>
 </action-group>
 </mod>
