@@ -40,6 +40,7 @@ $lang = array_merge($lang, array(
 	'ASACP_IP_SEARCH_POLL_VOTES'				=> 'Poll Votes',
 	'ASACP_IP_SEARCH_POSTS'						=> 'Posts',
 	'ASACP_IP_SEARCH_PRIVMSGS'					=> 'Private Messages',
+	'ASACP_IP_SEARCH_SPAM_LOG'					=> 'Spam Log',
 	'ASACP_IP_SEARCH_USERS'						=> 'Users',
 	'ASACP_LOG'									=> 'Enable Spam Log',
 	'ASACP_LOG_EXPLAIN'							=> 'If disabled new items will not be added to the spam log.',
@@ -63,7 +64,6 @@ $lang = array_merge($lang, array(
 	'ASACP_SPAM_WORDS_PROFILE_ACTION'			=> 'Action for Spam Profile Information',
 	'ASACP_SPAM_WORDS_PROFILE_ACTION_EXPLAIN'	=> 'Select the action you would like performed when information entered into a user\'s profile is flagged as spam.',
 	'ASACP_VERSION'								=> 'Version Information',
-	'ASACP_IP_SEARCH_SPAM_LOG' => 'Spam Log',
 
 	'CLICK_CHECK_NEW_VERSION'					=> 'Click %shere%s to check for a new version.',
 	'CLICK_GET_NEW_VERSION'						=> 'Click %shere%s to get the new version.',
@@ -118,8 +118,8 @@ $lang = array_merge($lang, array(
 	'UCP_YIM_POST_COUNT_EXPLAIN'				=> 'If Yahoo Messenger is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
 
 	'VERSION'									=> 'Version',
-	'VIEW_POST' => '%sView Post%s',
-	'VIEW_PROFILE' => '%sView Profile%s',
+	'VIEW_POST'									=> '%sView Post%s',
+	'VIEW_PROFILE'								=> '%sView Profile%s',
 
 	'WEBSITE_POST_COUNT'						=> 'Website Post Count',
 	'WEBSITE_POST_COUNT_EXPLAIN'				=> 'If Website is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',

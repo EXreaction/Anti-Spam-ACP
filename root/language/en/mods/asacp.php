@@ -32,13 +32,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ASACP_CREDITS'			=> 'Protected by <a href="http://www.lithiumstudios.org" target="_blank">Anti-Spam ACP</a>',
 
-	'USER_FLAGGED' => 'User Flagged',
-	'USER_UNFLAG' => 'Remove Flag',
-	'USER_UNFLAG_CONFIRM' => 'Are you sure you want to remove the flag from the user %s?',
-	'USER_UNFLAG_SUCCESS' => 'The flag has been removed from this user successfully.',
-	'USER_FLAG' => 'Flag',
-	'USER_FLAG_CONFIRM' => 'Are you sure you want to flag the user %s?',
-	'USER_FLAG_SUCCESS' => 'The user has been flagged successfully.',
 	'FOUNDER_ONLY'			=> 'You must be a Board Founder to access this page.',
 
 	'PROFILE_SPAM_DENIED'	=> 'One or more of the fields entered was marked as spam.',
@@ -48,6 +41,14 @@ $lang = array_merge($lang, array(
 
 	'SIGNATURE_DISABLED'	=> 'You are not allowed to use a signature.',
 	'SPAM_DENIED'			=> 'This message was flagged as spam and has been denied.',
+
+	'USER_FLAG'				=> 'Flag',
+	'USER_FLAGGED'			=> 'User Flagged',
+	'USER_FLAG_CONFIRM'		=> 'Are you sure you want to flag the user %s?',
+	'USER_FLAG_SUCCESS'		=> 'The user has been flagged successfully.',
+	'USER_UNFLAG'			=> 'Remove Flag',
+	'USER_UNFLAG_CONFIRM'	=> 'Are you sure you want to remove the flag from the user %s?',
+	'USER_UNFLAG_SUCCESS'	=> 'The flag has been removed from this user successfully.',
 ));
 
 ?>
