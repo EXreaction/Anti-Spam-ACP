@@ -7,6 +7,10 @@
 *
 */
 
+/* TODO
+* Spam information in MCP/Moderator Permissions
+*/
+
 /* DO NOT FORGET
 */
 
@@ -268,7 +272,14 @@ class antispam
 	}
 	//public static function ucp_signature($signature, &$error)
 
-	public static function viewtopic_flagged_output($poster_id, $poster_row)
+	/**
+	* Viewtopic Flagged Output
+	*
+	* @param int $poster_id The poster_id
+	* @param array $poster_row The array of information on the user
+	* @param int $post_id The post ID
+	*/
+	public static function viewtopic_flagged_output($poster_id, $poster_row, $post_id)
 	{
 		if (isset($poster_row['user_flagged']))
 		{
@@ -276,11 +287,11 @@ class antispam
 
 			if ($poster_row['user_flagged'])
 			{
-				$flagged_value = '<span class="error">' . $user->lang['YES'] . '</span> [ <a href="' . append_sid("{$phpbb_root_path}asacp.$phpEx", 'mode=user_unflag&amp;u=' . $poster_id) . '">' . $user->lang['USER_UNFLAG']. '</a> ]';
+				$flagged_value = '<span class="error">' . $user->lang['YES'] . '</span> [ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", "mode=user_unflag&amp;u={$poster_id}&amp;p=$post_id") . '">' . $user->lang['USER_UNFLAG']. '</a> ]';
 			}
 			else
 			{
-				$flagged_value = $user->lang['NO'] . ' [ <a href="' . append_sid("{$phpbb_root_path}asacp.$phpEx", 'mode=user_flag&amp;u=' . $poster_id) . '">' . $user->lang['USER_FLAG']. '</a> ]';
+				$flagged_value = $user->lang['NO'] . ' [ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", "mode=user_flag&amp;u={$poster_id}&amp;p=$post_id") . '">' . $user->lang['USER_FLAG']. '</a> ]';
 			}
 
 			$template->assign_block_vars('postrow.custom_fields', array(

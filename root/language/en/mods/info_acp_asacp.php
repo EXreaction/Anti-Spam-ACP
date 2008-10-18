@@ -37,6 +37,8 @@ $lang = array_merge($lang, array(
 	'ASACP_SPAM_LOG'			=> 'Spam Log',
 	'ASACP_SPAM_WORDS'			=> 'Spam Words',
 
+	'LOG_USER_FLAGGED' => '%s was flagged.',
+	'LOG_USER_UNFLAGGED' => 'The flag on %s was removed.',
 	'LOG_ASACP_SETTINGS'		=> 'Updated Anti-Spam ACP Settings',
 	'LOG_CLEAR_SPAM_LOG'		=> 'Cleared Spam Log',
 	'LOG_INCORRECT_CODE'		=> 'Entered in wrong confirm code.',
