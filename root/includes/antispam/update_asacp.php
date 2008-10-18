@@ -31,6 +31,52 @@ switch ($config['asacp_version'])
 {
 	case '0.1.0' :
 		$umif->permission_add('a_asacp', true);
+
+		// Automatic Module Insertion added post 0.3.0.  They are being added here because everyone else should have added the modules manually already.
+		$module_ary = array(
+			'module_langname'	=> 'ANTISPAM',
+		);
+		$umif->module_add('acp', 'ACP_CAT_DOT_MODS', $module_ary); // Category
+
+		$module_ary = array(
+			'module_basename'	=> 'asacp',
+			'module_langname'	=> 'ASACP_SETTINGS',
+			'module_mode'		=> 'settings',
+			'module_auth'		=> 'acl_a_asacp',
+		);
+		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Settings
+
+		$module_ary = array(
+			'module_basename'	=> 'asacp',
+			'module_langname'	=> 'ASACP_SPAM_LOG',
+			'module_mode'		=> 'log',
+			'module_auth'		=> 'acl_a_asacp',
+		);
+		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Spam Log
+
+		$module_ary = array(
+			'module_basename'	=> 'asacp',
+			'module_langname'	=> 'ASACP_IP_SEARCH',
+			'module_mode'		=> 'ip_search',
+			'module_auth'		=> 'acl_a_asacp',
+		);
+		$umif->module_add('acp', 'ANTISPAM', $module_ary); // IP Search
+
+		$module_ary = array(
+			'module_basename'	=> 'asacp',
+			'module_langname'	=> 'ASACP_SPAM_WORDS',
+			'module_mode'		=> 'spam_words',
+			'module_auth'		=> 'acl_a_asacp',
+		);
+		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Spam Words
+
+		$module_ary = array(
+			'module_basename'	=> 'asacp',
+			'module_langname'	=> 'ASACP_PROFILE_FIELDS',
+			'module_mode'		=> 'profile_fields',
+			'module_auth'		=> 'acl_a_asacp',
+		);
+		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Profile Fields
 	case '0.1.1' :
 		$umif->config_add('asacp_reg_captcha', true);
 	case '0.1.2' :

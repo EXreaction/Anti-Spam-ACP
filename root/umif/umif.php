@@ -1197,7 +1197,7 @@ class umif
 
 		$this->umif_start('TABLE_COLUMN_REMOVE', $table_name, $column_name);
 
-		if ($this->table_column_exists($table_name, $column_name))
+		if (!$this->table_column_exists($table_name, $column_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['TABLE_COLUMN_NOT_EXIST'], $table_name, $column_name);
