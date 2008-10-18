@@ -306,7 +306,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		<edit>
 			<find><![CDATA[$template->assign_block_vars('postrow', $postrow);]]></find>
 			<action type="after-add"><![CDATA[	// START Anti-Spam ACP
-	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id]);
+	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id], $row['post_id']);
 	// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
