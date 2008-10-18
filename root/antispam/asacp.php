@@ -375,7 +375,7 @@ class antispam
 		if (!class_exists('spam_words'))
 		{
 			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/antispam/spam_words.' . $phpEx);
+			include($phpbb_root_path . 'antispam/spam_words.' . $phpEx);
 		}
 
 		$spam_words = new spam_words();
