@@ -268,6 +268,31 @@ class antispam
 	}
 	//public static function ucp_signature($signature, &$error)
 
+	public static function viewtopic_flagged_output($poster_id, $poster_row)
+	{
+		if (isset($poster_row['user_flagged']))
+		{
+			global $phpbb_root_path, $phpEx, $user, $template;
+
+			if ($poster_row['user_flagged'])
+			{
+				$flagged_value = '<span class="error">' . $user->lang['YES'] . '</span> [ <a href="' . append_sid("{$phpbb_root_path}asacp.$phpEx", 'mode=user_unflag&amp;u=' . $poster_id) . '">' . $user->lang['USER_UNFLAG']. '</a> ]';
+			}
+			else
+			{
+				$flagged_value = $user->lang['NO'] . ' [ <a href="' . append_sid("{$phpbb_root_path}asacp.$phpEx", 'mode=user_flag&amp;u=' . $poster_id) . '">' . $user->lang['USER_FLAG']. '</a> ]';
+			}
+
+			$template->assign_block_vars('postrow.custom_fields', array(
+				'PROFILE_FIELD_NAME'		=> $user->lang['USER_FLAGGED'],
+				'PROFILE_FIELD_VALUE'		=> $flagged_value,
+				'S_FIELD_VT'				=> true, // For compatibility with the Select viewable Custom Profiles Mod
+				'S_FIELD_VP'				=> true, // For compatibility with the Select viewable Custom Profiles Mod
+			));
+		}
+	}
+	//public static function viewtopic_flagged_output($poster_id, $poster_row)
+
 	/**
 	* Spam Word Operations
 	*
