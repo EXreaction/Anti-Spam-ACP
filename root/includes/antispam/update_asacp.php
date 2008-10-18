@@ -78,7 +78,7 @@ switch ($config['asacp_version'])
 		);
 		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Profile Fields
 	case '0.1.1' :
-		$umif->config_add('asacp_reg_captcha', true);
+		$umif->config_add('asacp_reg_captcha', false);
 	case '0.1.2' :
 		$umif->config_add('asacp_log', true);
 	case '0.1.3' :

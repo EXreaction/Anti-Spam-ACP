@@ -319,7 +319,7 @@ class acp_asacp
 					}
 
 					$options['asacp_profile_' . $field] = array('lang' => $ary['lang'], 'validate' => 'int:1:4', 'type' => 'custom', 'method' => 'profile_fields_select', 'explain' => false);
-					$options['asacp_profile_' . $field . '_post_limit'] = array('lang' => $ary['lang'] . '_POST_COUNT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true);
+					$options['asacp_profile_' . $field . '_post_limit'] = array('lang' => $ary['lang'] . '_POST_COUNT', 'validate' => 'int:1:99999', 'type' => 'text:40:255', 'explain' => true);
 				}
 
 				$template->assign_vars(array(
