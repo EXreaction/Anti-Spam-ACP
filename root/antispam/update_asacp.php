@@ -13,7 +13,7 @@ if (!defined('IN_PHPBB'))
 }
 
 // To prevent issues in case the user forgets to upload the update file
-define('ASACP_UPDATE_VERSION', '0.3.2');
+define('ASACP_UPDATE_VERSION', '0.3.3');
 
 if (!class_exists('umif'))
 {
@@ -53,6 +53,14 @@ switch ($config['asacp_version'])
 			'module_auth'		=> 'acl_a_asacp',
 		);
 		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Spam Log
+
+		$module_ary = array(
+			'module_basename'	=> 'asacp',
+			'module_langname'	=> 'ASACP_FLAG_LOG',
+			'module_mode'		=> 'flag',
+			'module_auth'		=> 'acl_a_asacp',
+		);
+		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flag log
 
 		$module_ary = array(
 			'module_basename'	=> 'asacp',
@@ -167,6 +175,18 @@ switch ($config['asacp_version'])
 		$db->sql_multi_insert(SPAM_LOG_TABLE, $insert_ary);
 
 		$db->sql_query('DELETE FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM);
+	case '0.3.2' :
+		// Do not add if this is a new install.
+		if ($config['asacp_version'] != '0.1.0')
+		{
+			$module_ary = array(
+				'module_basename'	=> 'asacp',
+				'module_langname'	=> 'ASACP_FLAG_LOG',
+				'module_mode'		=> 'flag',
+				'module_auth'		=> 'acl_a_asacp',
+			);
+			$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flag log
+		}
 }
 
 $umif->config_update('asacp_version', ASACP_UPDATE_VERSION);

@@ -8,7 +8,7 @@
 */
 
 define('IN_PHPBB', true);
-$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../../';
+$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
 $user->session_begin();
@@ -127,6 +127,8 @@ if ($umif->confirm_box(true))
 	$umif->module_remove('acp', 'ASACP_SETTINGS');
 	$umif->display_results();
 	$umif->module_remove('acp', 'ASACP_SPAM_LOG');
+	$umif->display_results();
+	$umif->module_remove('acp', 'ASACP_FLAG_LOG');
 	$umif->display_results();
 	$umif->module_remove('acp', 'ASACP_IP_SEARCH');
 	$umif->display_results();

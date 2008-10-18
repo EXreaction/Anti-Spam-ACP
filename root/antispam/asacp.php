@@ -19,7 +19,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.3.2'); // Do not forget to update in update_asacp.php
+define('ASACP_VERSION', '0.3.3'); // Do not forget to update in update_asacp.php
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -198,6 +198,11 @@ class antispam
 				break;
 			}
 		}
+
+		if (!sizeof($error) && $user->data['user_flagged'])
+		{
+			self::add_log('LOG_ALTERED_PROFILE', array(), 'flag');
+		}
 	}
 	//public static function ucp_profile($data, &$error)
 
@@ -263,6 +268,11 @@ class antispam
 				antispam::add_log('LOG_SPAM_SIGNATURE_DENIED', $signature);
 				$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 			}
+
+			if (!sizeof($error) && $user->data['user_flagged'])
+			{
+				self::add_log('LOG_ALTERED_SIGNATURE', array(), 'flag');
+			}
 		}
 
 		if ($config['asacp_profile_signature'] == 3 || ($config['asacp_profile_signature'] == 4 && $user->data['user_posts'] < $config['asacp_profile_signature_post_limit']))
@@ -281,6 +291,13 @@ class antispam
 	*/
 	public static function viewtopic_flagged_output($poster_id, $poster_row, $post_id)
 	{
+		global $auth, $config;
+
+		if (!$config['asacp_enable'] || !$auth->acl_get('a_asacp'))
+		{
+			return;
+		}
+
 		if (isset($poster_row['user_flagged']))
 		{
 			global $phpbb_root_path, $phpEx, $user, $template;
@@ -303,6 +320,32 @@ class antispam
 		}
 	}
 	//public static function viewtopic_flagged_output($poster_id, $poster_row)
+
+	/**
+	* Submit Post
+	*
+	* Should be run when a post is submitted to check the user flag
+	*
+	* @param mixed $mode
+	* @param mixed $post_id
+	*/
+	public static function submit_post($mode, $post_id)
+	{
+		global $user;
+
+		if ($user->data['user_flagged'])
+		{
+			if ($mode == 'edit')
+			{
+				self::add_log('LOG_EDITED_POST', array('post_id' => $post_id), 'flag');
+			}
+			else
+			{
+				self::add_log('LOG_ADDED_POST', array('post_id' => $post_id), 'flag');
+			}
+		}
+	}
+	//public static function submit_post($mode, $post_id)
 
 	/**
 	* Spam Word Operations
@@ -347,7 +390,7 @@ class antispam
 	/**
 	* Add spam log event
 	*
-	* @param string $type The type of log.  spam for the normal spam log, user_flag for an event by a flagged user.
+	* @param string $type The type of log.  spam for the normal spam log, flag for an event by a flagged user.
 	*/
 	public static function add_log($action, $data = array(), $type = 'spam')
 	{
@@ -363,8 +406,20 @@ class antispam
 			$data = array($data);
 		}
 
+		switch ($type)
+		{
+			case 'flag' :
+				$log_type = 2;
+			break;
+
+			case 'spam' :
+			default :
+				$log_type = 1;
+			break;
+		}
+
 		$sql_ary = array(
-			'log_type'		=> ($type == 'spam') ? 1 : 2,
+			'log_type'		=> $log_type,
 			'user_id'		=> (int) (empty($user->data)) ? ANONYMOUS : $user->data['user_id'],
 			'forum_id'		=> ($forum_id) ? (int) $forum_id : request_var('f', 0),
 			'topic_id'		=> ($topic_id) ? (int) $topic_id : request_var('t', 0),
@@ -379,99 +434,6 @@ class antispam
 		return $db->sql_nextid();
 	}
 	//public static function add_log($action, $data = array(), $type = 'spam')
-
-	/**
-	* View log
-	*
-	* @param string $type The type of log.  spam for the normal spam log, user_flag for an event by a flagged user.
-	*/
-	public static function view_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
-	{
-		global $db, $user, $auth, $phpEx, $phpbb_root_path, $phpbb_admin_path;
-
-		$is_auth = $is_mod = array();
-
-		$profile_url = (defined('IN_ADMIN')) ? append_sid("{$phpbb_admin_path}index.$phpEx", 'i=users&amp;mode=overview') : append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=viewprofile');
-
-		$sql = "SELECT l.*, u.username, u.username_clean, u.user_colour
-			FROM " . SPAM_LOG_TABLE . " l, " . USERS_TABLE . " u
-			WHERE l.log_type = " . (($type == 'spam') ? 1 : 2) . "
-				AND u.user_id = l.user_id
-				" . (($limit_days) ? "AND l.log_time >= $limit_days" : '') . "
-			ORDER BY $sort_by";
-		$result = $db->sql_query_limit($sql, $limit, $offset);
-
-		$i = 0;
-		$log = array();
-		while ($row = $db->sql_fetchrow($result))
-		{
-			$log[$i] = array(
-				'id'				=> $row['log_id'],
-
-				'reportee_id'			=> '',
-				'reportee_username'		=> '',
-				'reportee_username_full'=> '',
-
-				'user_id'			=> $row['user_id'],
-				'username'			=> $row['username'],
-				'username_full'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], false, $profile_url),
-
-				'ip'				=> $row['log_ip'],
-				'time'				=> $row['log_time'],
-				'forum_id'			=> $row['forum_id'],
-				'topic_id'			=> $row['topic_id'],
-
-				'viewforum'			=> false,
-				'action'			=> (isset($user->lang[$row['log_operation']])) ? $user->lang[$row['log_operation']] : '{' . ucfirst(str_replace('_', ' ', $row['log_operation'])) . '}',
-				'operation'			=> $row['log_operation'],
-				'data'				=> unserialize($row['log_data']),
-			);
-
-			if (!empty($row['log_data']))
-			{
-				$log_data_ary = unserialize($row['log_data']);
-
-				if (isset($user->lang[$row['log_operation']]))
-				{
-					// We supress the warning about inappropriate number of passed parameters here due to possible changes within LOG strings from one version to another.
-					$log[$i]['action'] = @vsprintf($log[$i]['action'], $log_data_ary);
-
-					// If within the admin panel we do not censor text out
-					if (defined('IN_ADMIN'))
-					{
-						$log[$i]['action'] = bbcode_nl2br($log[$i]['action']);
-					}
-					else
-					{
-						$log[$i]['action'] = bbcode_nl2br(censor_text($log[$i]['action']));
-					}
-				}
-				else
-				{
-					$log[$i]['action'] .= '<br />' . implode('', $log_data_ary);
-				}
-
-				/* Apply make_clickable... has to be seen if it is for good. :/
-				// Seems to be not for the moment, reconsider later...
-				$log[$i]['action'] = make_clickable($log[$i]['action']);
-				*/
-			}
-
-			$i++;
-		}
-		$db->sql_freeresult($result);
-
-		$sql = 'SELECT COUNT(l.log_id) AS total_entries
-			FROM ' . LOG_TABLE . " l
-			WHERE l.log_type = " . LOG_SPAM . "
-				AND l.log_time >= $limit_days";
-		$result = $db->sql_query($sql);
-		$log_count = (int) $db->sql_fetchfield('total_entries');
-		$db->sql_freeresult($result);
-
-		return;
-	}
-	//public static function view_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
 
 	/**
 	* Builds a single message for the spam log from multiple items

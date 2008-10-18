@@ -169,6 +169,7 @@ class acp_asacp
 			// case 'ip_search' :
 
 			case 'log' :
+			case 'flag' :
 				$this->tpl_name = 'acp_logs';
 				$this->page_title = $user->lang['ASACP_SPAM_LOG'];
 
@@ -248,7 +249,15 @@ class acp_asacp
 				// Grab log data
 				$log_data = array();
 				$log_count = 0;
-				antispam::view_log('spam', $log_data, $log_count, $config['topics_per_page'], $start, $sql_days, $sql_sort);
+
+				if ($mode == 'log')
+				{
+					view_spam_log('spam', $log_data, $log_count, $config['topics_per_page'], $start, $sql_days, $sql_sort);
+				}
+				else
+				{
+					view_spam_log('flag', $log_data, $log_count, $config['topics_per_page'], $start, $sql_days, $sql_sort);
+				}
 
 				$template->assign_vars(array(
 					'L_TITLE'		=> $user->lang['ASACP_SPAM_LOG'],
