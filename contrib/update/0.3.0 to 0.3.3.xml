@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD. Although MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD. No support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.1.xsd">
+<header>
+	<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
+	<title lang="en">Anti-Spam ACP</title>
+	<description lang="en">Prevents spam on your phpBB3 forum.</description>
+
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
+
+Support by the author is only provided at http://www.lithiumstudios.org
+A small fee is required for support by the author unless otherwise specified by the author in the release topic.
+Bug reports are accepted and, if confirmed as a bug, you will receive support for fixing the bug for free by the mod author.</author-notes>
+
+	<author-group>
+		<author>
+			<username>EXreaction</username>
+			<realname>Nathan Guse</realname>
+			<homepage>http://www.lithiumstudios.org/</homepage>
+			<email>exreaction@lithiumstudios.org</email>
+		</author>
+	</author-group>
+
+	<mod-version>0.3.3</mod-version>
+
+	<installation>
+		<level>easy</level>
+		<time>300</time>
+		<target-version>3.0.2</target-version>
+	</installation>
+</header>
+
+<action-group>
+	<copy>
+		<file from="root/*.*" to="*.*" />
+	</copy>
+	<open src="includes/ucp/ucp_pm_compose.php">
+		<edit>
+			<find><![CDATA[		// START Anti-Spam ACP
+		if ($config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
+		{
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[		// START Anti-Spam ACP
+		if ($config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
+		{
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		if (!sizeof($error) && $submit && $user->data['user_flagged'])
+		{
+			antispam::add_log('LOG_SENT_PM', array('pm' => $address_list), 'flag');
+		}
+		// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<open src="common.php">
+		<edit>
+			<find><![CDATA[// START Anti-Spam ACP
+require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
+// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[// START Anti-Spam ACP
+require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
+// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<open src="posting.php">
+		<edit>
+			<find><![CDATA[// If the post need approval we will wait a lot longer.]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			antispam::submit_post($mode, $data['post_id']);
+			// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<open src="viewtopic.php">
+		<edit>
+			<find><![CDATA['search'		=> ($auth->acl_get('u_search')) ? append_sid("{$phpbb_root_path}search.$phpEx", 'search_author=' . urlencode($row['username']) .'&amp;sr=posts') : '',]]></find>
+			<action type="after-add"><![CDATA[				// START Anti-Spam ACP
+				'user_flagged'	=> $row['user_flagged'] ? true : false,
+				// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[$template->assign_block_vars('postrow', $postrow);]]></find>
+			<action type="after-add"><![CDATA[	// START Anti-Spam ACP
+	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id], $row['post_id']);
+	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<diy-instructions lang="en">Configure the Anti-Spam Settings in the ACP->.MODS->Anti-Spam</diy-instructions>
+</action-group>
+</mod>
