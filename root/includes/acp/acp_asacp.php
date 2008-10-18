@@ -25,7 +25,7 @@ class acp_asacp
 		global $config, $phpbb_admin_path, $phpbb_root_path, $phpEx;
 
 		$user->add_lang(array('acp/board', 'mods/acp_asacp', 'install'));
-		include($phpbb_root_path . 'includes/antispam/acp_asacp.' . $phpEx);
+		include($phpbb_root_path . 'antispam/acp_asacp.' . $phpEx);
 
 		$error = $notify = array();
 		$submit = (isset($_POST['submit'])) ? true : false;

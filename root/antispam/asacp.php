@@ -25,7 +25,7 @@ $user->add_lang('mods/asacp');
 
 if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
 {
-	include($phpbb_root_path . 'includes/antispam/update_asacp.' . $phpEx);
+	include($phpbb_root_path . 'antispam/update_asacp.' . $phpEx);
 }
 
 class antispam
