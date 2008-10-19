@@ -34,6 +34,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 
 	<link-group>
 		<link type="contrib" href="contrib/profile_switches.xml" lang="en">Profile Switches Install [Recommended]</link>
+		<link type="template" href="subsilver2.xml" lang="en">subsilver2</link>
 	</link-group>
 </header>
 
