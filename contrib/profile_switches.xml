@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD. Although MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD. No support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.1.xsd">
+<header>
+	<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
+	<title lang="en">Anti-Spam ACP Profile Switches</title>
+	<description lang="en">Adds switches to the profile page to hide the profile fields when they can not be filled out.
+
+This should be installed if you plan on using the controls over Profile Field options, though it is not required.</description>
+
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
+
+Support by the author is only provided at http://www.lithiumstudios.org
+A small fee is required for support by the author unless otherwise specified by the author in the release topic.
+Bug reports are accepted and, if confirmed as a bug, you will receive support for fixing the bug for free by the mod author.</author-notes>
+
+	<author-group>
+		<author>
+			<username>EXreaction</username>
+			<realname>Nathan Guse</realname>
+			<homepage>http://www.lithiumstudios.org/</homepage>
+			<email>exreaction@lithiumstudios.org</email>
+		</author>
+	</author-group>
+
+	<mod-version>1.0.0</mod-version>
+
+	<installation>
+		<level>intermediate</level>
+		<time>600</time>
+		<target-version>3.0.2</target-version>
+	</installation>
+</header>
+
+<action-group>
+	<open src="styles/prosilver/template/ucp_profile_profile_info.html">
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="icq">{L_UCP_ICQ}:</label></dt>
+		<dd><input type="text" name="icq" id="icq" maxlength="15" value="{ICQ}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_ICQ_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="icq">{L_UCP_ICQ}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_ICQ_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="aim">{L_UCP_AIM}:</label></dt>
+		<dd><input type="text" name="aim" id="aim" maxlength="255" value="{AIM}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_AIM_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="aim">{L_UCP_AIM}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_AIM_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="msn">{L_UCP_MSNM}:</label></dt>
+		<dd><input type="text" name="msn" id="msn" maxlength="255" value="{MSN}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_MSN_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="msn">{L_UCP_MSNM}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_MSN_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="yim">{L_UCP_YIM}:</label></dt>
+		<dd><input type="text" name="yim" id="yim" maxlength="255" value="{YIM}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_YIM_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="yim">{L_UCP_YIM}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_YIM_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="jabber">{L_UCP_JABBER}:</label></dt>
+		<dd><input type="text" name="jabber" id="jabber" maxlength="255" value="{JABBER}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_JABBER_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="jabber">{L_UCP_JABBER}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_JABBER_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="website">{L_WEBSITE}:</label></dt>
+		<dd><input type="text" name="website" id="website" maxlength="255" value="{WEBSITE}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_WEBSITE_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="website">{L_WEBSITE}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_WEBSITE_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="location">{L_LOCATION}:</label></dt>
+		<dd><input type="text" name="location" id="location" maxlength="255" value="{LOCATION}" class="inputbox" /></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_LOCATION_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="location">{L_LOCATION}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_LOCATION_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="occupation">{L_OCCUPATION}:</label></dt>
+		<dd><textarea name="occupation" id="occupation" class="inputbox" rows="3" cols="30">{OCCUPATION}</textarea></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_OCCUPATION_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="occupation">{L_OCCUPATION}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_OCCUPATION_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+		<edit>
+			<find><![CDATA[	<dl>
+		<dt><label for="interests">{L_INTERESTS}:</label></dt>
+		<dd><textarea name="interests" id="interests" class="inputbox" rows="3" cols="30">{INTERESTS}</textarea></dd>
+	</dl>]]></find>
+			<action type="before-add"><![CDATA[	<!-- IF not S_INTERESTS_DISABLED -->]]></action>
+			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[<dt><label for="interests">{L_INTERESTS}:</label></dt>]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[:]]></inline-find>
+				<inline-action type="after-add"><![CDATA[<!-- IF S_INTERESTS_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
+			</inline-edit>
+		</edit>
+    </open>
+	<open src="styles/prosilver/template/ucp_profile_signature.html">
+		<edit>
+			<find><![CDATA[<p>{L_SIGNATURE_EXPLAIN}</p>]]></find>
+			<action type="before-add"><![CDATA[<!-- IF not S_SIGNATURE_DISABLED -->]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[</fieldset>]]></find>
+			<action type="after-add"><![CDATA[<!-- ELSE -->
+	<p class="error">{L_SIGNATURE_DISABLED}</p>
+<!-- ENDIF -->]]></action>
+		</edit>
+    </open>
+</action-group>
+</mod>

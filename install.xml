@@ -9,6 +9,8 @@
 
 	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
 
+If you will be using the profile field controls you should install the profile switches instructions in the contrib/ folder.
+
 Support by the author is only provided at http://www.lithiumstudios.org
 A small fee is required for support by the author unless otherwise specified by the author in the release topic.
 Bug reports are accepted and, if confirmed as a bug, you will receive support for fixing the bug for free by the mod author.</author-notes>
@@ -26,9 +28,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 
 	<installation>
 		<level>intermediate</level>
-		<time>900</time>
+		<time>600</time>
 		<target-version>3.0.2</target-version>
 	</installation>
+
+	<link-group>
+		<link type="contrib" href="contrib/profile_switches.xml" lang="en">Profile Switches Install [Recommended]</link>
+	</link-group>
 </header>
 
 <action-group>
@@ -118,155 +124,6 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<edit>
 			<find><![CDATA[<!-- IF U_ACP --><br /><strong><a href="{U_ACP}">{L_ACP}</a></strong><!-- ENDIF -->]]></find>
 			<action type="before-add"><![CDATA[		<br />{L_ASACP_CREDITS}]]></action>
-		</edit>
-    </open>
-	<open src="styles/prosilver/template/ucp_profile_profile_info.html">
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="icq">{L_UCP_ICQ}:</label></dt>
-		<dd><input type="text" name="icq" id="icq" maxlength="15" value="{ICQ}" class="inputbox" /></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_ICQ_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="icq">{L_UCP_ICQ}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_ICQ_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="aim">{L_UCP_AIM}:</label></dt>
-		<dd><input type="text" name="aim" id="aim" maxlength="255" value="{AIM}" class="inputbox" /></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_AIM_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="aim">{L_UCP_AIM}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_AIM_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="msn">{L_UCP_MSNM}:</label></dt>
-		<dd><input type="text" name="msn" id="msn" maxlength="255" value="{MSN}" class="inputbox" /></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_MSN_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="msn">{L_UCP_MSNM}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_MSN_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="yim">{L_UCP_YIM}:</label></dt>
-		<dd><input type="text" name="yim" id="yim" maxlength="255" value="{YIM}" class="inputbox" /></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_YIM_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="yim">{L_UCP_YIM}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_YIM_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="jabber">{L_UCP_JABBER}:</label></dt>
-		<dd><input type="text" name="jabber" id="jabber" maxlength="255" value="{JABBER}" class="inputbox" /></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_JABBER_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="jabber">{L_UCP_JABBER}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_JABBER_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="website">{L_WEBSITE}:</label></dt>
-		<dd><input type="text" name="website" id="website" maxlength="255" value="{WEBSITE}" class="inputbox" /></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_WEBSITE_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="website">{L_WEBSITE}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_WEBSITE_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="location">{L_LOCATION}:</label></dt>
-		<dd><input type="text" name="location" id="location" maxlength="255" value="{LOCATION}" class="inputbox" /></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_LOCATION_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="location">{L_LOCATION}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_LOCATION_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="occupation">{L_OCCUPATION}:</label></dt>
-		<dd><textarea name="occupation" id="occupation" class="inputbox" rows="3" cols="30">{OCCUPATION}</textarea></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_OCCUPATION_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="occupation">{L_OCCUPATION}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_OCCUPATION_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-		<edit>
-			<find><![CDATA[	<dl>
-		<dt><label for="interests">{L_INTERESTS}:</label></dt>
-		<dd><textarea name="interests" id="interests" class="inputbox" rows="3" cols="30">{INTERESTS}</textarea></dd>
-	</dl>]]></find>
-			<action type="before-add"><![CDATA[	<!-- IF not S_INTERESTS_DISABLED -->]]></action>
-			<action type="after-add"><![CDATA[	<!-- ENDIF -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[<dt><label for="interests">{L_INTERESTS}:</label></dt>]]></find>
-			<inline-edit>
-				<inline-find><![CDATA[:]]></inline-find>
-				<inline-action type="after-add"><![CDATA[<!-- IF S_INTERESTS_REQUIRED --> *<!-- ENDIF -->]]></inline-action>
-			</inline-edit>
-		</edit>
-    </open>
-	<open src="styles/prosilver/template/ucp_profile_signature.html">
-		<edit>
-			<find><![CDATA[<p>{L_SIGNATURE_EXPLAIN}</p>]]></find>
-			<action type="before-add"><![CDATA[<!-- IF not S_SIGNATURE_DISABLED -->]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[</fieldset>]]></find>
-			<action type="after-add"><![CDATA[<!-- ELSE -->
-	<p class="error">{L_SIGNATURE_DISABLED}</p>
-<!-- ENDIF -->]]></action>
 		</edit>
     </open>
 	<open src="common.php">
