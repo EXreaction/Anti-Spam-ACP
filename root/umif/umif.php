@@ -14,6 +14,9 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+if (!class_exists('umif'))
+{
+
 /**
  * UMIF - Unified MOD Installation File class
  *
@@ -673,6 +676,63 @@ class umif
 		$cache->destroy('config');
 
 		return $this->umif_end();
+	}
+
+	/**
+	* Module Exists
+	*
+	* Check if a module exists
+	*
+	* @param string $class The module class(acp|mcp|ucp)
+	* @param int|string|bool $parent The parent module_id|module_langname (0 for no parent).  Use false to ignore the parent check and check class wide.
+	* @param mixed $module_langname The module_langname you would like to check for to see if it exists
+	*/
+	function module_exists($class, $parent, $module_langname)
+	{
+		global $db;
+
+		$class = $db->sql_escape($class);
+		$module_langname = $db->sql_escape($module_langname);
+
+		$parent_sql = '';
+		if ($parent !== false)
+		{
+			if (!is_numeric($parent))
+			{
+				$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
+					WHERE module_langname = '" . $db->sql_escape($parent) . "'
+					AND module_class = '$class'";
+				$result = $db->sql_query($sql);
+				$row = $db->sql_fetchrow($result);
+				$db->sql_freeresult($result);
+
+				if (!$row)
+				{
+					return false;
+				}
+
+				$parent_sql = 'AND parent_id = ' . (int) $row['module_id'];
+			}
+			else
+			{
+				$parent_sql = 'AND parent_id = ' . (int) $parent;
+			}
+		}
+
+		$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
+			WHERE module_class = '$class'
+			$parent_sql
+			AND module_langname = '$module_langname'";
+		$result = $db->sql_query($sql);
+		$row = $db->sql_fetchrow($result);
+		$db->sql_freeresult($result);
+
+		if ($row)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -1941,5 +2001,7 @@ class umif
 		return $sql;
 	}
 }
+
+} //if (!class_exists('umif'))
 
 ?>

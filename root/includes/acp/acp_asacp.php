@@ -143,7 +143,7 @@ class acp_asacp
 					'S_SPAM_WORDS'		=> true,
 				));
 			break;
-			// case 'spam_words' :
+			//case 'spam_words' :
 
 			case 'ip_search' :
 				$this->tpl_name = 'acp_asacp';
@@ -171,7 +171,15 @@ class acp_asacp
 			case 'log' :
 			case 'flag' :
 				$this->tpl_name = 'acp_logs';
-				$this->page_title = $user->lang['ASACP_SPAM_LOG'];
+
+				if ($mode == 'log')
+				{
+					$this->page_title = $user->lang['ASACP_SPAM_LOG'];
+				}
+				else
+				{
+					$this->page_title = $user->lang['ASACP_FLAG_LOG'];
+				}
 
 				$user->add_lang('mcp');
 
@@ -207,7 +215,7 @@ class acp_asacp
 						if ($where_sql || $deleteall)
 						{
 							$sql = 'DELETE FROM ' . SPAM_LOG_TABLE . '
-								WHERE log_type = 1' .
+								WHERE log_type = ' . (($mode == 'log') ? 1 : 2) .
 								$where_sql;
 							$db->sql_query($sql);
 
@@ -260,7 +268,7 @@ class acp_asacp
 				}
 
 				$template->assign_vars(array(
-					'L_TITLE'		=> $user->lang['ASACP_SPAM_LOG'],
+					'L_TITLE'		=> $this->page_title,
 					'L_EXPLAIN'		=> '',
 
 					'S_ON_PAGE'		=> on_page($log_count, $config['topics_per_page'], $start),
@@ -286,7 +294,8 @@ class acp_asacp
 					));
 				}
 			break;
-			// case 'log' :
+			//case 'log' :
+			//case 'flag' :
 
 			case 'profile_fields' :
 				$user->add_lang('ucp');

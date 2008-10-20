@@ -245,7 +245,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$total = $db->sql_fetchfield('total');
 
 			$log_data = array();
-			antispam::view_log('spam', $log_data, $log_count, $limit, $start);
+			view_spam_log('spam', $log_data, $log_count, $limit, $start);
 
 			foreach ($log_data as $row)
 			{
@@ -254,7 +254,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 					//$user->lang['REPORTEE_USERNAME']	=> ($row['reportee_username'] && $row['user_id'] != $row['reportee_id']) ? $row['reportee_username_full'] : '',
 
 					$user->lang['TIME']				=> $user->format_date($row['time']),
-					$user->lang['ACTION']			=> $row['action'],
+					$user->lang['ACTION']			=> $row['action'] . ((sizeof($row['data'])) ? '<br />' . @vsprintf($user->lang[$row['operation'] . '_DATA'], $row['data']) : ''),
 				);
 
 				$cnt++;
@@ -266,6 +266,35 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			}
 		break;
 		//case 'spam_log' :
+
+		case 'flag_log' :
+			$db->sql_query('SELECT count(log_id) AS total FROM ' . SPAM_LOG_TABLE . '
+				WHERE log_ip = \'' . $sql_ip . '\'
+				AND log_type = 2');
+			$total = $db->sql_fetchfield('total');
+
+			$log_data = array();
+			view_spam_log('flag', $log_data, $log_count, $limit, $start);
+
+			foreach ($log_data as $row)
+			{
+				$log = array(
+					$user->lang['USERNAME']			=> $row['username_full'],
+					//$user->lang['REPORTEE_USERNAME']	=> ($row['reportee_username'] && $row['user_id'] != $row['reportee_id']) ? $row['reportee_username_full'] : '',
+
+					$user->lang['TIME']				=> $user->format_date($row['time']),
+					$user->lang['ACTION']			=> $row['action'] . ((sizeof($row['data'])) ? '<br />' . @vsprintf($user->lang[$row['operation'] . '_DATA'], $row['data']) : ''),
+				);
+
+				$cnt++;
+				if ($cnt == 1)
+				{
+					$output .= asacp_display_table_head($log);
+				}
+				$output .= asacp_display_table_row($log, $cnt);
+			}
+		break;
+		//case 'flag_log' :
 
 		case 'poll_votes' :
 			$db->sql_query('SELECT count(vote_user_ip) AS total FROM ' . POLL_VOTES_TABLE . '
@@ -377,6 +406,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			asacp_display_ip_search('bot_check', $ip, $url);
 			asacp_display_ip_search('logs', $ip, $url);
 			asacp_display_ip_search('spam_log', $ip, $url);
+			asacp_display_ip_search('flag_log', $ip, $url);
 			asacp_display_ip_search('poll_votes', $ip, $url);
 			asacp_display_ip_search('posts', $ip, $url);
 			asacp_display_ip_search('privmsgs', $ip, $url);
