@@ -24,11 +24,11 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.3.3</mod-version>
+	<mod-version>0.3.4</mod-version>
 
 	<installation>
 		<level>intermediate</level>
-		<time>600</time>
+		<time>120</time>
 		<target-version>3.0.2</target-version>
 	</installation>
 
@@ -42,6 +42,17 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<edit>
 			<find><![CDATA[<span class="copyright">Powered by <a href="http://www.phpbb.com/">phpBB</a> &copy; 2000, 2002, 2005, 2007 phpBB Group]]></find>
 			<action type="before-add"><![CDATA[	<br />{L_ASACP_CREDITS}]]></action>
+		</edit>
+    </open>
+	<open src="styles/prosilver/template/overall_header.html">
+		<edit>
+			<find><![CDATA[				<!-- IF not S_IS_BOT -->
+					<!-- IF S_USER_LOGGED_IN -->
+						<!-- IF S_DISPLAY_PM --> &nbsp;<a href="{U_PRIVATEMSGS}"><img src="{T_THEME_PATH}/images/icon_mini_message.gif" width="12" height="13" alt="*" /> {PRIVATE_MESSAGE_INFO}<!-- IF PRIVATE_MESSAGE_INFO_UNREAD -->, {PRIVATE_MESSAGE_INFO_UNREAD}<!-- ENDIF --></a><!-- ENDIF -->
+					<!-- ELSEIF S_REGISTER_ENABLED --> &nbsp;<a href="{U_REGISTER}"><img src="{T_THEME_PATH}/images/icon_mini_register.gif" width="12" height="13" alt="*" /> {L_REGISTER}</a>
+					<!-- ENDIF -->
+				<!-- ENDIF -->]]></find>
+			<action type="after-add"><![CDATA[				<!-- IF U_USER_FLAG_NEW --> &nbsp;<a href="{U_USER_FLAG_NEW}" style="color: red; font-weight: bold;">[ {L_USER_FLAG_NEW} ]</a><!-- ENDIF -->]]></action>
 		</edit>
     </open>
 </action-group>

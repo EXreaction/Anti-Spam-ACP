@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.3.3</mod-version>
+	<mod-version>0.3.4</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -133,6 +133,16 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<edit>
 			<find><![CDATA[<!-- IF U_ACP --><br /><strong><a href="{U_ACP}">{L_ACP}</a></strong><!-- ENDIF -->]]></find>
 			<action type="before-add"><![CDATA[		<br />{L_ASACP_CREDITS}]]></action>
+		</edit>
+    </open>
+	<open src="styles/prosilver/template/overall_header.html">
+		<edit>
+			<find><![CDATA[					<!-- IF U_RESTORE_PERMISSIONS --> &bull;
+					<a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a>
+					<!-- ENDIF -->]]></find>
+			<action type="after-add"><![CDATA[					<!-- IF U_USER_FLAG_NEW --> &bull;
+					<a href="{U_USER_FLAG_NEW}" style="color: red; font-weight: bold;">{L_USER_FLAG_NEW}</a>
+					<!-- ENDIF -->]]></action>
 		</edit>
     </open>
 	<open src="common.php">
