@@ -289,7 +289,7 @@ class antispam
 	*/
 	public static function page_header()
 	{
-		global $db;
+		global $auth, $db, $user;
 
 		$user_id = request_var('u', 0);
 		if (request_var('mode', '') == 'viewprofile' && $user_id)
@@ -302,6 +302,12 @@ class antispam
 			{
 				self::flagged_output($user_id, $row, 'custom_fields');
 			}
+		}
+
+		if ($user->data['user_flag_new'] && $config['asacp_notify_new_flag'] && $auth->acl_get('a_asacp'))
+		{
+			global $phpbb_root_path, $phpEx, $template;
+			$template->assign_var('U_USER_FLAG_NEW', append_sid("{$phpbb_root_path}adm/index.$phpEx", 'i=asacp&amp;mode=flag', true, $user->session_id));
 		}
 	}
 	//public static function page_header()

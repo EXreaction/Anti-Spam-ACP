@@ -45,6 +45,7 @@ $lang = array_merge($lang, array(
 	'USER_FLAG'				=> 'Flag',
 	'USER_FLAGGED'			=> 'User Flagged',
 	'USER_FLAG_CONFIRM'		=> 'Are you sure you want to flag the user %s?',
+	'USER_FLAG_NEW'			=> 'New Flags Logged',
 	'USER_FLAG_SUCCESS'		=> 'The user has been flagged successfully.',
 	'USER_UNFLAG'			=> 'Remove Flag',
 	'USER_UNFLAG_CONFIRM'	=> 'Are you sure you want to remove the flag from the user %s?',
