@@ -19,7 +19,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.3.3'); // Do not forget to update in update_asacp.php
+define('ASACP_VERSION', '0.3.4'); // Do not forget to update in update_asacp.php
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -34,7 +34,7 @@ if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSIO
 
 class antispam
 {
-	// Profile Fields name => language
+	// Profile Fields  First is the name for the template side, lang holds the language name for when giving an error, db holds the name of the field in the db used when resetting the fields to blank.
 	public static $profile_fields = array(
 		'icq'			=> array('lang' => 'UCP_ICQ', 'db' => 'user_icq'),
 		'aim'			=> array('lang' => 'UCP_AIM', 'db' => 'user_aim'),
@@ -283,17 +283,44 @@ class antispam
 	//public static function ucp_signature($signature, &$error)
 
 	/**
-	* Viewtopic Flagged Output
+	* Page Header
+	*
+	* A function used for a few things that needs to be done when page_header is called.
+	*/
+	public static function page_header()
+	{
+		global $db;
+
+		$user_id = request_var('u', 0);
+		if (request_var('mode', '') == 'viewprofile' && $user_id)
+		{
+			$sql = 'SELECT user_flagged FROM ' . USERS_TABLE . ' WHERE user_id = ' . $user_id;
+			$result = $db->sql_query($sql);
+			$row = $db->sql_fetchrow($result);
+
+			if ($row)
+			{
+				self::flagged_output($user_id, $row, 'custom_fields');
+			}
+		}
+	}
+	//public static function page_header()
+
+	/**
+	* Flagged Output
+	*
+	* For outputting the flagged information to the CP fields
 	*
 	* @param int $poster_id The poster_id
 	* @param array $poster_row The array of information on the user
+	* @param string $template_block The template block to output the field to
 	* @param int $post_id The post ID
 	*/
-	public static function viewtopic_flagged_output($poster_id, $poster_row, $post_id)
+	public static function flagged_output($poster_id, $poster_row, $template_block, $post_id = 0)
 	{
 		global $auth, $config;
 
-		if (!$config['asacp_enable'] || !$auth->acl_get('a_asacp'))
+		if (!$config['asacp_enable'] || !$config['asacp_user_flag_enable'] || !$auth->acl_get('a_asacp'))
 		{
 			return;
 		}
@@ -311,7 +338,7 @@ class antispam
 				$flagged_value = $user->lang['NO'] . ' [ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", "mode=user_flag&amp;u={$poster_id}&amp;p=$post_id") . '">' . $user->lang['USER_FLAG']. '</a> ]';
 			}
 
-			$template->assign_block_vars('postrow.custom_fields', array(
+			$template->assign_block_vars($template_block, array(
 				'PROFILE_FIELD_NAME'		=> $user->lang['USER_FLAGGED'],
 				'PROFILE_FIELD_VALUE'		=> $flagged_value,
 				'S_FIELD_VT'				=> true, // For compatibility with the Select viewable Custom Profiles Mod
@@ -319,7 +346,7 @@ class antispam
 			));
 		}
 	}
-	//public static function viewtopic_flagged_output($poster_id, $poster_row)
+	//public static function flagged_output($poster_id, $poster_row, $template_block, $post_id = 0)
 
 	/**
 	* Submit Post
@@ -396,7 +423,7 @@ class antispam
 	{
 		global $config, $db, $user, $forum_id, $topic_id;
 
-		if (!$config['asacp_enable'] || !$config['asacp_log'])
+		if (!$config['asacp_enable'])
 		{
 			return;
 		}
@@ -409,11 +436,27 @@ class antispam
 		switch ($type)
 		{
 			case 'flag' :
+				if (!$config['asacp_user_flag_enable'])
+				{
+					return;
+				}
+
 				$log_type = 2;
+
+				// The user flag new notification
+				if ($config['asacp_notify_new_flag'])
+				{
+					$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 1');
+				}
 			break;
 
 			case 'spam' :
 			default :
+				if (!$config['asacp_log'])
+				{
+					return;
+				}
+
 				$log_type = 1;
 			break;
 		}

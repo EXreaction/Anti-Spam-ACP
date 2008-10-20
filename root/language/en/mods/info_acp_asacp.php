@@ -31,6 +31,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ANTISPAM'					=> 'Anti-Spam',
+	'ASACP_FLAG_LIST'			=> 'Flagged User List',
 	'ASACP_FLAG_LOG'			=> 'Flag Log',
 	'ASACP_IP_SEARCH'			=> 'IP Search',
 	'ASACP_PROFILE_FIELDS'		=> 'Profile Fields',

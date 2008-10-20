@@ -157,13 +157,13 @@ class acp_asacp
 				}
 
 				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang['ASACP_IP_SEARCH'],
-					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_IP_SEARCH_EXPLAIN'],
-					'S_IP_SEARCH'		=> true,
-					'S_DISPLAY_INPUT'	=> ($ip) ? false : true,
+					'L_TITLE'				=> $user->lang['ASACP_IP_SEARCH'],
+					'L_TITLE_EXPLAIN'		=> $user->lang['ASACP_IP_SEARCH_EXPLAIN'],
+					'S_DATA_OUTPUT'			=> true,
+					'S_DISPLAY_IP_INPUT'	=> ($ip) ? false : true,
 
-					'U_BACK'			=> ($type) ? $this->u_action . '&amp;ip=' . $ip : false,
-					'U_BACK_NONE'		=> $this->u_action,
+					'U_BACK'				=> ($type) ? $this->u_action . '&amp;ip=' . $ip : false,
+					'U_BACK_NONE'			=> $this->u_action,
 				));
 			break;
 			// case 'ip_search' :
@@ -179,6 +179,12 @@ class acp_asacp
 				else
 				{
 					$this->page_title = $user->lang['ASACP_FLAG_LOG'];
+
+					// Reset the user flag new notification
+					if ($user->data['user_flag_new'])
+					{
+						$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 0 WHERE user_id = ' . $user->data['user_id']);
+					}
 				}
 
 				$user->add_lang('mcp');
@@ -214,6 +220,8 @@ class acp_asacp
 
 						if ($where_sql || $deleteall)
 						{
+							$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 0');
+
 							$sql = 'DELETE FROM ' . SPAM_LOG_TABLE . '
 								WHERE log_type = ' . (($mode == 'log') ? 1 : 2) .
 								$where_sql;
@@ -297,6 +305,54 @@ class acp_asacp
 			//case 'log' :
 			//case 'flag' :
 
+			case 'flag_list' :
+				$user->add_lang('memberlist');
+				$this->tpl_name = 'acp_asacp';
+				$this->page_title = 'ASACP_FLAG_LIST';
+
+				$start = request_var('start', 0);
+				$limit = request_var('limit', 20);
+
+				$db->sql_query('SELECT count(user_id) as cnt FROM ' . USERS_TABLE . ' WHERE user_flagged = 1');
+				$total = $db->sql_fetchfield('cnt');
+
+				$sql = 'SELECT user_id, username, user_colour, user_ip, user_posts FROM ' . USERS_TABLE . ' WHERE user_flagged = 1';
+				$result = $db->sql_query_limit($sql, $limit, $start);
+
+				$cnt = 0;
+				$output = '';
+				while ($row = $db->sql_fetchrow($result))
+				{
+					$row['username'] = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
+					$row['user_ip'] = '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i={$id}&amp;mode=ip_search&amp;ip={$row['user_ip']}") . '">' . $row['user_ip'] . '</a>';
+					$row[$user->lang['ACTION']] = '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i=users&amp;mode=overview&amp;u={$row['user_id']}") . '">' . $user->lang['USER_ADMIN'] . '</a>';
+					unset($row['user_id'], $row['user_colour']);
+
+					$cnt++;
+					if ($cnt == 1)
+					{
+						$output .= asacp_display_table_head($row);
+					}
+
+					$output .= asacp_display_table_row($row, $cnt);
+				}
+				$db->sql_freeresult($result);
+
+				$template->assign_vars(array(
+					'L_TITLE'			=> $user->lang['ASACP_FLAG_LIST'],
+					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_FLAG_LIST_EXPLAIN'],
+
+					'S_DATA_OUTPUT'		=> true,
+				));
+
+				$template->assign_block_vars('data_output', array(
+					'TITLE'			=> $user->lang['USERS'],
+					'DATA'			=> $output,
+					'PAGINATION'	=> ($total) ? generate_pagination($this->u_action . "&amp;limit=$limit", $total, $limit, $start, true, 'data_output') : '',
+				));
+			break;
+			//case 'flag_list' :
+
 			case 'profile_fields' :
 				$user->add_lang('ucp');
 				$this->tpl_name = 'acp_asacp';
@@ -352,9 +408,11 @@ class acp_asacp
 				$this->page_title = 'ASACP_SETTINGS';
 
 				$options = array(
-					'legend1'				=> 'ASACP_SETTINGS',
-					'asacp_enable'			=> array('lang' => 'ASACP_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_log'				=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'legend1'					=> 'ASACP_SETTINGS',
+					'asacp_enable'				=> array('lang' => 'ASACP_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_log'					=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_user_flag_enable'	=> array('lang' => 'ASACP_USER_FLAG_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_notify_new_flag'		=> array('lang' => 'ASACP_NOTIFY_NEW_FLAG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 
 					'legend2'				=> 'ASACP_REGISTER_SETTINGS',
 					'asacp_reg_captcha'		=> array('lang' => 'ASACP_REG_CAPTCHA', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),

@@ -192,7 +192,6 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 				$cnt++;
 				if ($cnt == 1)
 				{
-
 					$output .= asacp_display_table_head($row);
 				}
 
@@ -417,10 +416,10 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 
 	if ($output)
 	{
-		$template->assign_block_vars('ip_search', array(
+		$template->assign_block_vars('data_output', array(
 			'TITLE'			=> (isset($user->lang['ASACP_IP_SEARCH_' . strtoupper($type)])) ? $user->lang['ASACP_IP_SEARCH_' . strtoupper($type)] : 'ASACP_IP_SEARCH_' . strtoupper($type),
 			'DATA'			=> $output,
-			'PAGINATION'	=> ($total) ? generate_pagination($url . "&amp;type=$type&amp;limit=$limit", $total, $limit, $start, true, 'ip_search') : '',
+			'PAGINATION'	=> ($total) ? generate_pagination($url . "&amp;type=$type&amp;limit=$limit", $total, $limit, $start, true, 'data_output') : '',
 		));
 	}
 }

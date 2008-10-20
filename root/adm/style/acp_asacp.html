@@ -61,27 +61,28 @@
 </form>
 <!-- ENDIF -->
 
-<!-- IF S_IP_SEARCH -->
-	<!-- BEGIN ip_search -->
-		<h2>{ip_search.TITLE}</h2>
+<!-- IF S_DATA_OUTPUT -->
+	<!-- BEGIN data_output -->
+		<h2>{data_output.TITLE}</h2>
 		<table cellspacing="1" cellpadding="0">
-			{ip_search.DATA}
+			{data_output.DATA}
 		</table>
-		<!-- IF ip_search.PAGINATION -->
+		<!-- IF data_output.PAGINATION -->
 		<div class="pagination">
-			<span>{ip_search.PAGINATION}</span>
+			<span>{data_output.PAGINATION}</span>
 		</div>
 		<!-- ENDIF -->
 	<!-- BEGINELSE -->
-		<!-- IF not S_DISPLAY_INPUT -->
+		<!-- IF not S_DISPLAY_IP_INPUT -->
 		<div class="errorbox">
 			<h3>{L_WARNING}</h3>
 			<p>{L_NO_ITEMS}<br /><a href="{U_BACK_NONE}">&laquo; {L_BACK}</a></p>
 		</div>
 		<!-- ENDIF -->
-	<!-- END ip_search -->
+	<!-- END data_output -->
+<!-- ENDIF -->
 
-	<!-- IF S_DISPLAY_INPUT -->
+<!-- IF S_DISPLAY_IP_INPUT -->
 	<form id="asacp_ip_search" method="post" action="{U_ACTION}">
 		<fieldset>
 			<dl>
@@ -96,7 +97,6 @@
 			{S_FORM_TOKEN}
 		</fieldset>
 	</form>
-	<!-- ENDIF -->
 <!-- ENDIF -->
 
 <!-- IF S_SPAM_WORDS -->

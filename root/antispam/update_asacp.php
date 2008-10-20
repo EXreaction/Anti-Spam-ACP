@@ -13,12 +13,9 @@ if (!defined('IN_PHPBB'))
 }
 
 // To prevent issues in case the user forgets to upload the update file
-define('ASACP_UPDATE_VERSION', '0.3.3');
+define('ASACP_UPDATE_VERSION', '0.3.4');
 
-if (!class_exists('umif'))
-{
-	include($phpbb_root_path . 'umif/umif.' . $phpEx);
-}
+include($phpbb_root_path . 'umif/umif.' . $phpEx);
 $umif = new umif();
 
 if (!isset($config['asacp_version']))
@@ -61,6 +58,14 @@ switch ($config['asacp_version'])
 			'module_auth'		=> 'acl_a_asacp',
 		);
 		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flag log
+
+		$module_ary = array(
+			'module_basename'	=> 'asacp',
+			'module_langname'	=> 'ASACP_FLAG_LIST',
+			'module_mode'		=> 'flag_list',
+			'module_auth'		=> 'acl_a_asacp',
+		);
+		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flagged User List
 
 		$module_ary = array(
 			'module_basename'	=> 'asacp',
@@ -186,6 +191,22 @@ switch ($config['asacp_version'])
 				'module_auth'		=> 'acl_a_asacp',
 			);
 			$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flag log
+		}
+	case '0.3.3' :
+		$umif->table_column_add(USERS_TABLE, 'user_flag_new', array('BOOL', 0));
+		$umif->config_add('asacp_notify_new_flag', true);
+		$umif->config_add('asacp_user_flag_enable', true);
+
+		// Do not add if this is a new install.
+		if ($config['asacp_version'] != '0.1.0')
+		{
+			$module_ary = array(
+				'module_basename'	=> 'asacp',
+				'module_langname'	=> 'ASACP_FLAG_LIST',
+				'module_mode'		=> 'flag_list',
+				'module_auth'		=> 'acl_a_asacp',
+			);
+			$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flagged User List
 		}
 }
 
