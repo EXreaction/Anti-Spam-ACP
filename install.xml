@@ -121,6 +121,14 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
+	<open src="includes/functions.php">
+		<edit>
+			<find><![CDATA[// application/xhtml+xml not used because of IE]]></find>
+			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
+	antispam::page_header();
+	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
 	<open src="styles/prosilver/template/overall_footer.html">
 		<edit>
 			<find><![CDATA[<!-- IF U_ACP --><br /><strong><a href="{U_ACP}">{L_ACP}</a></strong><!-- ENDIF -->]]></find>
@@ -174,7 +182,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		<edit>
 			<find><![CDATA[$template->assign_block_vars('postrow', $postrow);]]></find>
 			<action type="after-add"><![CDATA[	// START Anti-Spam ACP
-	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id], $row['post_id']);
+	antispam::flagged_output($poster_id, &$user_cache[$poster_id], 'postrow.custom_fields', $row['post_id']);
 	// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
