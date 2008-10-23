@@ -58,7 +58,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<find><![CDATA[	// START Anti-Spam ACP
 	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id], $row['post_id']);
 	// END Anti-Spam ACP]]></find>
-			<action type="after-add"><![CDATA[	// START Anti-Spam ACP
+			<action type="replace-with"><![CDATA[	// START Anti-Spam ACP
 	antispam::flagged_output($poster_id, &$user_cache[$poster_id], 'postrow.custom_fields', $row['post_id']);
 	// END Anti-Spam ACP]]></action>
 		</edit>
