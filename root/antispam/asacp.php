@@ -292,15 +292,16 @@ class antispam
 		global $auth, $config, $db, $user;
 
 		$user_id = request_var('u', 0);
-		if (request_var('mode', '') == 'viewprofile' && $user_id)
+		$username = request_var('un', '', true);
+		if (request_var('mode', '') == 'viewprofile' && ($user_id || $username))
 		{
-			$sql = 'SELECT user_flagged FROM ' . USERS_TABLE . ' WHERE user_id = ' . $user_id;
+			$sql = 'SELECT user_id, user_flagged FROM ' . USERS_TABLE . ' WHERE ' . (($user_id) ? 'user_id = ' . $user_id : "username_clean = '" . $db->sql_escape(utf8_clean_string($username)) . "'");
 			$result = $db->sql_query($sql);
 			$row = $db->sql_fetchrow($result);
 
 			if ($row)
 			{
-				self::flagged_output($user_id, $row, 'custom_fields');
+				self::flagged_output($row['user_id'], $row, 'custom_fields');
 			}
 		}
 
