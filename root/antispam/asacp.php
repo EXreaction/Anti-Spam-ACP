@@ -289,7 +289,7 @@ class antispam
 	*/
 	public static function page_header()
 	{
-		global $auth, $db, $user;
+		global $auth, $config, $db, $user;
 
 		$user_id = request_var('u', 0);
 		if (request_var('mode', '') == 'viewprofile' && $user_id)
