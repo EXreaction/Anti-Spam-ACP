@@ -30,66 +30,8 @@ switch ($config['asacp_version'])
 		$umif->permission_add('a_asacp', true);
 
 		// Automatic Module Insertion added post 0.3.0.  They are being added here because everyone else should have added the modules manually already.
-		$module_ary = array(
-			'module_langname'	=> 'ANTISPAM',
-		);
-		$umif->module_add('acp', 'ACP_CAT_DOT_MODS', $module_ary); // Category
-
-		$module_ary = array(
-			'module_basename'	=> 'asacp',
-			'module_langname'	=> 'ASACP_SETTINGS',
-			'module_mode'		=> 'settings',
-			'module_auth'		=> 'acl_a_asacp',
-		);
-		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Settings
-
-		$module_ary = array(
-			'module_basename'	=> 'asacp',
-			'module_langname'	=> 'ASACP_SPAM_LOG',
-			'module_mode'		=> 'log',
-			'module_auth'		=> 'acl_a_asacp',
-		);
-		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Spam Log
-
-		$module_ary = array(
-			'module_basename'	=> 'asacp',
-			'module_langname'	=> 'ASACP_FLAG_LOG',
-			'module_mode'		=> 'flag',
-			'module_auth'		=> 'acl_a_asacp',
-		);
-		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flag log
-
-		$module_ary = array(
-			'module_basename'	=> 'asacp',
-			'module_langname'	=> 'ASACP_FLAG_LIST',
-			'module_mode'		=> 'flag_list',
-			'module_auth'		=> 'acl_a_asacp',
-		);
-		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flagged User List
-
-		$module_ary = array(
-			'module_basename'	=> 'asacp',
-			'module_langname'	=> 'ASACP_IP_SEARCH',
-			'module_mode'		=> 'ip_search',
-			'module_auth'		=> 'acl_a_asacp',
-		);
-		$umif->module_add('acp', 'ANTISPAM', $module_ary); // IP Search
-
-		$module_ary = array(
-			'module_basename'	=> 'asacp',
-			'module_langname'	=> 'ASACP_SPAM_WORDS',
-			'module_mode'		=> 'spam_words',
-			'module_auth'		=> 'acl_a_asacp',
-		);
-		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Spam Words
-
-		$module_ary = array(
-			'module_basename'	=> 'asacp',
-			'module_langname'	=> 'ASACP_PROFILE_FIELDS',
-			'module_mode'		=> 'profile_fields',
-			'module_auth'		=> 'acl_a_asacp',
-		);
-		$umif->module_add('acp', 'ANTISPAM', $module_ary); // Profile Fields
+		$umif->module_add('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM'); // Category
+		$umif->module_add('acp', 'ANTISPAM', array('module_basename' => 'asacp'));
 	case '0.1.1' :
 		$umif->config_add('asacp_reg_captcha', false);
 	case '0.1.2' :
@@ -184,13 +126,7 @@ switch ($config['asacp_version'])
 		// Do not add if this is a new install.
 		if ($config['asacp_version'] != '0.1.0')
 		{
-			$module_ary = array(
-				'module_basename'	=> 'asacp',
-				'module_langname'	=> 'ASACP_FLAG_LOG',
-				'module_mode'		=> 'flag',
-				'module_auth'		=> 'acl_a_asacp',
-			);
-			$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flag log
+			$umif->module_add('acp', 'ANTISPAM', array('module_basename' => 'asacp', 'module_mode' => 'flag')); // Flag log
 		}
 	case '0.3.3' :
 		$umif->table_column_add(USERS_TABLE, 'user_flag_new', array('BOOL', 0));
@@ -200,18 +136,11 @@ switch ($config['asacp_version'])
 		// Do not add if this is a new install.
 		if ($config['asacp_version'] != '0.1.0')
 		{
-			$module_ary = array(
-				'module_basename'	=> 'asacp',
-				'module_langname'	=> 'ASACP_FLAG_LIST',
-				'module_mode'		=> 'flag_list',
-				'module_auth'		=> 'acl_a_asacp',
-			);
-			$umif->module_add('acp', 'ANTISPAM', $module_ary); // Flagged User List
+			$umif->module_add('acp', 'ANTISPAM', array('module_basename' => 'asacp', 'module_mode' => 'flag_list')); // Flagged User List
 		}
 }
 
 $umif->config_update('asacp_version', ASACP_UPDATE_VERSION);
-
-$cache->purge();
+$umif->cache_purge();
 
 ?>

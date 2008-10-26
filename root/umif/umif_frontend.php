@@ -27,12 +27,13 @@ class umif_frontend extends umif
 	/**
 	* Constructor
 	*/
-	function umif_frontend($title = '')
+	function umif_frontend($title = '', $auto_display_results = false)
 	{
 		global $db, $phpbb_root_path, $template, $user;
 
 		// we must call the main constructor
 		$this->umif();
+		$this->auto_display_results = $auto_display_results;
 
 		$user->add_lang('install');
 
