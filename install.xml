@@ -158,6 +158,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 			<find><![CDATA[// Store message, sync counters]]></find>
 			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
 	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
+	$is_spam = false;
 	if ($config['asacp_spam_words_posting_action'] && antispam::spam_words(array($sc_title, $message_parser->message)))
 	{
 		switch ($config['asacp_spam_words_posting_action'])
@@ -168,8 +169,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 			break;
 
 			case 2 :
-				$config['enable_queue_trigger'] = true;
-				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
+				$is_spam = true;
 			break;
 		}
 	}
@@ -178,7 +178,8 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		<edit>
 			<find><![CDATA[// If the post need approval we will wait a lot longer.]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
-			antispam::submit_post($mode, $data['post_id']);
+			$post_need_approval = ($post_need_approval || $is_spam) ? true : false;
+			antispam::submit_post($mode, $data['post_id'], $is_spam);
 			// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
