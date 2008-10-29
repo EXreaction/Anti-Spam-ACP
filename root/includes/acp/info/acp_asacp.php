@@ -7,6 +7,11 @@
 *
 */
 
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
+
 class acp_asacp_info
 {
 	function module()
