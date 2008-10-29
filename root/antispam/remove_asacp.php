@@ -55,6 +55,7 @@ if ($umif->confirm_box(true))
 	$umif->permission_remove('a_asacp_spam_log', true);
 	$umif->permission_remove('a_asacp_user_flag', true);
 	$umif->permission_remove('a_asacp_profile_fields', true);
+	$umif->permission_remove('a_asacp_spam_words', true);
 
 	// 0.3.4
 	$umif->table_column_remove(USERS_TABLE, 'user_flag_new');
