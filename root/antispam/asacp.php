@@ -7,10 +7,6 @@
 *
 */
 
-/* TODO
-* Spam information in MCP/Moderator Permissions
-*/
-
 /* DO NOT FORGET
 */
 
@@ -19,7 +15,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.3.4'); // Do not forget to update in update_asacp.php
+define('ASACP_VERSION', '0.3.5'); // Do not forget to update in update_asacp.php
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -305,7 +301,7 @@ class antispam
 			}
 		}
 
-		if ($user->data['user_flag_new'] && $config['asacp_notify_new_flag'] && $auth->acl_get('a_asacp'))
+		if ($user->data['user_flag_new'] && $config['asacp_notify_new_flag'] && $auth->acl_get('a_asacp_user_flag'))
 		{
 			global $phpbb_root_path, $phpEx, $template;
 			$template->assign_var('U_USER_FLAG_NEW', append_sid("{$phpbb_root_path}adm/index.$phpEx", 'i=asacp&amp;mode=flag', true, $user->session_id));
@@ -327,7 +323,7 @@ class antispam
 	{
 		global $auth, $config;
 
-		if (!$config['asacp_enable'] || !$config['asacp_user_flag_enable'] || !$auth->acl_get('a_asacp'))
+		if (!$config['asacp_enable'] || !$config['asacp_user_flag_enable'] || !$auth->acl_get('a_asacp_user_flag'))
 		{
 			return;
 		}

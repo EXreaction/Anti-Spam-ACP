@@ -811,7 +811,7 @@ class umif
 			$result = '';
 			foreach ($module['modes'] as $mode => $module_info)
 			{
-				if (in_array($mode, $data['modes']) || !isset($data['modes']))
+				if (!isset($data['modes']) || in_array($mode, $data['modes']))
 				{
 					$new_module = array(
 						'module_basename'	=> $basename,

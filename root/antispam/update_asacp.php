@@ -13,7 +13,7 @@ if (!defined('IN_PHPBB'))
 }
 
 // To prevent issues in case the user forgets to upload the update file
-define('ASACP_UPDATE_VERSION', '0.3.4');
+define('ASACP_UPDATE_VERSION', '0.3.5');
 
 include($phpbb_root_path . 'umif/umif.' . $phpEx);
 $umif = new umif();
@@ -28,10 +28,6 @@ switch ($config['asacp_version'])
 {
 	case '0.1.0' :
 		$umif->permission_add('a_asacp', true);
-
-		// Automatic Module Insertion added post 0.3.0.  They are being added here because everyone else should have added the modules manually already.
-		$umif->module_add('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM'); // Category
-		$umif->module_add('acp', 'ANTISPAM', array('module_basename' => 'asacp'));
 	case '0.1.1' :
 		$umif->config_add('asacp_reg_captcha', false);
 	case '0.1.2' :
@@ -123,21 +119,36 @@ switch ($config['asacp_version'])
 
 		$db->sql_query('DELETE FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM);
 	case '0.3.2' :
-		// Do not add if this is a new install.
-		if ($config['asacp_version'] != '0.1.0')
-		{
-			$umif->module_add('acp', 'ANTISPAM', array('module_basename' => 'asacp', 'module_mode' => 'flag')); // Flag log
-		}
 	case '0.3.3' :
 		$umif->table_column_add(USERS_TABLE, 'user_flag_new', array('BOOL', 0));
 		$umif->config_add('asacp_notify_new_flag', true);
 		$umif->config_add('asacp_user_flag_enable', true);
+	case '0.3.4' :
+		$umif->permission_add('a_asacp_ip_search', true);
+		$umif->permission_add('a_asacp_spam_log', true);
+		$umif->permission_add('a_asacp_user_flag', true);
+		$umif->permission_add('a_asacp_profile_fields', true);
 
-		// Do not add if this is a new install.
-		if ($config['asacp_version'] != '0.1.0')
-		{
-			$umif->module_add('acp', 'ANTISPAM', array('module_basename' => 'asacp', 'module_mode' => 'flag_list')); // Flagged User List
-		}
+		// Remove the Modules (the permissions for each module was updated)
+		$umif->module_remove('acp', false, 'ASACP_SETTINGS');
+		$umif->module_remove('acp', false, 'ASACP_SPAM_LOG');
+		$umif->module_remove('acp', false, 'ASACP_FLAG_LOG');
+		$umif->module_remove('acp', false, 'ASACP_FLAG_LIST');
+		$umif->module_remove('acp', false, 'ASACP_IP_SEARCH');
+		$umif->module_remove('acp', false, 'ASACP_SPAM_WORDS');
+		$umif->module_remove('acp', false, 'ASACP_PROFILE_FIELDS');
+		$umif->module_remove('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM');
+}
+
+// Add the modules if they do not exist.
+if (!$umif->module_exists('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM'))
+{
+	$umif->module_add('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM'); // Category
+}
+
+if (!$umif->module_exists('acp', 'ANTISPAM', 'ASACP_SETTINGS'))
+{
+	$umif->module_add('acp', 'ANTISPAM', array('module_basename' => 'asacp')); // All the Anti-Spam ACP Modules
 }
 
 $umif->config_update('asacp_version', ASACP_UPDATE_VERSION);

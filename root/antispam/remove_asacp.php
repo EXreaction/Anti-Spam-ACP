@@ -50,6 +50,12 @@ if ($umif->confirm_box(true))
 	$umif->module_remove('acp', false, 'ASACP_PROFILE_FIELDS');
 	$umif->module_remove('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM');
 
+	// 0.3.5
+	$umif->permission_remove('a_asacp_ip_search', true);
+	$umif->permission_remove('a_asacp_spam_log', true);
+	$umif->permission_remove('a_asacp_user_flag', true);
+	$umif->permission_remove('a_asacp_profile_fields', true);
+
 	// 0.3.4
 	$umif->table_column_remove(USERS_TABLE, 'user_flag_new');
 	$umif->config_remove('asacp_notify_new_flag');
@@ -111,7 +117,7 @@ if ($umif->confirm_box(true))
 	$umif->config_remove('asacp_reg_captcha');
 
 	// 0.1.1
-	$umif->permission_remove('a_asacp', 'global');
+	$umif->permission_remove('a_asacp', true);
 
 	// 0.1.0
 	$umif->config_remove('asacp_enable');

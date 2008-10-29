@@ -34,7 +34,7 @@ $return = '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $re
 switch ($mode)
 {
 	case 'user_flag' :
-		if (!$auth->acl_get('a_asacp'))
+		if (!$auth->acl_get('a_asacp_user_flag'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -54,7 +54,6 @@ switch ($mode)
 		{
 			$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flagged = 1 WHERE user_id = ' . $user_id);
 
-			add_log('mod', 0, 0, 'LOG_USER_FLAGGED', $username);
 			add_log('admin', 'LOG_USER_FLAGGED', $username);
 			trigger_error($user->lang['USER_FLAG_SUCCESS'] . $return);
 		}
@@ -66,7 +65,7 @@ switch ($mode)
 	break;
 
 	case 'user_unflag' :
-		if (!$auth->acl_get('a_asacp'))
+		if (!$auth->acl_get('a_asacp_user_flag'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -86,7 +85,6 @@ switch ($mode)
 		{
 			$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flagged = 0 WHERE user_id = ' . $user_id);
 
-			add_log('mod', 0, 0, 'LOG_USER_UNFLAGGED', $username);
 			add_log('admin', 'LOG_USER_UNFLAGGED', $username);
 			trigger_error($user->lang['USER_UNFLAG_SUCCESS'] . $return);
 		}
