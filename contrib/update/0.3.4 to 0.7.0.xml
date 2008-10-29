@@ -22,7 +22,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.3.4</mod-version>
+	<mod-version>0.7.0</mod-version>
 
 	<installation>
 		<level>easy</level>
@@ -35,34 +35,5 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	<copy>
 		<file from="root/*.*" to="*.*" />
 	</copy>
-	<open src="includes/functions.php">
-		<edit>
-			<find><![CDATA[// application/xhtml+xml not used because of IE]]></find>
-			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
-	antispam::page_header();
-	// END Anti-Spam ACP]]></action>
-		</edit>
-    </open>
-	<open src="styles/prosilver/template/overall_header.html">
-		<edit>
-			<find><![CDATA[					<!-- IF U_RESTORE_PERMISSIONS --> &bull;
-					<a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a>
-					<!-- ENDIF -->]]></find>
-			<action type="after-add"><![CDATA[					<!-- IF U_USER_FLAG_NEW --> &bull;
-					<a href="{U_USER_FLAG_NEW}" style="color: red; font-weight: bold;">{L_USER_FLAG_NEW}</a>
-					<!-- ENDIF -->]]></action>
-		</edit>
-    </open>
-	<open src="viewtopic.php">
-		<edit>
-			<find><![CDATA[	// START Anti-Spam ACP
-	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id], $row['post_id']);
-	// END Anti-Spam ACP]]></find>
-			<action type="replace-with"><![CDATA[	// START Anti-Spam ACP
-	antispam::flagged_output($poster_id, &$user_cache[$poster_id], 'postrow.custom_fields', $row['post_id']);
-	// END Anti-Spam ACP]]></action>
-		</edit>
-    </open>
-	<diy-instructions lang="en">Configure the Anti-Spam Settings in the ACP->.MODS->Anti-Spam</diy-instructions>
 </action-group>
 </mod>

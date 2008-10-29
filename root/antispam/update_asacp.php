@@ -13,7 +13,7 @@ if (!defined('IN_PHPBB'))
 }
 
 // To prevent issues in case the user forgets to upload the update file
-define('ASACP_UPDATE_VERSION', '0.3.5');
+define('ASACP_UPDATE_VERSION', '0.7.0');
 
 include($phpbb_root_path . 'umif/umif.' . $phpEx);
 $umif = new umif();

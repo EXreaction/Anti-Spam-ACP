@@ -9,8 +9,6 @@
 
 	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
 
-If you will be using the profile field controls you should install the profile switches instructions in the contrib/ folder.
-
 Support by the author is only provided at http://www.lithiumstudios.org
 A small fee is required for support by the author unless otherwise specified by the author in the release topic.
 Bug reports are accepted and, if confirmed as a bug, you will receive support for fixing the bug for free by the mod author.</author-notes>
@@ -27,33 +25,44 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	<mod-version>0.7.0</mod-version>
 
 	<installation>
-		<level>intermediate</level>
+		<level>easy</level>
 		<time>120</time>
 		<target-version>3.0.2</target-version>
 	</installation>
-
-	<link-group>
-		<link type="contrib" href="contrib/profile_switches_subsilver2.xml" lang="en">Subsilver2 Profile Switches Install [Recommended]</link>
-	</link-group>
 </header>
 
 <action-group>
-	<open src="styles/prosilver/template/overall_footer.html">
+	<copy>
+		<file from="root/*.*" to="*.*" />
+	</copy>
+	<open src="includes/functions.php">
 		<edit>
-			<find><![CDATA[<span class="copyright">Powered by <a href="http://www.phpbb.com/">phpBB</a> &copy; 2000, 2002, 2005, 2007 phpBB Group]]></find>
-			<action type="before-add"><![CDATA[	<br />{L_ASACP_CREDITS}]]></action>
+			<find><![CDATA[// application/xhtml+xml not used because of IE]]></find>
+			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
+	antispam::page_header();
+	// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
 	<open src="styles/prosilver/template/overall_header.html">
 		<edit>
-			<find><![CDATA[				<!-- IF not S_IS_BOT -->
-					<!-- IF S_USER_LOGGED_IN -->
-						<!-- IF S_DISPLAY_PM --> &nbsp;<a href="{U_PRIVATEMSGS}"><img src="{T_THEME_PATH}/images/icon_mini_message.gif" width="12" height="13" alt="*" /> {PRIVATE_MESSAGE_INFO}<!-- IF PRIVATE_MESSAGE_INFO_UNREAD -->, {PRIVATE_MESSAGE_INFO_UNREAD}<!-- ENDIF --></a><!-- ENDIF -->
-					<!-- ELSEIF S_REGISTER_ENABLED --> &nbsp;<a href="{U_REGISTER}"><img src="{T_THEME_PATH}/images/icon_mini_register.gif" width="12" height="13" alt="*" /> {L_REGISTER}</a>
-					<!-- ENDIF -->
-				<!-- ENDIF -->]]></find>
-			<action type="after-add"><![CDATA[				<!-- IF U_USER_FLAG_NEW --> &nbsp;<a href="{U_USER_FLAG_NEW}" style="color: red; font-weight: bold;">[ {L_USER_FLAG_NEW} ]</a><!-- ENDIF -->]]></action>
+			<find><![CDATA[					<!-- IF U_RESTORE_PERMISSIONS --> &bull;
+					<a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a>
+					<!-- ENDIF -->]]></find>
+			<action type="after-add"><![CDATA[					<!-- IF U_USER_FLAG_NEW --> &bull;
+					<a href="{U_USER_FLAG_NEW}" style="color: red; font-weight: bold;">{L_USER_FLAG_NEW}</a>
+					<!-- ENDIF -->]]></action>
 		</edit>
     </open>
+	<open src="viewtopic.php">
+		<edit>
+			<find><![CDATA[	// START Anti-Spam ACP
+	antispam::viewtopic_flagged_output($poster_id, &$user_cache[$poster_id], $row['post_id']);
+	// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[	// START Anti-Spam ACP
+	antispam::flagged_output($poster_id, &$user_cache[$poster_id], 'postrow.custom_fields', $row['post_id']);
+	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<diy-instructions lang="en">Configure the Anti-Spam Settings in the ACP->.MODS->Anti-Spam</diy-instructions>
 </action-group>
 </mod>
