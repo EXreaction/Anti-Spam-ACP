@@ -128,6 +128,7 @@ switch ($config['asacp_version'])
 		$umif->permission_add('a_asacp_spam_log', true);
 		$umif->permission_add('a_asacp_user_flag', true);
 		$umif->permission_add('a_asacp_profile_fields', true);
+		$umif->permission_add('a_asacp_spam_words', true);
 
 		// Remove the Modules (the permissions for each module was updated)
 		$umif->module_remove('acp', false, 'ASACP_SETTINGS');
