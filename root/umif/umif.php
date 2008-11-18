@@ -18,6 +18,22 @@ if (!class_exists('umif'))
 {
 
 /**
+* Multicall instructions
+*
+* With the "multicall" (as I am calling it) you can make a single function call and have it repeat the actions multiple times on information sent from an array.
+*
+* To do this (it does not work on the _exists functions), all you must do is send the first variable in the function call as an array and for each item, send an array for each of the variables in order.
+*
+* Example:
+* $umif->config_add(array(
+*	array('config_name', 'config_value', false),
+*	array('config_name1', 'config_value1', false),
+*	array('config_name2', 'config_value2', false),
+*	array('config_name3', 'config_value3', false),
+* );
+*/
+
+/**
  * UMIF - Unified MOD Installation File class
  *
  * Cache Functions
@@ -54,6 +70,7 @@ if (!class_exists('umif'))
  *	table_index_exists($table_name, $index_name)
  *	table_index_add($table_name, $index_name, $column)
  *	table_index_remove($table_name, $index_name)
+ *
  */
 class umif
 {
@@ -188,6 +205,16 @@ class umif
 	function cache_purge($type = '', $style_id = 0)
 	{
 		global $auth, $cache, $db, $user, $phpbb_root_path, $phpEx;
+
+		// Multicall
+		if (is_array($type))
+		{
+			foreach ($type as $params)
+			{
+				call_user_func_array(array($this, 'cache_purge'), $params);
+			}
+			return;
+		}
 
 		$style_id = (int) $style_id;
 
@@ -621,8 +648,18 @@ class umif
 	*
 	* @return result
 	*/
-	function config_add($config_name, $config_value, $is_dynamic = false)
+	function config_add($config_name, $config_value = '', $is_dynamic = false)
 	{
+		// Multicall
+		if (is_array($config_name))
+		{
+			foreach ($config_name as $params)
+			{
+				call_user_func_array(array($this, 'config_add'), $params);
+			}
+			return;
+		}
+
 		$this->umif_start('CONFIG_ADD', $config_name);
 
 		if ($this->config_exists($config_name))
@@ -646,8 +683,18 @@ class umif
 	*
 	* @return result
 	*/
-	function config_update($config_name, $config_value, $is_dynamic = false)
+	function config_update($config_name, $config_value = '', $is_dynamic = false)
 	{
+		// Multicall
+		if (is_array($config_name))
+		{
+			foreach ($config_name as $params)
+			{
+				call_user_func_array(array($this, 'config_update'), $params);
+			}
+			return;
+		}
+
 		$this->umif_start('CONFIG_UPDATE', $config_name);
 
 		if (!$this->config_exists($config_name))
@@ -672,6 +719,16 @@ class umif
 	function config_remove($config_name)
 	{
 		global $cache, $config, $db;
+
+		// Multicall
+		if (is_array($config_name))
+		{
+			foreach ($config_name as $params)
+			{
+				call_user_func_array(array($this, 'config_remove'), $params);
+			}
+			return;
+		}
 
 		$this->umif_start('CONFIG_REMOVE', $config_name);
 
@@ -776,9 +833,19 @@ class umif
 	* )
 	* 		Optionally you may not send 'modes' and it will insert all of the modules in that info file.
 	*/
-	function module_add($class, $parent, $data)
+	function module_add($class, $parent = '', $data = array())
 	{
 		global $cache, $db, $user, $phpbb_root_path, $phpEx;
+
+		// Multicall
+		if (is_array($class))
+		{
+			foreach ($class as $params)
+			{
+				call_user_func_array(array($this, 'module_add'), $params);
+			}
+			return;
+		}
 
 		// allow sending the name as a string in $data to create a category
 		if (!is_array($data))
@@ -895,102 +962,146 @@ class umif
 	* @param int|string|bool $parent The parent module_id|module_langname (0 for no parent).  Use false to ignore the parent check and check class wide.
 	* @param int|string $module The module id|module_langname
 	*/
-	function module_remove($class, $parent, $module)
+	function module_remove($class, $parent = '', $module = '')
 	{
 		global $cache, $db, $user, $phpbb_root_path, $phpEx;
 
-		$class = $db->sql_escape($class);
-
-		if (!$this->module_exists($class, $parent, $module))
+		// Multicall
+		if (is_array($class))
 		{
-			$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module])) ? $user->lang[$module] : $module));
-			$this->result = $user->lang['MODULE_NOT_EXIST'];
-			return $this->umif_end();
+			foreach ($class as $params)
+			{
+				call_user_func_array(array($this, 'module_remove'), $params);
+			}
+			return;
 		}
 
-		$parent_sql = '';
-		if ($parent !== false)
+		// Imitation of module_add's "automatic" method
+		if (is_array($module))
 		{
-			if (!is_numeric($parent))
+			if (!isset($module['module_basename']) || !isset($module['modes']))
 			{
+				return;
+			}
+
+			$basename = preg_replace('#([^a-zA-Z0-9])#', '', $module['module_basename']);
+			$class = preg_replace('#([^a-zA-Z0-9])#', '', $class);
+			$info_file = "{$phpbb_root_path}includes/$class/info/{$class}_$basename.$phpEx";
+
+			if (!file_exists($info_file))
+			{
+				return;
+			}
+
+			include($info_file);
+			$classname = "{$class}_{$basename}_info";
+			$info = new $classname;
+			$module_info = $info->module();
+			unset($info);
+
+			foreach ($module['modes'] as $mode)
+			{
+				if (isset($module_info['modes'][$mode]))
+				{
+					call_user_func(array($this, 'module_remove'), $class, $parent, $module_info['modes'][$mode]['title']);
+				}
+			}
+		}
+		else
+		{
+			$class = $db->sql_escape($class);
+
+			if (!$this->module_exists($class, $parent, $module))
+			{
+				$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module])) ? $user->lang[$module] : $module));
+				$this->result = $user->lang['MODULE_NOT_EXIST'];
+				return $this->umif_end();
+			}
+
+			$parent_sql = '';
+			if ($parent !== false)
+			{
+				if (!is_numeric($parent))
+				{
+					$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
+						WHERE module_langname = '" . $db->sql_escape($parent) . "'
+						AND module_class = '$class'";
+					$result = $db->sql_query($sql);
+					$row = $db->sql_fetchrow($result);
+					$db->sql_freeresult($result);
+
+					// we know it exists from the module_exists check
+
+					$parent_sql = 'AND parent_id = ' . (int) $row['module_id'];
+				}
+				else
+				{
+					$parent_sql = 'AND parent_id = ' . (int) $parent;
+				}
+			}
+
+			$module_ids = array();
+			if (!is_numeric($module))
+			{
+				$module = $db->sql_escape($module);
 				$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
-					WHERE module_langname = '" . $db->sql_escape($parent) . "'
-					AND module_class = '$class'";
+					WHERE module_langname = '$module'
+					AND module_class = '$class'
+					$parent_sql";
+				$result = $db->sql_query($sql);
+				while ($row = $db->sql_fetchrow($result))
+				{
+					$module_ids[] = (int) $row['module_id'];
+				}
+				$db->sql_freeresult($result);
+
+				$module_name = $module;
+			}
+			else
+			{
+				$module = (int) $module;
+				$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . "
+					WHERE module_id = $module
+					AND module_class = '$class'
+					$parent_sql";
 				$result = $db->sql_query($sql);
 				$row = $db->sql_fetchrow($result);
 				$db->sql_freeresult($result);
 
-				// we know it exists from the module_exists check
-
-				$parent_sql = 'AND parent_id = ' . (int) $row['module_id'];
+				$module_name = $row['module_langname'];
+				$module_ids[] = $module;
 			}
-			else
+
+			$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module_name])) ? $user->lang[$module_name] : $module_name));
+
+			if (!class_exists('acp_modules'))
 			{
-				$parent_sql = 'AND parent_id = ' . (int) $parent;
+				include($phpbb_root_path . 'includes/acp/acp_modules.' . $phpEx);
+				$user->add_lang('acp/modules');
 			}
-		}
+			$acp_modules = new acp_modules();
+			$acp_modules->module_class = $class;
 
-		$module_ids = array();
-		if (!is_numeric($module))
-		{
-			$module = $db->sql_escape($module);
-			$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
-				WHERE module_langname = '$module'
-				AND module_class = '$class'
-				$parent_sql";
-			$result = $db->sql_query($sql);
-			while ($row = $db->sql_fetchrow($result))
+			foreach ($module_ids as $module_id)
 			{
-				$module_ids[] = (int) $row['module_id'];
-			}
-			$db->sql_freeresult($result);
-
-			$module_name = $module;
-		}
-		else
-		{
-			$module = (int) $module;
-			$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . "
-				WHERE module_id = $module
-				AND module_class = '$class'
-				$parent_sql";
-			$result = $db->sql_query($sql);
-			$row = $db->sql_fetchrow($result);
-			$db->sql_freeresult($result);
-
-			$module_name = $row['module_langname'];
-			$module_ids[] = $module;
-		}
-
-		$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module_name])) ? $user->lang[$module_name] : $module_name));
-
-		if (!class_exists('acp_modules'))
-		{
-			include($phpbb_root_path . 'includes/acp/acp_modules.' . $phpEx);
-			$user->add_lang('acp/modules');
-		}
-		$acp_modules = new acp_modules();
-		$acp_modules->module_class = $class;
-
-		foreach ($module_ids as $module_id)
-		{
-			$result = $acp_modules->delete_module($module_id);
-			if (!empty($result))
-			{
-				if ($this->result == $user->lang['SUCCESS'])
+				$result = $acp_modules->delete_module($module_id);
+				if (!empty($result))
 				{
-					$this->result = implode('<br />', $result);
-				}
-				else
-				{
-					$this->result .= '<br />' . implode('<br />', $result);
+					if ($this->result == $user->lang['SUCCESS'])
+					{
+						$this->result = implode('<br />', $result);
+					}
+					else
+					{
+						$this->result .= '<br />' . implode('<br />', $result);
+					}
 				}
 			}
+
+			$cache->destroy("_modules_$class");
+
+			return $this->umif_end();
 		}
-
-		$cache->destroy("_modules_$class");
-
-		return $this->umif_end();
 	}
 
 	/**
@@ -1047,6 +1158,16 @@ class umif
 	{
 		global $db;
 
+		// Multicall
+		if (is_array($auth_option))
+		{
+			foreach ($auth_option as $params)
+			{
+				call_user_func_array(array($this, 'permission_add'), $params);
+			}
+			return;
+		}
+
 		$this->umif_start('PERMISSION_ADD', $auth_option);
 
 		if ($this->permission_exists($auth_option, $global))
@@ -1090,6 +1211,16 @@ class umif
 	function permission_remove($auth_option, $global = true)
 	{
 		global $auth, $cache, $db;
+
+		// Multicall
+		if (is_array($auth_option))
+		{
+			foreach ($auth_option as $params)
+			{
+				call_user_func_array(array($this, 'permission_remove'), $params);
+			}
+			return;
+		}
 
 		$this->umif_start('PERMISSION_REMOVE', $auth_option);
 
@@ -1158,9 +1289,19 @@ class umif
 	* Currently this only supports input from the array format of db_tools or create_schema_files.
 	* Input of a MySQL formatted creation query is a planned option for the future (that method would create the array format required from the SQL query)
 	*/
-	function table_add($table_name, $table_data)
+	function table_add($table_name, $table_data = array())
 	{
 		global $db, $dbms, $table_prefix, $user;
+
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_add'), $params);
+			}
+			return;
+		}
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
@@ -1214,6 +1355,16 @@ class umif
 	{
 		global $db, $table_prefix;
 
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_remove'), $params);
+			}
+			return;
+		}
+
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
 		$this->umif_start('TABLE_REMOVE', $table_name);
@@ -1256,9 +1407,19 @@ class umif
 	*
 	* Add a new column to a table.
 	*/
-	function table_column_add($table_name, $column_name, $column_data)
+	function table_column_add($table_name, $column_name = '', $column_data = array())
 	{
 		global $db, $table_prefix;
+
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_column_add'), $params);
+			}
+			return;
+		}
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
@@ -1288,9 +1449,19 @@ class umif
 	*
 	* Alter/Update a column in a table.  You can not change a column name with this.
 	*/
-	function table_column_update($table_name, $column_name, $column_data)
+	function table_column_update($table_name, $column_name = '', $column_data = array())
 	{
 		global $db, $table_prefix;
+
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_column_update'), $params);
+			}
+			return;
+		}
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
@@ -1320,9 +1491,19 @@ class umif
 	*
 	* Remove a column from a table
 	*/
-	function table_column_remove($table_name, $column_name)
+	function table_column_remove($table_name, $column_name = '')
 	{
 		global $db, $table_prefix;
+
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_column_remove'), $params);
+			}
+			return;
+		}
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
@@ -1381,9 +1562,19 @@ class umif
 	*
 	* Add a new key/index to a table
 	*/
-	function table_index_add($table_name, $index_name, $column)
+	function table_index_add($table_name, $index_name = '', $column = '')
 	{
 		global $db, $table_prefix;
+
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_index_add'), $params);
+			}
+			return;
+		}
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
@@ -1418,9 +1609,19 @@ class umif
 	*
 	* Remove a key/index from a table
 	*/
-	function table_index_remove($table_name, $index_name)
+	function table_index_remove($table_name, $index_name = '')
 	{
 		global $db, $table_prefix;
+
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_index_remove'), $params);
+			}
+			return;
+		}
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
