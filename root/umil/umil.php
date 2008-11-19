@@ -2,7 +2,7 @@
 /**
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
- * @package phpBB3 UMIF - Unified MOD Install File
+ * @package phpBB3 UMIL - Unified MOD Install Library
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
@@ -14,7 +14,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-if (!class_exists('umif'))
+if (!class_exists('umil'))
 {
 
 /**
@@ -25,7 +25,7 @@ if (!class_exists('umif'))
 * To do this (it does not work on the _exists functions), all you must do is send the first variable in the function call as an array and for each item, send an array for each of the variables in order.
 *
 * Example:
-* $umif->config_add(array(
+* $umil->config_add(array(
 *	array('config_name', 'config_value', false),
 *	array('config_name1', 'config_value1', false),
 *	array('config_name2', 'config_value2', false),
@@ -34,45 +34,45 @@ if (!class_exists('umif'))
 */
 
 /**
- * UMIF - Unified MOD Installation File class
- *
- * Cache Functions
- *	cache_purge($type = '', $style_id = 0)
- *
- * Config Functions:
- *	config_exists($config_name, $return_result = false)
- *	config_add($config_name, $config_value, $is_dynamic = false)
- *	config_update($config_name, $config_value, $is_dynamic = false)
- *	config_remove($config_name)
- *
- * Module Functions
- *	module_exists($class, $parent, $module)
- *	module_add($class, $parent, $module)
- *	module_remove($class, $parent, $module)
- *
- * Permissions/Auth Functions
- *	permission_exists($auth_option, $global = true)
- *	permission_add($auth_option, $global = true)
- *	permission_remove($auth_option, $global = true)
- *
- * Table Functions
- *	table_exists($table_name)
- *	table_add($table_name, $table_data)
- *	table_remove($table_name)
- *
- * Table Column Functions
- *	table_column_exists($table_name, $column_name)
- *	table_column_add($table_name, $column_name, $column_data)
- *	table_column_update($table_name, $column_name, $column_data)
- *	table_column_remove($table_name, $column_name)
- *
- * Table Key/Index Functions
- *	table_index_exists($table_name, $index_name)
- *	table_index_add($table_name, $index_name, $column)
- *	table_index_remove($table_name, $index_name)
- *
- */
-class umif
+* UMIL - Unified MOD Installation File class
+*
+* Cache Functions
+*	cache_purge($type = '', $style_id = 0)
+*
+* Config Functions:
+*	config_exists($config_name, $return_result = false)
+*	config_add($config_name, $config_value, $is_dynamic = false)
+*	config_update($config_name, $config_value, $is_dynamic = false)
+*	config_remove($config_name)
+*
+* Module Functions
+*	module_exists($class, $parent, $module)
+*	module_add($class, $parent, $module)
+*	module_remove($class, $parent, $module)
+*
+* Permissions/Auth Functions
+*	permission_exists($auth_option, $global = true)
+*	permission_add($auth_option, $global = true)
+*	permission_remove($auth_option, $global = true)
+*
+* Table Functions
+*	table_exists($table_name)
+*	table_add($table_name, $table_data)
+*	table_remove($table_name)
+*
+* Table Column Functions
+*	table_column_exists($table_name, $column_name)
+*	table_column_add($table_name, $column_name, $column_data)
+*	table_column_update($table_name, $column_name, $column_data)
+*	table_column_remove($table_name, $column_name)
+*
+* Table Key/Index Functions
+*	table_index_exists($table_name, $index_name)
+*	table_index_add($table_name, $index_name, $column)
+*	table_index_remove($table_name, $index_name)
+*
+*/
+class umil
 {
 	/**
 	* This will hold the text output for the inputted command (if the mod author would like to display the command that was ran)
@@ -96,43 +96,43 @@ class umif
 	/**
 	* Constructor
 	*/
-	function umif()
+	function umil()
 	{
 		global $config, $user, $phpbb_root_path, $phpEx;
 
 		/* Does not have the fall back option to use en/ if the user's language file does not exist, so we will not use it...unless that is changed.
 		if (method_exists('user', 'set_custom_lang_path'))
 		{
-			$user->set_custom_lang_path($phpbb_root_path . 'umif/language/');
-			$user->add_lang('umif');
+			$user->set_custom_lang_path($phpbb_root_path . 'umil/language/');
+			$user->add_lang('umil');
 			$user->set_custom_lang_path($phpbb_root_path . 'language/');
 		}
 		else
 		{*/
-			// Include the umif language file.  First we check if the language file for the user's language is available, if not we check if the board's default language is available, if not we use the english file.
-			$path = './../../umif/language/';
-			if (isset($user->data['user_lang']) && file_exists("{$phpbb_root_path}umif/language/{$user->data['user_lang']}/umif.$phpEx"))
+			// Include the umil language file.  First we check if the language file for the user's language is available, if not we check if the board's default language is available, if not we use the english file.
+			$path = './../../umil/language/';
+			if (isset($user->data['user_lang']) && file_exists("{$phpbb_root_path}umil/language/{$user->data['user_lang']}/umil.$phpEx"))
 			{
 				$path .= $user->data['user_lang'];
 			}
-			else if (file_exists("{$phpbb_root_path}umif/language/" . basename($config['default_lang']) . "/umif.$phpEx"))
+			else if (file_exists("{$phpbb_root_path}umil/language/" . basename($config['default_lang']) . "/umil.$phpEx"))
 			{
 				$path .= basename($config['default_lang']);
 			}
-			else if (file_exists("{$phpbb_root_path}umif/language/en/umif.$phpEx"))
+			else if (file_exists("{$phpbb_root_path}umil/language/en/umil.$phpEx"))
 			{
 				$path .= 'en';
 			}
-			$user->add_lang($path . '/umif');
+			$user->add_lang($path . '/umil');
 		//}
 	}
 
 	/**
-	* umif_start
+	* umil_start
 	*
 	* A function which runs (almost) every time a function here is ran
 	*/
-	function umif_start()
+	function umil_start()
 	{
 		global $db, $user;
 
@@ -161,11 +161,11 @@ class umif
 	}
 
 	/**
-	* umif_end
+	* umil_end
 	*
 	* A function which runs (almost) every time a function here is ran
 	*/
-	function umif_end()
+	function umil_end()
 	{
 		global $db, $user;
 
@@ -221,11 +221,11 @@ class umif
 		switch ($type)
 		{
 			case 'auth' :
-				$this->umif_start('AUTH_CACHE_PURGE');
+				$this->umil_start('AUTH_CACHE_PURGE');
 				$cache->destroy('_acl_options');
 				$auth->acl_clear_prefetch();
 
-				return $this->umif_end();
+				return $this->umil_end();
 			break;
 
 			case 'imageset' :
@@ -254,12 +254,12 @@ class umif
 
 					if (!$imageset_row)
 					{
-						$this->umif_start('IMAGESET_CACHE_PURGE', $user->lang['UNKNOWN']);
+						$this->umil_start('IMAGESET_CACHE_PURGE', $user->lang['UNKNOWN']);
 						$this->result = $user->lang['FAIL'];
-						return $this->umif_end();
+						return $this->umil_end();
 					}
 
-					$this->umif_start('IMAGESET_CACHE_PURGE', $imageset_row['imageset_name']);
+					$this->umil_start('IMAGESET_CACHE_PURGE', $imageset_row['imageset_name']);
 
 					// The following is from includes/acp/acp_styles.php
 					$sql_ary = array();
@@ -392,7 +392,7 @@ class umif
 
 					$cache->destroy('sql', STYLES_IMAGESET_DATA_TABLE);
 
-					return $this->umif_end();
+					return $this->umil_end();
 				}
 			break;
 			//case 'imageset' :
@@ -423,12 +423,12 @@ class umif
 
 					if (!$template_row)
 					{
-						$this->umif_start('TEMPLATE_CACHE_PURGE', $user->lang['UNKNOWN']);
+						$this->umil_start('TEMPLATE_CACHE_PURGE', $user->lang['UNKNOWN']);
 						$this->result = $user->lang['FAIL'];
-						return $this->umif_end();
+						return $this->umil_end();
 					}
 
-					$this->umif_start('TEMPLATE_CACHE_PURGE', $template_row['template_name']);
+					$this->umil_start('TEMPLATE_CACHE_PURGE', $template_row['template_name']);
 
 					// The following is from includes/acp/acp_styles.php
 					if ($template_row['template_storedb'] && file_exists("{$phpbb_root_path}styles/{$template_row['template_path']}/template/"))
@@ -465,7 +465,7 @@ class umif
 								if (!($fp = @fopen("{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file", 'r')))
 								{
 									$this->result = $user->lang['FAIL'];
-									return $this->umif_end();
+									return $this->umil_end();
 								}
 								$template_data = fread($fp, filesize("{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file"));
 								fclose($fp);
@@ -509,7 +509,7 @@ class umif
 						unset($filelist);
 					}
 
-					return $this->umif_end();
+					return $this->umil_end();
 				}
 			break;
 			//case 'template' :
@@ -540,12 +540,12 @@ class umif
 
 					if (!$theme_row)
 					{
-						$this->umif_start('THEME_CACHE_PURGE', $user->lang['UNKNOWN']);
+						$this->umil_start('THEME_CACHE_PURGE', $user->lang['UNKNOWN']);
 						$this->result = $user->lang['FAIL'];
-						return $this->umif_end();
+						return $this->umil_end();
 					}
 
-					$this->umif_start('THEME_CACHE_PURGE', $theme_row['theme_name']);
+					$this->umil_start('THEME_CACHE_PURGE', $theme_row['theme_name']);
 
 					// The following is from includes/acp/acp_styles.php
 					if ($theme_row['theme_storedb'] && file_exists("{$phpbb_root_path}styles/{$theme_row['theme_path']}/theme/stylesheet.css"))
@@ -581,16 +581,16 @@ class umif
 						$cache->destroy('sql', STYLES_THEME_TABLE);
 					}
 
-					return $this->umif_end();
+					return $this->umil_end();
 				}
 			break;
 			//case 'theme' :
 
 			default:
-				$this->umif_start('CACHE_PURGE');
+				$this->umil_start('CACHE_PURGE');
 				$cache->purge();
 
-				return $this->umif_end();
+				return $this->umil_end();
 			break;
 		}
 	}
@@ -660,18 +660,18 @@ class umif
 			return;
 		}
 
-		$this->umif_start('CONFIG_ADD', $config_name);
+		$this->umil_start('CONFIG_ADD', $config_name);
 
 		if ($this->config_exists($config_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['CONFIG_ALREADY_EXISTS'], $config_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		set_config($config_name, $config_value, $is_dynamic);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -695,18 +695,18 @@ class umif
 			return;
 		}
 
-		$this->umif_start('CONFIG_UPDATE', $config_name);
+		$this->umil_start('CONFIG_UPDATE', $config_name);
 
 		if (!$this->config_exists($config_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['CONFIG_NOT_EXIST'], $config_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		set_config($config_name, $config_value, $is_dynamic);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -730,13 +730,13 @@ class umif
 			return;
 		}
 
-		$this->umif_start('CONFIG_REMOVE', $config_name);
+		$this->umil_start('CONFIG_REMOVE', $config_name);
 
 		if (!$this->config_exists($config_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['CONFIG_NOT_EXIST'], $config_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		$sql = 'DELETE FROM ' . CONFIG_TABLE . " WHERE config_name = '" . $db->sql_escape($config_name) . "'";
@@ -745,7 +745,7 @@ class umif
 		unset($config[$config_name]);
 		$cache->destroy('config');
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -864,9 +864,9 @@ class umif
 			// The manual and automatic ways both failed...
 			if (!file_exists($info_file))
 			{
-				$this->umif_start('MODULE_ADD', $class, $user->lang['UNKNOWN']);
+				$this->umil_start('MODULE_ADD', $class, $user->lang['UNKNOWN']);
 				$this->result = $user->lang['FAIL'];
-				return $this->umif_end();
+				return $this->umil_end();
 			}
 
 			include($info_file);
@@ -896,7 +896,7 @@ class umif
 		}
 
 		// The "manual" way
-		$this->umif_start('MODULE_ADD', $class, ((isset($user->lang[$data['module_langname']])) ? $user->lang[$data['module_langname']] : $data['module_langname']));
+		$this->umil_start('MODULE_ADD', $class, ((isset($user->lang[$data['module_langname']])) ? $user->lang[$data['module_langname']] : $data['module_langname']));
 
 		$class = $db->sql_escape($class);
 
@@ -912,7 +912,7 @@ class umif
 			if (!$row)
 			{
 				$this->result = $user->lang['FAIL'];
-				return $this->umif_end();
+				return $this->umil_end();
 			}
 
 			$data['parent_id'] = $row['module_id'];
@@ -950,7 +950,7 @@ class umif
 		// Clear the Modules Cache
 		$cache->destroy("_modules_$class");
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1013,9 +1013,9 @@ class umif
 
 			if (!$this->module_exists($class, $parent, $module))
 			{
-				$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module])) ? $user->lang[$module] : $module));
+				$this->umil_start('MODULE_REMOVE', $class, ((isset($user->lang[$module])) ? $user->lang[$module] : $module));
 				$this->result = $user->lang['MODULE_NOT_EXIST'];
-				return $this->umif_end();
+				return $this->umil_end();
 			}
 
 			$parent_sql = '';
@@ -1072,7 +1072,7 @@ class umif
 				$module_ids[] = $module;
 			}
 
-			$this->umif_start('MODULE_REMOVE', $class, ((isset($user->lang[$module_name])) ? $user->lang[$module_name] : $module_name));
+			$this->umil_start('MODULE_REMOVE', $class, ((isset($user->lang[$module_name])) ? $user->lang[$module_name] : $module_name));
 
 			if (!class_exists('acp_modules'))
 			{
@@ -1100,7 +1100,7 @@ class umif
 
 			$cache->destroy("_modules_$class");
 
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 	}
 
@@ -1168,13 +1168,13 @@ class umif
 			return;
 		}
 
-		$this->umif_start('PERMISSION_ADD', $auth_option);
+		$this->umil_start('PERMISSION_ADD', $auth_option);
 
 		if ($this->permission_exists($auth_option, $global))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['PERMISSION_ALREADY_EXISTS'], $auth_option);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if (!class_exists('auth_admin'))
@@ -1195,7 +1195,7 @@ class umif
 			$auth_admin->acl_add_option(array('local' => array($auth_option)));
 		}
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1222,13 +1222,13 @@ class umif
 			return;
 		}
 
-		$this->umif_start('PERMISSION_REMOVE', $auth_option);
+		$this->umil_start('PERMISSION_REMOVE', $auth_option);
 
 		if (!$this->permission_exists($auth_option, $global))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['PERMISSION_NOT_EXIST'], $auth_option);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		$sql = 'SELECT auth_option_id FROM ' . ACL_OPTIONS_TABLE . "
@@ -1247,7 +1247,7 @@ class umif
 		$cache->destroy('_acl_options');
 		$auth->acl_clear_prefetch();
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1305,18 +1305,18 @@ class umif
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
-		$this->umif_start('TABLE_ADD', $table_name);
+		$this->umil_start('TABLE_ADD', $table_name);
 
 		if ($this->table_exists($table_name))
 		{
 			$this->result = sprintf($user->lang['TABLE_ALREADY_EXISTS'], $table_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if (!is_array($table_data))
 		{
 			$this->result = $user->lang['FAIL'];
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if ($dbms == 'mysqli')
@@ -1343,7 +1343,7 @@ class umif
 
 		$db->sql_query($sql);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1367,18 +1367,18 @@ class umif
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
-		$this->umif_start('TABLE_REMOVE', $table_name);
+		$this->umil_start('TABLE_REMOVE', $table_name);
 
 		if (!$this->table_exists($table_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['TABLE_NOT_EXIST'], $table_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		$db->sql_query('DROP TABLE ' . $table_name);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1423,13 +1423,13 @@ class umif
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
-		$this->umif_start('TABLE_COLUMN_ADD', $table_name, $column_name);
+		$this->umil_start('TABLE_COLUMN_ADD', $table_name, $column_name);
 
 		if ($this->table_column_exists($table_name, $column_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['TABLE_COLUMN_ALREADY_EXISTS'], $table_name, $column_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if (!class_exists('phpbb_db_tools'))
@@ -1441,7 +1441,7 @@ class umif
 		$db_tools = new phpbb_db_tools($db);
 		$db_tools->sql_column_add($table_name, $column_name, $column_data);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1465,13 +1465,13 @@ class umif
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
-		$this->umif_start('TABLE_COLUMN_UPDATE', $table_name, $column_name);
+		$this->umil_start('TABLE_COLUMN_UPDATE', $table_name, $column_name);
 
 		if (!$this->table_column_exists($table_name, $column_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['TABLE_COLUMN_NOT_EXIST'], $table_name, $column_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if (!class_exists('phpbb_db_tools'))
@@ -1483,7 +1483,7 @@ class umif
 		$db_tools = new phpbb_db_tools($db);
 		$db_tools->sql_column_change($table_name, $column_name, $column_data);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1507,13 +1507,13 @@ class umif
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
-		$this->umif_start('TABLE_COLUMN_REMOVE', $table_name, $column_name);
+		$this->umil_start('TABLE_COLUMN_REMOVE', $table_name, $column_name);
 
 		if (!$this->table_column_exists($table_name, $column_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['TABLE_COLUMN_NOT_EXIST'], $table_name, $column_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if (!class_exists('phpbb_db_tools'))
@@ -1525,7 +1525,7 @@ class umif
 		$db_tools = new phpbb_db_tools($db);
 		$db_tools->sql_column_remove($table_name, $column_name);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1578,13 +1578,13 @@ class umif
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
-		$this->umif_start('TABLE_KEY_ADD', $table_name, $index_name);
+		$this->umil_start('TABLE_KEY_ADD', $table_name, $index_name);
 
 		if ($this->table_index_exists($table_name, $index_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['TABLE_KEY_ALREADY_EXIST'], $table_name, $index_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if (!is_array($column))
@@ -1601,7 +1601,7 @@ class umif
 		$db_tools = new phpbb_db_tools($db);
 		$db_tools->sql_create_index($table_name, $index_name, $column);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -1625,13 +1625,13 @@ class umif
 
 		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
 
-		$this->umif_start('TABLE_KEY_REMOVE', $table_name, $index_name);
+		$this->umil_start('TABLE_KEY_REMOVE', $table_name, $index_name);
 
 		if (!$this->table_index_exists($table_name, $index_name))
 		{
 			global $user;
 			$this->result = sprintf($user->lang['TABLE_KEY_NOT_EXIST'], $table_name, $index_name);
-			return $this->umif_end();
+			return $this->umil_end();
 		}
 
 		if (!class_exists('phpbb_db_tools'))
@@ -1643,7 +1643,7 @@ class umif
 		$db_tools = new phpbb_db_tools($db);
 		$db_tools->sql_index_drop($table_name, $index_name);
 
-		return $this->umif_end();
+		return $this->umil_end();
 	}
 
 	/**
@@ -2318,6 +2318,6 @@ class umif
 	}
 }
 
-} //if (!class_exists('umif'))
+} //if (!class_exists('umil'))
 
 ?>

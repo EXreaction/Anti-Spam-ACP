@@ -1,6 +1,6 @@
 <?php
 /**
-* @package phpBB3 UMIF - Unified MOD Install File
+* @package phpBB3 UMIL - Unified MOD Install File
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 */
 
@@ -39,6 +39,7 @@ $lang = array_merge($lang, array(
 	'CONFIG_UPDATE'					=> 'Updating config variable: %s',
 
 	'FAIL'							=> 'Fail',
+	'FOUNDERS_ONLY'					=> 'You must be a board founder to access this page.',
 
 	'IMAGESET_CACHE_PURGE'			=> 'Refreshing the %s imageset',
 	'INSTALL'						=> 'Install',
@@ -46,6 +47,8 @@ $lang = array_merge($lang, array(
 	'MODULE_ADD'					=> 'Adding %1$s module: %2$s',
 	'MODULE_NOT_EXIST'				=> 'ERROR: Module does not exist.',
 	'MODULE_REMOVE'					=> 'Removing %1$s module: %2$s',
+
+	'NONE'							=> 'None',
 
 	'PERMISSION_ADD'				=> 'Adding new permission option: %s',
 	'PERMISSION_ALREADY_EXISTS'		=> 'ERROR: Permission option %s already exists.',
@@ -72,6 +75,8 @@ $lang = array_merge($lang, array(
 
 	'UNINSTALL'						=> 'Uninstall',
 	'UNKNOWN'						=> 'Unknown',
+
+	'VERSIONS'						=> 'Mod Version: <strong>%1$s</strong><br />Currently Installed: <strong>%2$s</strong>'
 ));
 
 ?>

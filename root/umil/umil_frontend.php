@@ -1,44 +1,47 @@
 <?php
 /**
- * @author Nathan Guse (EXreaction) http://lithiumstudios.org
- * @author David Lewis (Highway of Life) highwayoflife@gmail.com
- * @package phpBB3 UMIF - Unified MOD Install File
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- */
+* @author Nathan Guse (EXreaction) http://lithiumstudios.org
+* @author David Lewis (Highway of Life) highwayoflife@gmail.com
+* @package phpBB3 UMIL - Unified MOD Install Library
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*/
 
 /**
- * @ignore
- */
+* @ignore
+*/
 if (!defined('IN_PHPBB'))
 {
 	exit;
 }
 
-if (!class_exists('umif'))
+if (!class_exists('umil'))
 {
-	include($phpbb_root_path . 'umif/umif.' . $phpEx);
+	include($phpbb_root_path . 'umil/umil.' . $phpEx);
 }
 
 /**
- * UMIF - Unified MOD Installation File class Front End
- */
-class umif_frontend extends umif
+* UMIL - Unified MOD Installation File class Front End
+*/
+class umil_frontend extends umil
 {
 	/**
 	* Constructor
 	*/
-	function umif_frontend($title = '', $auto_display_results = false)
+	function umil_frontend($title = '', $auto_display_results = false)
 	{
-		global $db, $phpbb_root_path, $template, $user;
+		global $db, $phpbb_root_path, $phpEx, $template, $user;
+
+		// Need some ACP language items.
+		$user->add_lang('acp/common');
 
 		// we must call the main constructor
-		$this->umif();
+		$this->umil();
 		$this->auto_display_results = $auto_display_results;
 
 		$user->add_lang('install');
 
 		// Setup the template
-		$template->set_custom_template($phpbb_root_path . 'umif/style/', 'umif');
+		$template->set_custom_template($phpbb_root_path . 'umil/style/', 'umil');
 		$template->set_filenames(array(
 			'body' => 'index_body.html',
 		));
@@ -50,7 +53,10 @@ class umif_frontend extends umif
 
 		$template->assign_vars(array(
 			'SQL_LAYER'			=> $db->sql_layer,
-			'UMIF_ROOT_PATH'	=> $phpbb_root_path . 'umif/',
+			'UMIL_ROOT_PATH'	=> $phpbb_root_path . 'umil/',
+			
+			'U_ADM_INDEX'		=> append_sid("{$phpbb_root_path}adm/index.$phpEx", false, true, true),
+			'U_INDEX'			=> append_sid("{$phpbb_root_path}index.$phpEx"),
 
 			'L_TITLE'			=> $title,
 			'L_TITLE_EXPLAIN'	=> $title_explain,

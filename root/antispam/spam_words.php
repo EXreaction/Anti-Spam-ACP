@@ -88,7 +88,10 @@ class spam_words
 			'7'		=> 'tT7',
 			'8'		=> 'bB8',
 			'$'		=> 'sS$',
-			' '		=> '([\s-_\[\]{}\+]+)?',
+			' '		=> '([\s-_+]+)?',
+			'.'		=> '\.',
+			']'		=> '\]',
+			'*'		=> '\*',
 		);
 
 		$len = utf8_strlen($text);
@@ -99,7 +102,7 @@ class spam_words
 
 			if (!isset($regex_ary[$char]))
 			{
-				$new_text .= '([' . $char . utf8_strtoupper($char) . ']+)';
+				$new_text .= '([' . $char . (($char != utf8_strtoupper($char)) ? utf8_strtoupper($char) : '') . ']+)';
 			}
 			else
 			{
@@ -107,7 +110,16 @@ class spam_words
 			}
 		}
 
-		return '#' . $new_text . '#';
+		$endings = array('#', '%', '!', '@', '$', '%', '^', '&', '/', '|');
+		
+		foreach ($endings as $ending)
+		{
+			if (!strpos($new_text, $ending))
+			{
+				return $ending . $new_text . $ending;
+				break;
+			}
+		}
 	}
 
 	public function reset()
