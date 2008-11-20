@@ -52,20 +52,22 @@ if (!class_exists('umil_frontend'))
 
 $umil = new umil_frontend($mod_name, true);
 
+// We will sort the actions to prevent issues from mod authors incorrectly listing the version numbers
+uksort($versions, 'umil_version_compare');
+
 // Find the current version to install
 $current_version = '0.0.0';
 foreach ($versions as $version => $actions)
 {
-	if (version_compare($current_version, $version, '<'))
-	{
-		$current_version = $version;
-	}
+	$current_version = $version;
 }
 
 $template->assign_var('L_TITLE_EXPLAIN', sprintf($user->lang['VERSIONS'], $current_version, ((isset($config[$version_config_name])) ? $config[$version_config_name] : $user->lang['NONE'])));
 
 $submit = (isset($_POST['submit'])) ? true : false;
 $action = request_var('action', '');
+$version_select = request_var('version_select', '');
+
 $stages = array(
 	'CONFIGURE'	=> array('url' => append_sid($phpbb_root_path . $user->page['page_name'])),
 	'CONFIRM',
@@ -77,8 +79,9 @@ if (!$submit && !$umil->confirm_box(true))
 	$umil->display_stages($stages);
 
 	$options = array(
-		'legend1'		=> $mod_name,
-		'action'		=> array('lang' => 'ACTION', 'type' => 'custom', 'function' => 'umil_install_update_uninstall_select', 'explain' => false),
+		'legend1'			=> $mod_name,
+		'action'			=> array('lang' => 'ACTION', 'type' => 'custom', 'function' => 'umil_install_update_uninstall_select', 'explain' => false),
+		'version_select'	=> array('lang' => 'VERSION_SELECT', 'type' => 'custom', 'function' => 'umil_version_select', 'explain' => true),
 	);
 
 	$umil->display_options($options);
@@ -88,7 +91,7 @@ else if (!$umil->confirm_box(true))
 {
 	$umil->display_stages($stages, 2);
 
-	$hidden = array('action' => $action);
+	$hidden = array('action' => $action, 'version_select' => $version_select);
 	switch ($action)
 	{
 		case 'install' :
@@ -108,7 +111,7 @@ else if ($umil->confirm_box(true))
 {
 	$umil->display_stages($stages, 3);
 
-	umil_run_actions($action, $versions, $current_version, $version_config_name);
+	umil_run_actions($action, $versions, $current_version, $version_config_name, $version_select);
 	$umil->done();
 }
 
@@ -139,6 +142,37 @@ function umil_install_update_uninstall_select($value, $key)
 		<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="update" checked="checked" /> ' . $user->lang['UPDATE'] . '&nbsp;&nbsp;
 		<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="uninstall" /> ' . $user->lang['UNINSTALL'];
 	}
+	else
+	{
+		// Shouldn't ever get here...but just in case.
+		return '<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="install" /> ' . $user->lang['INSTALL'] . '&nbsp;&nbsp;
+		<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="update" /> ' . $user->lang['UPDATE'] . '&nbsp;&nbsp;
+		<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="uninstall" /> ' . $user->lang['UNINSTALL'];
+	}
+}
+
+function umil_version_select($value, $key)
+{
+	global $user, $versions;
+
+	$output = '<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="" checked="checked" /> ' . $user->lang['IGNORE'] . '<br /><br />';
+
+	$cnt = 0;
+	$output .= '<table><tr>';
+	foreach ($versions as $version => $actions)
+	{
+		$cnt++;
+
+		$output .= '<td><input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="' . $version . '" /> ' . $version . '</td>';
+
+		if ($cnt % 4 == 0)
+		{
+			$output .= '</tr><tr>';
+		}
+	}
+	$output .= '</tr></table>';
+
+	return $output;
 }
 
 /**
@@ -151,30 +185,26 @@ function umil_install_update_uninstall_select($value, $key)
 * @param string $current_version The current version to install/update to
 * @param string|bool $db_version The current version installed to update to/remove from
 */
-function umil_run_actions($action, $versions, $current_version, $version_config_name)
+function umil_run_actions($action, $versions, $current_version, $version_config_name, $version_select = '')
 {
 	global $config, $umil;
 
 	$db_version = (isset($config[$version_config_name])) ? $config[$version_config_name] : '';
 
-	// sort the actions by the version.
-	if ($action == 'install' || $action == 'update')
+	if ($action == 'uninstall')
 	{
-		ksort($versions);
-	}
-	else if ($action == 'uninstall')
-	{
-		krsort($versions);
-	}
-	else
-	{
-		return false;
+		$versions = array_reverse($versions);
 	}
 
 	foreach ($versions as $version => $version_actions)
 	{
-		if ($action == 'install' || ($action == 'update' && version_compare($version, $db_version, '>')))
+		if (($action == 'install' || $action == 'update') && (!$db_version || version_compare($version, $db_version, '>')))
 		{
+			if ($version_select && version_compare($version, $version_select, '>'))
+			{
+				continue;
+			}
+
 			foreach ($version_actions as $method => $params)
 			{
 				if (method_exists($umil, $method))
@@ -183,8 +213,13 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 				}
 			}
 		}
-		else if ($action == 'uninstall' && version_compare($db_version, $version, '>'))
+		else if ($action == 'uninstall' && version_compare($version, $db_version, '<='))
 		{
+			if ($version_select && version_compare($version_select, $version, '>='))
+			{
+				continue;
+			}
+
 			$version_actions = array_reverse($version_actions);
 
 			foreach ($version_actions as $method => $params)
@@ -206,7 +241,7 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 		}
 	}
 
-	if ($action == 'uninstall')
+	if ($action == 'uninstall' && !$version_select)
 	{
 		$umil->config_remove($version_config_name);
 	}
@@ -214,12 +249,26 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 	{
 		if ($umil->config_exists($version_config_name))
 		{
-			$umil->config_update($version_config_name, $current_version);
+			$umil->config_update($version_config_name, (($version_select) ? $version_select : $current_version));
 		}
 		else
 		{
-			$umil->config_add($version_config_name, $current_version);
+			$umil->config_add($version_config_name, (($version_select) ? $version_select : $current_version));
 		}
 	}
+}
+
+function umil_version_compare($v1, $v2)
+{
+	if (version_compare($v1, $v2, '<'))
+	{
+		return -1;
+	}
+	else if (version_compare($v1, $v2, '>'))
+	{
+		return 1;
+	}
+
+	else return 0;
 }
 ?>

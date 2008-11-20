@@ -55,7 +55,7 @@ class umil_frontend extends umil
 			'SQL_LAYER'			=> $db->sql_layer,
 			'UMIL_ROOT_PATH'	=> $phpbb_root_path . 'umil/',
 			
-			'U_ADM_INDEX'		=> append_sid("{$phpbb_root_path}adm/index.$phpEx", false, true, true),
+			'U_ADM_INDEX'		=> append_sid("{$phpbb_root_path}adm/index.$phpEx", false, true, $user->session_id),
 			'U_INDEX'			=> append_sid("{$phpbb_root_path}index.$phpEx"),
 
 			'L_TITLE'			=> $title,

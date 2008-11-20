@@ -41,6 +41,7 @@ $lang = array_merge($lang, array(
 	'FAIL'							=> 'Fail',
 	'FOUNDERS_ONLY'					=> 'You must be a board founder to access this page.',
 
+	'IGNORE'						=> 'Ignore',
 	'IMAGESET_CACHE_PURGE'			=> 'Refreshing the %s imageset',
 	'INSTALL'						=> 'Install',
 
@@ -76,7 +77,9 @@ $lang = array_merge($lang, array(
 	'UNINSTALL'						=> 'Uninstall',
 	'UNKNOWN'						=> 'Unknown',
 
-	'VERSIONS'						=> 'Mod Version: <strong>%1$s</strong><br />Currently Installed: <strong>%2$s</strong>'
+	'VERSIONS'						=> 'Mod Version: <strong>%1$s</strong><br />Currently Installed: <strong>%2$s</strong>',
+	'VERSION_SELECT'				=> 'Version Select',
+	'VERSION_SELECT_EXPLAIN'		=> 'Do not change from "Ignore" unless you know what you are doing or were told to.',
 ));
 
 ?>
