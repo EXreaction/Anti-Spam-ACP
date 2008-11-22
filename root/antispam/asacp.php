@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.7.0'); // Do not forget to update in update_asacp.php
+define('ASACP_VERSION', '0.7.1'); // Do not forget to update in update_asacp.php
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');

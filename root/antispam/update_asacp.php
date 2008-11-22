@@ -13,7 +13,7 @@ if (!defined('IN_PHPBB'))
 }
 
 // To prevent issues in case the user forgets to upload the update file
-define('ASACP_UPDATE_VERSION', '0.7.0');
+define('ASACP_UPDATE_VERSION', '0.7.1');
 
 include($phpbb_root_path . 'umil/umil.' . $phpEx);
 $umil = new umil();
@@ -139,6 +139,8 @@ switch ($config['asacp_version'])
 		$umil->module_remove('acp', false, 'ASACP_SPAM_WORDS');
 		$umil->module_remove('acp', false, 'ASACP_PROFILE_FIELDS');
 		$umil->module_remove('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM');
+	case '0.7.0' :
+	case '0.7.1' :
 }
 
 // Add the modules if they do not exist.
