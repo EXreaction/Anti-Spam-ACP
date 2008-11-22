@@ -22,12 +22,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.7.0</mod-version>
+	<mod-version>0.7.1</mod-version>
 
 	<installation>
 		<level>easy</level>
-		<time>120</time>
-		<target-version>3.0.2</target-version>
+		<time>300</time>
+		<target-version>3.0.3</target-version>
 	</installation>
 </header>
 
@@ -35,6 +35,56 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	<copy>
 		<file from="root/*.*" to="*.*" />
 	</copy>
+	<open src="includes/ucp/ucp_pm_compose.php">
+		<edit>
+			<find><![CDATA[		// START Anti-Spam ACP
+		if ($config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
+		{
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[		// START Anti-Spam ACP
+		if ($config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
+		{
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		if (!sizeof($error) && $submit && $user->data['user_flagged'])
+		{
+			antispam::add_log('LOG_SENT_PM', array('pm' => $address_list), 'flag');
+		}
+		// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<open src="includes/functions.php">
+		<edit>
+			<find><![CDATA[// application/xhtml+xml not used because of IE]]></find>
+			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
+	antispam::page_header();
+	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<open src="styles/prosilver/template/overall_header.html">
+		<edit>
+			<find><![CDATA[					<!-- IF U_RESTORE_PERMISSIONS --> &bull;
+					<a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a>
+					<!-- ENDIF -->]]></find>
+			<action type="after-add"><![CDATA[					<!-- IF U_USER_FLAG_NEW --> &bull;
+					<a href="{U_USER_FLAG_NEW}" style="color: red; font-weight: bold;">{L_USER_FLAG_NEW}</a>
+					<!-- ENDIF -->]]></action>
+		</edit>
+    </open>
+	<open src="common.php">
+		<edit>
+			<find><![CDATA[// START Anti-Spam ACP
+require($phpbb_root_path . 'includes/antispam/asacp.' . $phpEx);
+// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[// START Anti-Spam ACP
+require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
+// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
 	<open src="posting.php">
 		<edit>
 			<find><![CDATA[	// START Anti-Spam ACP
@@ -75,14 +125,27 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
-			<find><![CDATA[			// START Anti-Spam ACP
-			antispam::submit_post($mode, $data['post_id']);
-			// END Anti-Spam ACP]]></find>
-			<action type="replace-with"><![CDATA[			// START Anti-Spam ACP
+			<find><![CDATA[// If the post need approval we will wait a lot longer.]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
 			$post_need_approval = ($post_need_approval || $is_spam) ? true : false;
 			antispam::submit_post($mode, $data['post_id'], $is_spam);
 			// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
+	<open src="viewtopic.php">
+		<edit>
+			<find><![CDATA['search'		=> ($auth->acl_get('u_search')) ? append_sid("{$phpbb_root_path}search.$phpEx",]]></find>
+			<action type="after-add"><![CDATA[				// START Anti-Spam ACP
+				'user_flagged'	=> $row['user_flagged'] ? true : false,
+				// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[$template->assign_block_vars('postrow', $postrow);]]></find>
+			<action type="after-add"><![CDATA[	// START Anti-Spam ACP
+	antispam::flagged_output($poster_id, &$user_cache[$poster_id], 'postrow.custom_fields', $row['post_id']);
+	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<diy-instructions lang="en">Configure the Anti-Spam Settings in the ACP->.MODS->Anti-Spam</diy-instructions>
 </action-group>
 </mod>

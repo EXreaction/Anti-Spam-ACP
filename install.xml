@@ -29,7 +29,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	<installation>
 		<level>intermediate</level>
 		<time>600</time>
-		<target-version>3.0.2</target-version>
+		<target-version>3.0.3</target-version>
 	</installation>
 
 	<link-group>
@@ -176,8 +176,8 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 	// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
-			<find><![CDATA[// If the post need approval we will wait a lot longer.]]></find>
-			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message);]]></find>
+			<action type="after-add"><![CDATA[			// START Anti-Spam ACP
 			$post_need_approval = ($post_need_approval || $is_spam) ? true : false;
 			antispam::submit_post($mode, $data['post_id'], $is_spam);
 			// END Anti-Spam ACP]]></action>
@@ -185,7 +185,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
     </open>
 	<open src="viewtopic.php">
 		<edit>
-			<find><![CDATA['search'		=> ($auth->acl_get('u_search')) ? append_sid("{$phpbb_root_path}search.$phpEx", 'search_author=' . urlencode($row['username']) .'&amp;sr=posts') : '',]]></find>
+			<find><![CDATA['search'		=> ($auth->acl_get('u_search')) ? append_sid("{$phpbb_root_path}search.$phpEx",]]></find>
 			<action type="after-add"><![CDATA[				// START Anti-Spam ACP
 				'user_flagged'	=> $row['user_flagged'] ? true : false,
 				// END Anti-Spam ACP]]></action>

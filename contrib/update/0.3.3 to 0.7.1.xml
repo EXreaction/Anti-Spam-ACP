@@ -22,12 +22,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.7.0</mod-version>
+	<mod-version>0.7.1</mod-version>
 
 	<installation>
 		<level>easy</level>
 		<time>120</time>
-		<target-version>3.0.2</target-version>
+		<target-version>3.0.3</target-version>
 	</installation>
 </header>
 
