@@ -191,18 +191,20 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 
 	$db_version = (isset($config[$version_config_name])) ? $config[$version_config_name] : '';
 
-	if ($action == 'uninstall')
+	if ($action == 'install' || ($action == 'update' && $db_version))
 	{
-		$versions = array_reverse($versions);
-	}
-
-	foreach ($versions as $version => $version_actions)
-	{
-		if (($action == 'install' || $action == 'update') && (!$db_version || version_compare($version, $db_version, '>')))
+		$version_installed = $db_version;
+		foreach ($versions as $version => $version_actions)
 		{
-			if ($version_select && version_compare($version, $version_select, '>'))
+			// If we are updating
+			if ($db_version && version_compare($version, $db_version, '<='))
 			{
 				continue;
+			}
+
+			if ($version_select && version_compare($version, $version_select, '>'))
+			{
+				break;
 			}
 
 			foreach ($version_actions as $method => $params)
@@ -212,16 +214,42 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 					call_user_func(array($umil, $method), $params);
 				}
 			}
+
+			$version_installed = $version;
 		}
-		else if ($action == 'uninstall' && version_compare($version, $db_version, '<='))
+
+		// update the version number or add it
+		if ($umil->config_exists($version_config_name))
 		{
-			if ($version_select && version_compare($version_select, $version, '>='))
+			$umil->config_update($version_config_name, $version_installed);
+		}
+		else
+		{
+			$umil->config_add($version_config_name, $version_installed);
+		}
+	}
+	else if ($action == 'uninstall' && $db_version)
+	{
+		// reverse version list
+		$versions = array_reverse($versions);
+
+		foreach ($versions as $version => $version_actions)
+		{
+			// Uninstalling and this listed version is newer than installed
+			if (version_compare($version, $db_version, '>'))
 			{
 				continue;
 			}
 
-			$version_actions = array_reverse($version_actions);
+			// Version selection stuff
+			if ($version_select && version_compare($version, $version_select, '<='))
+			{
+				// update the version number
+				$umil->config_update($version_config_name, $version);
+				break;
+			}
 
+			$version_actions = array_reverse($version_actions);
 			foreach ($version_actions as $method => $params)
 			{
 				// update mode (reversing an action) isn't possible for uninstallations
@@ -239,21 +267,11 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 				}
 			}
 		}
-	}
 
-	if ($action == 'uninstall' && !$version_select)
-	{
-		$umil->config_remove($version_config_name);
-	}
-	else
-	{
-		if ($umil->config_exists($version_config_name))
+		if (!$version_select)
 		{
-			$umil->config_update($version_config_name, (($version_select) ? $version_select : $current_version));
-		}
-		else
-		{
-			$umil->config_add($version_config_name, (($version_select) ? $version_select : $current_version));
+			// Unset the version number
+			$umil->config_remove($version_config_name);
 		}
 	}
 }
