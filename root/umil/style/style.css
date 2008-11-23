@@ -433,17 +433,6 @@ span.corners-bottom span {
 	color: #F632A0;
 }
 
-#menu li#activemenu a span {
-	text-decoration: none;
-	font-weight: bold;
-	color: #1180B7;
-	background: transparent url("../images/arrow_right.gif") 0% 50% no-repeat;
-}
-
-.rtl #menu li#activemenu a span {
-	background: transparent url("../images/arrow_left.gif") 100% 50% no-repeat;
-}
-
 #menu li#activemenu a:hover span, #menu li#activemenu span {
 	text-decoration: none;
 	font-weight: bold;

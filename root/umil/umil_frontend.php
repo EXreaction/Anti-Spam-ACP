@@ -54,7 +54,7 @@ class umil_frontend extends umil
 		$template->assign_vars(array(
 			'SQL_LAYER'			=> $db->sql_layer,
 			'UMIL_ROOT_PATH'	=> $phpbb_root_path . 'umil/',
-			
+
 			'U_ADM_INDEX'		=> append_sid("{$phpbb_root_path}adm/index.$phpEx", false, true, $user->session_id),
 			'U_INDEX'			=> append_sid("{$phpbb_root_path}index.$phpEx"),
 
@@ -88,7 +88,7 @@ class umil_frontend extends umil
 			$template->assign_block_vars('l_block', array(
 				'L_TITLE'			=> (isset($user->lang[$stage])) ? $user->lang[$stage] : $stage,
 				'U_TITLE'			=> (isset($data['url'])) ? $data['url'] : false,
-				'S_COMPLETE'		=> ($i <= $selected) ? true : false,
+				'S_COMPLETE'		=> ($i < $selected) ? true : false,
 				'S_SELECTED'		=> ($i == $selected) ? true : false,
 			));
 
