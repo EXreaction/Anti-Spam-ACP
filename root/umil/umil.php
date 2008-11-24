@@ -94,37 +94,46 @@ class umil
 	var $auto_display_results = false;
 
 	/**
+	* Stand Alone option (this makes it possible to just use the single umil file and not worry about any language stuff
+	*/
+	var $stand_alone = false;
+
+	/**
 	* Constructor
 	*/
-	function umil()
+	function umil($stand_alone = false)
 	{
 		global $config, $user, $phpbb_root_path, $phpEx;
 
-		/* Does not have the fall back option to use en/ if the user's language file does not exist, so we will not use it...unless that is changed.
-		if (method_exists('user', 'set_custom_lang_path'))
+		$this->stand_alone = $stand_alone;
+		if (!$stand_alone)
 		{
-			$user->set_custom_lang_path($phpbb_root_path . 'umil/language/');
-			$user->add_lang('umil');
-			$user->set_custom_lang_path($phpbb_root_path . 'language/');
+			/* Does not have the fall back option to use en/ if the user's language file does not exist, so we will not use it...unless that is changed.
+			if (method_exists('user', 'set_custom_lang_path'))
+			{
+				$user->set_custom_lang_path($phpbb_root_path . 'umil/language/');
+				$user->add_lang('umil');
+				$user->set_custom_lang_path($phpbb_root_path . 'language/');
+			}
+			else
+			{*/
+				// Include the umil language file.  First we check if the language file for the user's language is available, if not we check if the board's default language is available, if not we use the english file.
+				$path = './../../umil/language/';
+				if (isset($user->data['user_lang']) && file_exists("{$phpbb_root_path}umil/language/{$user->data['user_lang']}/umil.$phpEx"))
+				{
+					$path .= $user->data['user_lang'];
+				}
+				else if (file_exists("{$phpbb_root_path}umil/language/" . basename($config['default_lang']) . "/umil.$phpEx"))
+				{
+					$path .= basename($config['default_lang']);
+				}
+				else if (file_exists("{$phpbb_root_path}umil/language/en/umil.$phpEx"))
+				{
+					$path .= 'en';
+				}
+				$user->add_lang($path . '/umil');
+			//}
 		}
-		else
-		{*/
-			// Include the umil language file.  First we check if the language file for the user's language is available, if not we check if the board's default language is available, if not we use the english file.
-			$path = './../../umil/language/';
-			if (isset($user->data['user_lang']) && file_exists("{$phpbb_root_path}umil/language/{$user->data['user_lang']}/umil.$phpEx"))
-			{
-				$path .= $user->data['user_lang'];
-			}
-			else if (file_exists("{$phpbb_root_path}umil/language/" . basename($config['default_lang']) . "/umil.$phpEx"))
-			{
-				$path .= basename($config['default_lang']);
-			}
-			else if (file_exists("{$phpbb_root_path}umil/language/en/umil.$phpEx"))
-			{
-				$path .= 'en';
-			}
-			$user->add_lang($path . '/umil');
-		//}
 	}
 
 	/**
@@ -153,11 +162,37 @@ class umil
 			}
 		}
 
-		$this->result = $user->lang['SUCCESS'];
+		$this->result('SUCCESS');
 		$db->return_on_error = true;
 		$db->sql_error_triggered = false;
 
 		//$db->sql_transaction('begin');
+	}
+
+	/**
+	* result function
+	*
+	* This makes it easy to manage the stand alone version.
+	*/
+	function result()
+	{
+		global $user;
+
+		// Set up the command.  This will get the arguments sent to the function.
+		$args = func_get_args();
+		if (sizeof($args))
+		{
+			$lang_key = array_shift($args);
+
+			if (sizeof($args))
+			{
+				$this->result = @vsprintf(((isset($user->lang[$lang_key])) ? $user->lang[$lang_key] : $lang_key), $args);
+			}
+			else
+			{
+				$this->result = ((isset($user->lang[$lang_key])) ? $user->lang[$lang_key] : $lang_key);
+			}
+		}
 	}
 
 	/**
@@ -171,7 +206,7 @@ class umil
 
 		if ($db->sql_error_triggered)
 		{
-			if ($this->result == $user->lang['SUCCESS'])
+			if ($this->result == ((isset($user->lang['SUCCESS'])) ? $user->lang['SUCCESS'] : 'SUCCESS'))
 			{
 				$this->result = 'SQL ERROR ' . $db->sql_error_returned['message'];
 			}
@@ -254,8 +289,8 @@ class umil
 
 					if (!$imageset_row)
 					{
-						$this->umil_start('IMAGESET_CACHE_PURGE', $user->lang['UNKNOWN']);
-						$this->result = $user->lang['FAIL'];
+						$this->umil_start('IMAGESET_CACHE_PURGE', 'UNKNOWN');
+						$this->result('FAIL');
 						return $this->umil_end();
 					}
 
@@ -423,8 +458,8 @@ class umil
 
 					if (!$template_row)
 					{
-						$this->umil_start('TEMPLATE_CACHE_PURGE', $user->lang['UNKNOWN']);
-						$this->result = $user->lang['FAIL'];
+						$this->umil_start('TEMPLATE_CACHE_PURGE', 'UNKNOWN');
+						$this->result('FAIL');
 						return $this->umil_end();
 					}
 
@@ -464,7 +499,7 @@ class umil
 							{
 								if (!($fp = @fopen("{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file", 'r')))
 								{
-									$this->result = $user->lang['FAIL'];
+									$this->result('FAIL');
 									return $this->umil_end();
 								}
 								$template_data = fread($fp, filesize("{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file"));
@@ -540,8 +575,8 @@ class umil
 
 					if (!$theme_row)
 					{
-						$this->umil_start('THEME_CACHE_PURGE', $user->lang['UNKNOWN']);
-						$this->result = $user->lang['FAIL'];
+						$this->umil_start('THEME_CACHE_PURGE', 'UNKNOWN');
+						$this->result('FAIL');
 						return $this->umil_end();
 					}
 
@@ -665,7 +700,7 @@ class umil
 		if ($this->config_exists($config_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['CONFIG_ALREADY_EXISTS'], $config_name);
+			$this->result('CONFIG_ALREADY_EXISTS', $config_name);
 			return $this->umil_end();
 		}
 
@@ -700,7 +735,7 @@ class umil
 		if (!$this->config_exists($config_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['CONFIG_NOT_EXIST'], $config_name);
+			$this->result('CONFIG_NOT_EXIST', $config_name);
 			return $this->umil_end();
 		}
 
@@ -735,7 +770,7 @@ class umil
 		if (!$this->config_exists($config_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['CONFIG_NOT_EXIST'], $config_name);
+			$this->result('CONFIG_NOT_EXIST', $config_name);
 			return $this->umil_end();
 		}
 
@@ -864,8 +899,8 @@ class umil
 			// The manual and automatic ways both failed...
 			if (!file_exists($info_file))
 			{
-				$this->umil_start('MODULE_ADD', $class, $user->lang['UNKNOWN']);
-				$this->result = $user->lang['FAIL'];
+				$this->umil_start('MODULE_ADD', $class, 'UNKNOWN');
+				$this->result('FAIL');
 				return $this->umil_end();
 			}
 
@@ -911,7 +946,7 @@ class umil
 
 			if (!$row)
 			{
-				$this->result = $user->lang['FAIL'];
+				$this->result('FAIL');
 				return $this->umil_end();
 			}
 
@@ -944,7 +979,7 @@ class umil
 		}
 		else if (!is_array($result) && $result !== '')
 		{
-			$this->result = (isset($user->lang[$result])) ? $user->lang[$result] : $result;
+			$this->result($result);
 		}
 
 		// Clear the Modules Cache
@@ -976,14 +1011,21 @@ class umil
 			return;
 		}
 
-		// Imitation of module_add's "automatic" method
+		// Imitation of module_add's "automatic" and "manual" method so the uninstaller works from the same set of instructions for umil_auto
 		if (is_array($module))
 		{
 			if (!isset($module['module_basename']) || !isset($module['modes']))
 			{
+				if (isset($module['module_langname']))
+				{
+					// Manual Method
+					call_user_func(array($this, 'module_remove'), $class, $parent, $module['module_langname']);
+				}
+
 				return;
 			}
 
+			// Automatic method
 			$basename = preg_replace('#([^a-zA-Z0-9])#', '', $module['module_basename']);
 			$class = preg_replace('#([^a-zA-Z0-9])#', '', $class);
 			$info_file = "{$phpbb_root_path}includes/$class/info/{$class}_$basename.$phpEx";
@@ -1014,7 +1056,7 @@ class umil
 			if (!$this->module_exists($class, $parent, $module))
 			{
 				$this->umil_start('MODULE_REMOVE', $class, ((isset($user->lang[$module])) ? $user->lang[$module] : $module));
-				$this->result = $user->lang['MODULE_NOT_EXIST'];
+				$this->result('MODULE_NOT_EXIST');
 				return $this->umil_end();
 			}
 
@@ -1087,7 +1129,7 @@ class umil
 				$result = $acp_modules->delete_module($module_id);
 				if (!empty($result))
 				{
-					if ($this->result == $user->lang['SUCCESS'])
+					if ($this->result == ((isset($user->lang['SUCCESS'])) ? $user->lang['SUCCESS'] : 'SUCCESS'))
 					{
 						$this->result = implode('<br />', $result);
 					}
@@ -1173,7 +1215,7 @@ class umil
 		if ($this->permission_exists($auth_option, $global))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['PERMISSION_ALREADY_EXISTS'], $auth_option);
+			$this->result('PERMISSION_ALREADY_EXISTS', $auth_option);
 			return $this->umil_end();
 		}
 
@@ -1227,7 +1269,7 @@ class umil
 		if (!$this->permission_exists($auth_option, $global))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['PERMISSION_NOT_EXIST'], $auth_option);
+			$this->result('PERMISSION_NOT_EXIST', $auth_option);
 			return $this->umil_end();
 		}
 
@@ -1309,13 +1351,13 @@ class umil
 
 		if ($this->table_exists($table_name))
 		{
-			$this->result = sprintf($user->lang['TABLE_ALREADY_EXISTS'], $table_name);
+			$this->result('TABLE_ALREADY_EXISTS', $table_name);
 			return $this->umil_end();
 		}
 
 		if (!is_array($table_data))
 		{
-			$this->result = $user->lang['FAIL'];
+			$this->result('FAIL');
 			return $this->umil_end();
 		}
 
@@ -1372,7 +1414,7 @@ class umil
 		if (!$this->table_exists($table_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['TABLE_NOT_EXIST'], $table_name);
+			$this->result('TABLE_NOT_EXIST', $table_name);
 			return $this->umil_end();
 		}
 
@@ -1428,7 +1470,7 @@ class umil
 		if ($this->table_column_exists($table_name, $column_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['TABLE_COLUMN_ALREADY_EXISTS'], $table_name, $column_name);
+			$this->result('TABLE_COLUMN_ALREADY_EXISTS', $table_name, $column_name);
 			return $this->umil_end();
 		}
 
@@ -1470,7 +1512,7 @@ class umil
 		if (!$this->table_column_exists($table_name, $column_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['TABLE_COLUMN_NOT_EXIST'], $table_name, $column_name);
+			$this->result('TABLE_COLUMN_NOT_EXIST', $table_name, $column_name);
 			return $this->umil_end();
 		}
 
@@ -1512,7 +1554,7 @@ class umil
 		if (!$this->table_column_exists($table_name, $column_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['TABLE_COLUMN_NOT_EXIST'], $table_name, $column_name);
+			$this->result('TABLE_COLUMN_NOT_EXIST', $table_name, $column_name);
 			return $this->umil_end();
 		}
 
@@ -1583,7 +1625,7 @@ class umil
 		if ($this->table_index_exists($table_name, $index_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['TABLE_KEY_ALREADY_EXIST'], $table_name, $index_name);
+			$this->result('TABLE_KEY_ALREADY_EXIST', $table_name, $index_name);
 			return $this->umil_end();
 		}
 
@@ -1630,7 +1672,7 @@ class umil
 		if (!$this->table_index_exists($table_name, $index_name))
 		{
 			global $user;
-			$this->result = sprintf($user->lang['TABLE_KEY_NOT_EXIST'], $table_name, $index_name);
+			$this->result('TABLE_KEY_NOT_EXIST', $table_name, $index_name);
 			return $this->umil_end();
 		}
 
