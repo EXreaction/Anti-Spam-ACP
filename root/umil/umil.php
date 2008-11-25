@@ -163,8 +163,7 @@ class umil
 		}
 
 		$this->result('SUCCESS');
-		$db->return_on_error = true;
-		$db->sql_error_triggered = false;
+		$db->sql_return_on_error(true);
 
 		//$db->sql_transaction('begin');
 	}
@@ -220,7 +219,7 @@ class umil
 			//$db->sql_transaction('commit');
 		}
 
-		$db->return_on_error = false;
+		$db->sql_return_on_error(false);
 
 		// Auto output if requested.
 		if ($this->auto_display_results && method_exists($this, 'display_results'))

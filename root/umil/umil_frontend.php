@@ -24,6 +24,9 @@ if (!class_exists('umil'))
 */
 class umil_frontend extends umil
 {
+	// Were there any errors so far (used when displaying results)?
+	var $errors = false;
+
 	/**
 	* Constructor
 	*/
@@ -202,6 +205,11 @@ class umil_frontend extends umil
 		$result = ($result) ? $result : $this->result;
 		$result = (isset($user->lang[$result])) ? $user->lang[$result] : $result;
 
+		if ($result != $user->lang['SUCCESS'])
+		{
+			$this->errors = true;
+		}
+
 		$template->assign_block_vars('results', array(
 			'COMMAND'	=> $command,
 			'RESULT'	=> $result,
@@ -216,6 +224,13 @@ class umil_frontend extends umil
 	*/
 	function done()
 	{
+		global $template, $user;
+
+		$template->assign_vars(array(
+			'L_RESULTS'		=> ($this->errors) ? $user->lang['FAIL'] : $user->lang['SUCCESS'],
+			'S_SUCCESS'		=> ($this->errors) ? false : true,
+		));
+
 		page_footer();
 	}
 

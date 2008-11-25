@@ -53,7 +53,7 @@ if (!class_exists('umil_frontend'))
 $umil = new umil_frontend($mod_name, true);
 
 // We will sort the actions to prevent issues from mod authors incorrectly listing the version numbers
-uksort($versions, 'umil_version_compare');
+uksort($versions, 'version_compare');
 
 // Find the current version to install
 $current_version = '0.0.0';
@@ -79,7 +79,7 @@ if (!$submit && !$umil->confirm_box(true))
 	$umil->display_stages($stages);
 
 	$options = array(
-		'legend1'			=> $mod_name,
+		'legend1'			=> 'OPTIONS',
 		'action'			=> array('lang' => 'ACTION', 'type' => 'custom', 'function' => 'umil_install_update_uninstall_select', 'explain' => false),
 		'version_select'	=> array('lang' => 'VERSION_SELECT', 'type' => 'custom', 'function' => 'umil_version_select', 'explain' => true),
 	);
@@ -155,10 +155,11 @@ function umil_version_select($value, $key)
 {
 	global $user, $versions;
 
-	$output = '<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="" checked="checked" /> ' . $user->lang['IGNORE'] . '<br /><br />';
+	$output = '<input id="' . $key . '" class="radio" type="radio" name="' . $key . '" value="" checked="checked" /> ' . $user->lang['IGNORE'] . ' &nbsp; ';
+	$output .='<a href="#" onclick="if (document.getElementById(\'version_select_advanced\').style.display == \'none\') {document.getElementById(\'version_select_advanced\').style.display=\'block\'} else {document.getElementById(\'version_select_advanced\').style.display=\'none\'}">' . $user->lang['ADVANCED'] . '</a><br /><br />';
 
 	$cnt = 0;
-	$output .= '<table><tr>';
+	$output .= '<table id="version_select_advanced" style="display: none;" cellspacing="0" cellpadding="0"><tr>';
 	foreach ($versions as $version => $actions)
 	{
 		$cnt++;
@@ -209,9 +210,19 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 
 			foreach ($version_actions as $method => $params)
 			{
-				if (method_exists($umil, $method))
+				if ($method == 'custom')
 				{
-					call_user_func(array($umil, $method), $params);
+					if (function_exists($params))
+					{
+						call_user_func($params, $action, $version);
+					}
+				}
+				else
+				{
+					if (method_exists($umil, $method))
+					{
+						call_user_func(array($umil, $method), $params);
+					}
 				}
 			}
 
@@ -252,18 +263,28 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 			$version_actions = array_reverse($version_actions);
 			foreach ($version_actions as $method => $params)
 			{
-				// update mode (reversing an action) isn't possible for uninstallations
-				if (strpos($method, 'update'))
+				if ($method == 'custom')
 				{
-					continue;
+					if (function_exists($params))
+					{
+						call_user_func($params, $action, $version);
+					}
 				}
-
-				// reverse function call
-				$method = str_replace(array('add', 'remove', 'temp'), array('temp', 'add', 'remove'), $method);
-
-				if (method_exists($umil, $method))
+				else
 				{
-					call_user_func(array($umil, $method), array_reverse($params));
+					// update mode (reversing an action) isn't possible for uninstallations
+					if (strpos($method, 'update'))
+					{
+						continue;
+					}
+
+					// reverse function call
+					$method = str_replace(array('add', 'remove', 'temp'), array('temp', 'add', 'remove'), $method);
+
+					if (method_exists($umil, $method))
+					{
+						call_user_func(array($umil, $method), array_reverse($params));
+					}
 				}
 			}
 		}
@@ -274,19 +295,5 @@ function umil_run_actions($action, $versions, $current_version, $version_config_
 			$umil->config_remove($version_config_name);
 		}
 	}
-}
-
-function umil_version_compare($v1, $v2)
-{
-	if (version_compare($v1, $v2, '<'))
-	{
-		return -1;
-	}
-	else if (version_compare($v1, $v2, '>'))
-	{
-		return 1;
-	}
-
-	else return 0;
 }
 ?>
