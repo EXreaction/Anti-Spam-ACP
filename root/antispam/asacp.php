@@ -319,7 +319,7 @@ class antispam
 	* @param string $template_block The template block to output the field to
 	* @param int $post_id The post ID
 	*/
-	public static function flagged_output($poster_id, $poster_row, $template_block, $post_id = 0)
+	public static function flagged_output($poster_id, &$poster_row, $template_block, $post_id = 0)
 	{
 		global $auth, $config;
 
@@ -349,7 +349,7 @@ class antispam
 			));
 		}
 	}
-	//public static function flagged_output($poster_id, $poster_row, $template_block, $post_id = 0)
+	//public static function flagged_output($poster_id, &$poster_row, $template_block, $post_id = 0)
 
 	/**
 	* Submit Post
