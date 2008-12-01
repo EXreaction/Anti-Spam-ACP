@@ -17,7 +17,7 @@ if (!defined('IN_PHPBB'))
 *
 * @param string $type The type of log.  spam for the normal spam log, flag for an event by a flagged user.
 */
-function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'l.log_time DESC')
+function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_ip = '', $limit_days = 0, $sort_by = 'l.log_time DESC')
 {
 	global $db, $user, $auth, $phpEx, $phpbb_root_path, $phpbb_admin_path;
 
@@ -40,6 +40,7 @@ function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $limi
 		WHERE l.log_type = " . $log_type . "
 			AND u.user_id = l.user_id
 			" . (($limit_days) ? "AND l.log_time >= $limit_days" : '') . "
+			" . (($sql_ip) ? "AND l.log_ip = '$sql_ip'" : '') . "
 		ORDER BY $sort_by";
 	$result = $db->sql_query_limit($sql, $limit, $offset);
 
@@ -244,7 +245,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$total = $db->sql_fetchfield('total');
 
 			$log_data = array();
-			view_spam_log('spam', $log_data, $log_count, $limit, $start);
+			view_spam_log('spam', $log_data, $log_count, $limit, $start, $sql_ip);
 
 			foreach ($log_data as $row)
 			{
@@ -273,7 +274,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$total = $db->sql_fetchfield('total');
 
 			$log_data = array();
-			view_spam_log('flag', $log_data, $log_count, $limit, $start);
+			view_spam_log('flag', $log_data, $log_count, $limit, $start, $sql_ip);
 
 			foreach ($log_data as $row)
 			{
