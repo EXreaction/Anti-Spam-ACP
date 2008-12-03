@@ -45,5 +45,11 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
+	<open src="posting.php">
+		<edit>
+			<find><![CDATA[$post_need_approval = ($post_need_approval || $is_spam) ? true : false;]]></find>
+			<action type="replace-with"><![CDATA[$post_need_approval = ((isset($post_need_approval) && $post_need_approval) || $is_spam) ? true : false;]]></action>
+		</edit>
+    </open>
 </action-group>
 </mod>

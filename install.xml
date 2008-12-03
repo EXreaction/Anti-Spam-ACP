@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.7.1</mod-version>
+	<mod-version>0.7.2_dev</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -178,7 +178,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		<edit>
 			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message);]]></find>
 			<action type="after-add"><![CDATA[			// START Anti-Spam ACP
-			$post_need_approval = ($post_need_approval || $is_spam) ? true : false;
+			$post_need_approval = ((isset($post_need_approval) && $post_need_approval) || $is_spam) ? true : false;
 			antispam::submit_post($mode, $data['post_id'], $is_spam);
 			// END Anti-Spam ACP]]></action>
 		</edit>
