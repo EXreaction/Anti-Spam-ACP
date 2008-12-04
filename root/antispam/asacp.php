@@ -424,14 +424,14 @@ class antispam
 	{
 		global $cache, $config, $db, $user;
 
-		if (!$config['asacp_enable'] || !$config['asacp_spam_words_enable'] || ($post_count > $config['asacp_spam_words_post_limit'] && $config['asacp_spam_words_post_limit'] > 0))
-		{
-			return false;
-		}
-
 		if ($post_count === false)
 		{
 			$post_count = $user->data['user_posts'];
+		}
+
+		if (!$config['asacp_enable'] || !$config['asacp_spam_words_enable'] || ($post_count > $config['asacp_spam_words_post_limit'] && $config['asacp_spam_words_post_limit'] > 0))
+		{
+			return false;
 		}
 
 		if (!class_exists('spam_words'))
