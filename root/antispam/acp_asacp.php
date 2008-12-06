@@ -131,14 +131,6 @@ function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_
 	}
 	$db->sql_freeresult($result);
 
-	$sql = 'SELECT COUNT(l.log_id) AS total_entries
-		FROM ' . LOG_TABLE . " l
-		WHERE l.log_type = " . LOG_SPAM . "
-			AND l.log_time >= $limit_days";
-	$result = $db->sql_query($sql);
-	$log_count = (int) $db->sql_fetchfield('total_entries');
-	$db->sql_freeresult($result);
-
 	return;
 }
 

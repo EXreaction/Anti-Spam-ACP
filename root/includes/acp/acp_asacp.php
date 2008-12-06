@@ -268,11 +268,11 @@ class acp_asacp
 
 				if ($mode == 'log')
 				{
-					view_spam_log('spam', $log_data, $log_count, $config['topics_per_page'], $start, $sql_days, $sql_sort);
+					view_spam_log('spam', $log_data, $log_count, $config['topics_per_page'], $start, '', $sql_days, $sql_sort);
 				}
 				else
 				{
-					view_spam_log('flag', $log_data, $log_count, $config['topics_per_page'], $start, $sql_days, $sql_sort);
+					view_spam_log('flag', $log_data, $log_count, $config['topics_per_page'], $start, '', $sql_days, $sql_sort);
 				}
 
 				$template->assign_vars(array(
