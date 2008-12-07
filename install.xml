@@ -7,7 +7,7 @@
 	<title lang="en">Anti-Spam ACP</title>
 	<description lang="en">Prevents spam on your phpBB3 forum.</description>
 
-	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.3 are not supported.
 
 If you will be using the profile field controls you should install the profile switches instructions in the contrib/ folder.
 
@@ -169,17 +169,18 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 			break;
 
 			case 2 :
-				$is_spam = true;
+				// Not the nicest way to do it, but by far the easiest.
+				$config['enable_queue_trigger'] = true;
+				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
 			break;
 		}
 	}
-	// END Anti-Spam ACP]]></action>
+	// END Anti-Spam ACP]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message);]]></find>
 			<action type="after-add"><![CDATA[			// START Anti-Spam ACP
-			$post_need_approval = ((isset($post_need_approval) && $post_need_approval) || $is_spam) ? true : false;
-			antispam::submit_post($mode, $data['post_id'], $is_spam);
+			antispam::submit_post($mode, $data['post_id']);
 			// END Anti-Spam ACP]]></action>
 		</edit>
     </open>

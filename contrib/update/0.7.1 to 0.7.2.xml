@@ -47,8 +47,53 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
     </open>
 	<open src="posting.php">
 		<edit>
-			<find><![CDATA[$post_need_approval = ($post_need_approval || $is_spam) ? true : false;]]></find>
-			<action type="replace-with"><![CDATA[$post_need_approval = ((isset($post_need_approval) && $post_need_approval) || $is_spam) ? true : false;]]></action>
+			<find><![CDATA[	// START Anti-Spam ACP
+	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
+	$is_spam = false;
+	if ($config['asacp_spam_words_posting_action'] && antispam::spam_words(array($sc_title, $message_parser->message)))
+	{
+		switch ($config['asacp_spam_words_posting_action'])
+		{
+			case 1 :
+				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $message_parser->message));
+				$error[] = $user->lang['SPAM_DENIED'];
+			break;
+
+			case 2 :
+				$is_spam = true;
+			break;
+		}
+	}
+	// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[	// START Anti-Spam ACP
+	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
+	$is_spam = false;
+	if ($config['asacp_spam_words_posting_action'] && antispam::spam_words(array($sc_title, $message_parser->message)))
+	{
+		switch ($config['asacp_spam_words_posting_action'])
+		{
+			case 1 :
+				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $message_parser->message));
+				$error[] = $user->lang['SPAM_DENIED'];
+			break;
+
+			case 2 :
+				// Not the nicest way to do it, but by far the easiest.
+				$config['enable_queue_trigger'] = true;
+				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
+			break;
+		}
+	}
+	// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[			// START Anti-Spam ACP
+			$post_need_approval = ($post_need_approval || $is_spam) ? true : false;
+			antispam::submit_post($mode, $data['post_id'], $is_spam);
+			// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[			// START Anti-Spam ACP
+			antispam::submit_post($mode, $data['post_id']);
+			// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
 </action-group>

@@ -7,7 +7,7 @@
 	<title lang="en">Anti-Spam ACP</title>
 	<description lang="en">Prevents spam on your phpBB3 forum.</description>
 
-	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.3 are not supported.
 
 If you will be using the profile field controls you should install the profile switches instructions in the contrib/ folder.
 
