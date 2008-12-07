@@ -33,6 +33,11 @@ if (!defined('SPAM_WORDS_TABLE'))
 	define('LOG_SPAM', 6); // Removed as of 0.3.2, keeping for updates
 }
 
+if (!file_exists($phpbb_root_path . 'umil/umil_frontend.' . $phpEx))
+{
+	trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+}
+
 include($phpbb_root_path . 'umil/umil_frontend.' . $phpEx);
 $umil = new umil_frontend('REMOVE_ASACP', true);
 
