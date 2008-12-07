@@ -356,13 +356,11 @@ class antispam
 	*
 	* Should be run when a post is submitted to check the user flag
 	*
-	* @param mixed $mode
-	* @param mixed $post_id
+	* @param string $mode
+	* @param int $post_id
 	*/
-	public static function submit_post($mode, $post_id, $is_spam)
+	public static function submit_post($mode, $post_id)
 	{
-		global $auth, $db, $user;
-
 		$post_id = (int) $post_id;
 
 		if ($user->data['user_flagged'])
@@ -374,36 +372,6 @@ class antispam
 			else
 			{
 				self::add_log('LOG_ADDED_POST', array('post_id' => $post_id), 'flag');
-			}
-		}
-
-		// In order to integrate with phpBB3 and have it set the post to unapproved to start with a bunch of extra edits need to be put in place.
-		// Instead of requiring a whole bunch more edits to the core, screw it and we'll just do some SQL Queries and set everything to what it should be after the post is submitted.
-		$sql = 'SELECT forum_id, topic_id FROM ' . POSTS_TABLE . ' WHERE post_id = ' . $post_id;
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
-		$topic_id = $row['topic_id'];
-		$forum_id = $row['forum_id'];
-		unset($row);
-
-		if ($is_spam && ($auth->acl_get('f_noapprove', $forum_id) || $auth->acl_get('m_approve', $forum_id)))
-		{
-			$db->sql_query('UPDATE ' . POSTS_TABLE . ' SET post_approved = 0 WHERE post_id = ' . $post_id);
-			$db->sql_query('UPDATE ' . FORUMS_TABLE . ' SET forum_posts = forum_posts - 1 WHERE forum_id = ' . $forum_id);
-
-			$sql = 'SELECT forum_id FROM ' . TOPICS_TABLE . ' WHERE topic_first_post_id = ' . $post_id;
-			$result = $db->sql_query($sql);
-			$row = $db->sql_fetchrow($result);
-			$db->sql_freeresult($result);
-			if ($row)
-			{
-				$db->sql_query('UPDATE ' . TOPICS_TABLE . ' SET topic_approved = 0 WHERE topic_first_post_id = ' . $post_id);
-				$db->sql_query('UPDATE ' . FORUMS_TABLE . ' SET forum_topics = forum_topics - 1 WHERE forum_id = ' . $row['forum_id']);
-			}
-			else
-			{
-				$db->sql_query('UPDATE ' . TOPICS_TABLE . ' SET topic_replies = topic_replies - 1 WHERE topic_id = ' . $topic_id);
 			}
 		}
 	}
