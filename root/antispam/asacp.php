@@ -361,6 +361,8 @@ class antispam
 	*/
 	public static function submit_post($mode, $post_id)
 	{
+		global $user;
+
 		$post_id = (int) $post_id;
 
 		if ($user->data['user_flagged'])
