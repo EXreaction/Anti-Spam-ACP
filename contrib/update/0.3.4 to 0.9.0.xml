@@ -22,12 +22,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.7.1</mod-version>
+	<mod-version>0.9.0</mod-version>
 
 	<installation>
 		<level>easy</level>
 		<time>120</time>
-		<target-version>3.0.3</target-version>
+		<target-version>3.0.4</target-version>
 	</installation>
 </header>
 
@@ -35,6 +35,42 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	<copy>
 		<file from="root/*.*" to="*.*" />
 	</copy>
+	<open src="includes/ucp/ucp_register.php">
+		<edit>
+			<find><![CDATA[		// START Anti-Spam ACP
+		$asacp_hidden = antispam::ucp_register();
+		if ($asacp_hidden === false)
+		{
+			$this->tpl_name = 'antispam/ucp_register';
+			return;
+		}
+		// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[		// START Anti-Spam ACP
+		$asacp_hidden = antispam::ucp_preregister();
+		if ($asacp_hidden === false)
+		{
+			$this->tpl_name = 'antispam/ucp_register';
+			return;
+		}
+		// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[			if (!sizeof($error))
+			{
+				$server_url = generate_board_url();]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			antispam::ucp_register($data, $error, $wrong_confirm);
+			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[				// Register user...
+				$user_id = user_add($user_row, $cp_data);]]></find>
+			<action type="after-add"><![CDATA[
+				// START Anti-Spam ACP
+				antispam::sfs_register($user_id);
+				// END Anti-Spam ACP]]></action>
+		</edit>
+	</open>
 	<open src="posting.php">
 		<edit>
 			<find><![CDATA[	// START Anti-Spam ACP
@@ -68,20 +104,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			break;
 
 			case 2 :
-				$is_spam = true;
+				// Not the nicest way to do it, but by far the easiest.
+				$config['enable_queue_trigger'] = true;
+				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
 			break;
 		}
 	}
 	// END Anti-Spam ACP]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[			// START Anti-Spam ACP
-			antispam::submit_post($mode, $data['post_id']);
-			// END Anti-Spam ACP]]></find>
-			<action type="replace-with"><![CDATA[			// START Anti-Spam ACP
-			$post_need_approval = ($post_need_approval || $is_spam) ? true : false;
-			antispam::submit_post($mode, $data['post_id'], $is_spam);
-			// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
 </action-group>

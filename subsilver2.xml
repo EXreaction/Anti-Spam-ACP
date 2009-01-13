@@ -24,12 +24,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.7.1</mod-version>
+	<mod-version>0.9.0</mod-version>
 
 	<installation>
 		<level>intermediate</level>
 		<time>120</time>
-		<target-version>3.0.3</target-version>
+		<target-version>3.0.4</target-version>
 	</installation>
 
 	<link-group>

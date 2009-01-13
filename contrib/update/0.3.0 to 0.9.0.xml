@@ -22,12 +22,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.7.1</mod-version>
+	<mod-version>0.9.0</mod-version>
 
 	<installation>
 		<level>easy</level>
 		<time>300</time>
-		<target-version>3.0.3</target-version>
+		<target-version>3.0.4</target-version>
 	</installation>
 </header>
 
@@ -57,6 +57,42 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
+	<open src="includes/ucp/ucp_register.php">
+		<edit>
+			<find><![CDATA[		// START Anti-Spam ACP
+		$asacp_hidden = antispam::ucp_register();
+		if ($asacp_hidden === false)
+		{
+			$this->tpl_name = 'antispam/ucp_register';
+			return;
+		}
+		// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[		// START Anti-Spam ACP
+		$asacp_hidden = antispam::ucp_preregister();
+		if ($asacp_hidden === false)
+		{
+			$this->tpl_name = 'antispam/ucp_register';
+			return;
+		}
+		// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[			if (!sizeof($error))
+			{
+				$server_url = generate_board_url();]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			antispam::ucp_register($data, $error, $wrong_confirm);
+			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[				// Register user...
+				$user_id = user_add($user_row, $cp_data);]]></find>
+			<action type="after-add"><![CDATA[
+				// START Anti-Spam ACP
+				antispam::sfs_register($user_id);
+				// END Anti-Spam ACP]]></action>
+		</edit>
+	</open>
 	<open src="includes/functions.php">
 		<edit>
 			<find><![CDATA[// application/xhtml+xml not used because of IE]]></find>
@@ -118,7 +154,9 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 			break;
 
 			case 2 :
-				$is_spam = true;
+				// Not the nicest way to do it, but by far the easiest.
+				$config['enable_queue_trigger'] = true;
+				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
 			break;
 		}
 	}
@@ -127,8 +165,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		<edit>
 			<find><![CDATA[// If the post need approval we will wait a lot longer.]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
-			$post_need_approval = ($post_need_approval || $is_spam) ? true : false;
-			antispam::submit_post($mode, $data['post_id'], $is_spam);
+			antispam::submit_post($mode, $data['post_id']);
 			// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
@@ -142,7 +179,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		<edit>
 			<find><![CDATA[$template->assign_block_vars('postrow', $postrow);]]></find>
 			<action type="after-add"><![CDATA[	// START Anti-Spam ACP
-	antispam::flagged_output($poster_id, &$user_cache[$poster_id], 'postrow.custom_fields', $row['post_id']);
+	antispam::flagged_output($poster_id, $user_cache[$poster_id], 'postrow.custom_fields', $row['post_id']);
 	// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
