@@ -467,7 +467,7 @@ class acp_asacp
 	{
 		global $db, $user;
 
-		$return = '<select name="' . $key . '"><option value="0">--------</option>';
+		$return = '<select name="config[' . $key . ']"><option value="0">--------</option>';
 
 		$sql = 'SELECT group_id, group_founder_manage, group_name FROM ' . GROUPS_TABLE;
 		$result = $db->sql_query($sql);
@@ -477,7 +477,7 @@ class acp_asacp
 			if (!$row['group_founder_manage'] || $user->data['user_type'] == USER_FOUNDER)
 			{
 				$lang = (isset($user->lang[$row['group_name']])) ? $user->lang[$row['group_name']] : ((isset($user->lang['G_' . $row['group_name']])) ? $user->lang['G_' . $row['group_name']] : $row['group_name']);
-				$return .= '<option value="' . $row['group_id'] . '">' . $lang . '</option>';
+				$return .= '<option value="' . $row['group_id'] . (($value == $row['group_id']) ? ' selected="selected"' : '') . '">' . $lang . '</option>';
 			}
 		}
 		$db->sql_freeresult($result);
