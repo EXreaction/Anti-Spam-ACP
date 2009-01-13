@@ -16,7 +16,6 @@ define('ASACP_VERSION', '0.7.2');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
-define('LOG_SPAM', 6); // Removed as of 0.3.2, keeping for updates
 
 $user->add_lang('mods/asacp');
 

@@ -188,7 +188,7 @@ function asacp_update($action, $version)
 	{
 		case '0.3.2' :
 			// Moving the Spam log from the Log table to the Spam Log table.
-			$sql = 'SELECT * FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM;
+			$sql = 'SELECT * FROM ' . LOG_TABLE . ' WHERE log_type = 6';
 			$result = $db->sql_query($sql);
 			$insert_ary = array();
 			while ($row = $db->sql_fetchrow($result))
@@ -202,7 +202,7 @@ function asacp_update($action, $version)
 
 			$db->sql_multi_insert(SPAM_LOG_TABLE, $insert_ary);
 
-			$db->sql_query('DELETE FROM ' . LOG_TABLE . ' WHERE log_type = ' . LOG_SPAM);
+			$db->sql_query('DELETE FROM ' . LOG_TABLE . ' WHERE log_type = 6');
 		break;
 
 		case '0.7.0' :

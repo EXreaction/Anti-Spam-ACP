@@ -30,7 +30,6 @@ if (!defined('SPAM_WORDS_TABLE'))
 {
 	define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 	define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
-	define('LOG_SPAM', 6); // Removed as of 0.3.2, keeping for updates
 }
 
 if (!file_exists($phpbb_root_path . 'umil/umil_frontend.' . $phpEx))
