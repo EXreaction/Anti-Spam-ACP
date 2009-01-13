@@ -85,7 +85,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<edit>
 			<find><![CDATA[include($phpbb_root_path . 'includes/functions_profile_fields.' . $phpEx);]]></find>
 			<action type="after-add"><![CDATA[		// START Anti-Spam ACP
-		$asacp_hidden = antispam::ucp_register();
+		$asacp_hidden = antispam::ucp_preregister();
 		if ($asacp_hidden === false)
 		{
 			$this->tpl_name = 'antispam/ucp_register';
@@ -100,19 +100,20 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
-			<find><![CDATA[						if (strcasecmp($row['code'], $data['confirm_code']) === 0)
-						{
-							$sql = 'DELETE FROM ' . CONFIRM_TABLE . "
-								WHERE confirm_id = '" . $db->sql_escape($confirm_id) . "'
-									AND session_id = '" . $db->sql_escape($user->session_id) . "'
-									AND confirm_type = " . CONFIRM_REG;
-							$db->sql_query($sql);
-						}
-						else
-						{]]></find>
-			<action type="after-add"><![CDATA[							// START Anti-Spam ACP
-							antispam::add_log('LOG_INCORRECT_CODE', array($row['code'], $data['confirm_code']));
-							// END Anti-Spam ACP]]></action>
+			<find><![CDATA[			if (!sizeof($error))
+			{
+				$server_url = generate_board_url();]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			antispam::ucp_register($data, $error, $wrong_confirm);
+			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[				// Register user...
+				$user_id = user_add($user_row, $cp_data);]]></find>
+			<action type="after-add"><![CDATA[
+				// START Anti-Spam ACP
+				antispam::sfs_register($user_id);
+				// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[$s_hidden_fields = build_hidden_fields($s_hidden_fields);]]></find>
@@ -175,7 +176,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 			break;
 		}
 	}
-	// END Anti-Spam ACP]></action>
+	// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message);]]></find>

@@ -35,6 +35,42 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	<copy>
 		<file from="root/*.*" to="*.*" />
 	</copy>
+	<open src="includes/ucp/ucp_register.php">
+		<edit>
+			<find><![CDATA[		// START Anti-Spam ACP
+		$asacp_hidden = antispam::ucp_register();
+		if ($asacp_hidden === false)
+		{
+			$this->tpl_name = 'antispam/ucp_register';
+			return;
+		}
+		// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[		// START Anti-Spam ACP
+		$asacp_hidden = antispam::ucp_preregister();
+		if ($asacp_hidden === false)
+		{
+			$this->tpl_name = 'antispam/ucp_register';
+			return;
+		}
+		// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[			if (!sizeof($error))
+			{
+				$server_url = generate_board_url();]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			antispam::ucp_register($data, $error, $wrong_confirm);
+			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[				// Register user...
+				$user_id = user_add($user_row, $cp_data);]]></find>
+			<action type="after-add"><![CDATA[
+				// START Anti-Spam ACP
+				antispam::sfs_register($user_id);
+				// END Anti-Spam ACP]]></action>
+		</edit>
+	</open>
 	<open src="viewtopic.php">
 		<edit>
 			<find><![CDATA[	// START Anti-Spam ACP
