@@ -30,11 +30,10 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'ASACP_BAN'	=> 'One Click Ban',
-'ASACP_BAN_CONFIRM' => 'Are you sure you want to ban the user %s?  All of the actions as specified in the Anti-Spam ACP Settings to perform during a One Click Ban will be performed on this user.<br /><br /><strong>This can not be undone!</strong>',
+	'ASACP_BAN'				=> 'One Click Ban',
+	'ASACP_BAN_COMPLETE'	=> 'You have successfully banned the user.<br /><br /><a href="%s">Click here to return to the user\'s profile.</a>',
+	'ASACP_BAN_CONFIRM'		=> 'Are you sure you want to ban the user %s?  All of the actions as specified in the Anti-Spam ACP Settings to perform during a One Click Ban will be performed on this user.<br /><br /><strong>This can not be undone!</strong>',
 	'ASACP_CREDITS'			=> 'Protected by <a href="http://www.lithiumstudios.org" target="_blank">Anti-Spam ACP</a>',
-	'ASACP_BAN_COMPLETE' => 'You have successfully banned the user.<br /><br /><a href="%s">Click here to return to the user\'s profile.</a>',
-	'SFS_SUBMIT' => 'Submit profile information to <a href="http://www.stopforumspam.com/">Stop Forum Spam</a>',
 
 	'FOUNDER_ONLY'			=> 'You must be a Board Founder to access this page.',
 
@@ -43,6 +42,7 @@ $lang = array_merge($lang, array(
 	'REMOVE_ASACP'			=> 'Remove Anti-Spam ACP',
 	'REMOVE_ASACP_CONFIRM'	=> 'Are you sure you want to remove the database alterations made by the Anti-Spam ACP Mod?<br /><br />Before you do this make sure you remove the mod edits from the files or the database section will automatically get added again.',
 
+	'SFS_SUBMIT'			=> 'Submit profile information to <a href="http://www.stopforumspam.com/">Stop Forum Spam</a>',
 	'SIGNATURE_DISABLED'	=> 'You are not allowed to use a signature.',
 	'SPAM_DENIED'			=> 'This message was flagged as spam and has been denied.',
 

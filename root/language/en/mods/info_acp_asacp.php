@@ -60,6 +60,11 @@ $lang = array_merge($lang, array(
 		'cat'						=> 'settings',
 	),
 
+	'acl_a_asacp_ban'				=> array(
+		'lang'						=> 'Can One Click Ban users',
+		'cat'						=> 'settings',
+	),
+
 	'acl_a_asacp_ip_search'			=> array(
 		'lang'						=> 'Can use IP Search',
 		'cat'						=> 'settings',
