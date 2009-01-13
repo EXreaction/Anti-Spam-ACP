@@ -101,22 +101,27 @@ switch ($mode)
 			trigger_error('NOT_AUTHORISED');
 		}
 
-		$sql = 'SELECT username, user_colour FROM ' . USERS_TABLE . ' WHERE user_id = ' . $user_id;
+		$sql = 'SELECT * FROM ' . USERS_TABLE . ' WHERE user_id = ' . $user_id;
 		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
+		$user_row = $db->sql_fetchrow($result);
 		$db->sql_freeresult($result);
 
-		if (!$row)
+		if (!$user_row)
 		{
 			trigger_error('NO_USER');
 		}
-		$username = get_username_string('full', $user_id, $row['username'], $row['user_colour']);
+		$username = get_username_string('full', $user_id, $user_row['username'], $user_row['user_colour']);
 
 		if (confirm_box(true))
 		{
+			if (!function_exists('user_ban'))
+			{
+				include($phpbb_root_path . 'includes/functions_user.' . $phpEx);
+			}
+
 			if ($config['asacp_ocban_username'])
 			{
-				user_ban('user', $username, 0, '', 0, '');
+				user_ban('user', $user_row['username'], 0, '', 0, '');
 			}
 
 			if ($config['asacp_ocban_move_to_group'])
@@ -139,7 +144,7 @@ switch ($mode)
 
 			if ($config['asacp_ocban_delete_avatar'])
 			{
-				avatar_delete('user', $row, true);
+				avatar_delete('user', $user_row, true);
 			}
 
 			if ($config['asacp_ocban_delete_signature'])
@@ -170,12 +175,51 @@ switch ($mode)
 				$db->sql_query($sql);
 			}
 
+			// Submit the information to Stop Forum Spam
+			if (isset($_POST['sfs_submit']) && $config['asacp_sfs_key'])
+			{
+				$data = array(
+					'username'	=> $user_row['username'],
+					'email'		=> $user_row['user_email'],
+					'ip_addr'	=> $user->ip,
+					'api_key'	=> $config['asacp_sfs_key'],
+				);
+
+				$errno = $errstr = '';
+				$domain = 'www.stopforumspam.com';
+				$fp = @fsockopen($domain, 80, $errno, $errstr, 5);
+				if ($fp)
+				{
+					$post = '';
+					foreach ($data as $name => $value)
+					{
+						$post .= "&$name=$value";
+					}
+					$post = substr($post, 1);
+
+				    $out = "POST /add HTTP/1.0\r\n";
+				    $out .= "Host: $domain\r\n";
+					$out .= "Content-Type: application/x-www-form-urlencoded\r\n";
+				    $out .= 'Content-Length: ' . strlen($post) . "\r\n\r\n";
+				    $out .= "$post\r\n";
+				    $out .= "Connection: close\r\n";
+
+				    fwrite($fp, $out);
+				    fclose($fp);
+				}
+			}
+
 			trigger_error(sprintf($user->lang['ASACP_BAN_COMPLETE'], append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u=$user_id")));
 		}
 		else
 		{
+			if ($config['asacp_sfs_key'])
+			{
+				$template->assign_var('S_SFS_SUBMIT', true);
+			}
+
 			$user->lang['ASACP_BAN_CONFIRM'] = sprintf($user->lang['ASACP_BAN_CONFIRM'], $username);
-			confirm_box(false, 'ASACP_BAN');
+			confirm_box(false, 'ASACP_BAN', '', 'antispam/oc_ban.html');
 		}
 	break;
 
