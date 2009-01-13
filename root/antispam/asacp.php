@@ -7,15 +7,12 @@
 *
 */
 
-/* DO NOT FORGET
-*/
-
 if (!defined('IN_PHPBB'))
 {
 	exit;
 }
 
-define('ASACP_VERSION', '0.7.1');
+define('ASACP_VERSION', '0.7.2');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -23,7 +20,10 @@ define('LOG_SPAM', 6); // Removed as of 0.3.2, keeping for updates
 
 $user->add_lang('mods/asacp');
 
-if (!isset($config['asacp_version']) || $config['asacp_version'] != ASACP_VERSION)
+// Debug
+//set_config('asacp_version', '0.7.1');
+
+if (!isset($config['asacp_version']) || version_compare(ASACP_VERSION, $config['asacp_version'], '>'))
 {
 	include($phpbb_root_path . 'antispam/update_asacp.' . $phpEx);
 }
@@ -44,10 +44,13 @@ class antispam
 		'signature'		=> array('lang' => 'SIGNATURE', 'db' => 'user_sig'),
 	);
 
+	// True if marked as Stop Forum Spam as a spam user
+	private static $sfs_spam = false;
+
 	/**
-	* UCP Register Operations
+	* UCP Pre-Register Operations (Pre-Registration Captcha)
 	*/
-	public static function ucp_register()
+	public static function ucp_preregister()
 	{
 		global $config, $db, $phpbb_root_path, $phpEx, $template, $user;
 
@@ -137,7 +140,108 @@ class antispam
 			);
 		}
 	}
+	//public static function ucp_preregister()
+
+	/**
+	* UCP Register
+	*
+	* @param array $data Data from ucp_register
+	* @param array $error
+	* @param boolean $wrong_confirm
+	*/
+	public static function ucp_register($data, &$error, $wrong_confirm)
+	{
+		global $config, $user;
+
+		if ($wrong_confirm)
+		{
+			antispam::add_log('LOG_INCORRECT_CODE', array($row['code'], $data['confirm_code']));
+		}
+
+		if (!sizeof($error) && $config['asacp_sfs_action'] > 1)
+		{
+			if (!function_exists('get_remote_file'))
+			{
+				global $phpbb_root_path, $phpEx;
+				include($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
+			}
+
+			$stop_forum_spam_urls = array(
+				'api?username=' . $data['username'],
+				'api?email=' . $data['email'],
+				//'api?ip=' . $user->ip,
+			);
+
+			foreach ($stop_forum_spam_urls as $url)
+			{
+				$errstr = $errno = '';
+				$file = get_remote_file('stopforumspam.com', '', $url, $errstr, $errno);
+
+				if ($file !== false)
+				{
+					$file = str_replace("\r\n", "\n", $file);
+					$file = explode("\n", $file);
+
+					$appears = $frequency = false;
+					foreach ($file as $line)
+					{
+						if (strpos($line, '<appears>') !== false && strpos($line, '</appears>') !== false)
+						{
+							$start = strpos($line, '<appears>') + 9;
+							$end = strpos($line, '</appears>') - $start;
+							$appears = (substr($line, $start, $end) == 'yes') ? true : false;
+						}
+						else if (strpos($line, '<frequency>') !== false && strpos($line, '</frequency>') !== false)
+						{
+							$start = strpos($line, '<frequency>') + 11;
+							$end = strpos($line, '</frequency>') - $start;
+							$frequency = (int) substr($line, $start, $end);
+						}
+					}
+
+					if ($appears && $frequency >= $config['asacp_sfs_min_freq'])
+					{
+						self::$sfs_spam = true;
+					}
+				}
+			}
+
+			if (self::$sfs_spam)
+			{
+				switch ($config['asacp_sfs_action'])
+				{
+					case 3 :
+						$config['require_activation'] = USER_ACTIVATION_SELF;
+					break;
+
+					case 4 :
+						$config['require_activation'] = USER_ACTIVATION_ADMIN;
+					break;
+
+					case 5 :
+						$error[] = $user->lang['PROFILE_SPAM_DENIED'];
+					break;
+				}
+			}
+		}
+	}
 	//public static function ucp_register()
+
+	/**
+	* Stop Forum Spam registration hook (used to flag a user if their profile info was marked as spam and action is set to flag the user.
+	*
+	* @param mixed $user_id
+	*/
+	public static function sfs_register($user_id)
+	{
+		global $config, $db;
+
+		if (self::$sfs_spam && $config['asacp_sfs_action'] == 2)
+		{
+			$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flagged = 1 WHERE user_id = ' . (int) $user_id);
+		}
+	}
+	//public static function sfs_register($user_id)
 
 	/**
 	* UCP Profile Fields Operations

@@ -166,7 +166,13 @@ $versions = array(
 		'custom'	=> 'asacp_update',
 	),
 	'0.7.1'		=> array(),
-	'0.7.2'		=> array(),
+	'0.7.2'		=> array(
+		'config_add'	=> array(
+			array('asacp_sfs_action', 1),
+			array('asacp_sfs_min_freq', 2),
+			array('asacp_sfs_key', ''),
+		),
+	),
 );
 
 function asacp_update($action, $version)

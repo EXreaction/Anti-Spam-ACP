@@ -30,6 +30,17 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'ASACP_SFS_SETTINGS' => 'Stop Forum Spam Settings',
+'ASACP_SFS_ACTION' => 'Stop Forum Spam Action',
+'ASACP_SFS_ACTION_EXPLAIN' => 'The action to perform when an account is registered and the profile information matches information stored on <a href="http://www.stopforumspam.com/">Stop Forum Spam</a>',
+'ASACP_SFS_MIN_FREQ' => 'Minimum Frequency',
+'ASACP_SFS_MIN_FREQ_EXPLAIN' => 'Minimum frequency (number of times that account has been reported by others) before performing any action for the account from the information returned by <a href="http://www.stopforumspam.com/">Stop Forum Spam</a>',
+'ASACP_SFS_KEY' => 'Stop Forum Spam Key',
+'ASACP_SFS_KEY_EXPLAIN' => 'If you would like to be able to submit information to the <a href="http://www.stopforumspam.com/">Stop Forum Spam</a>, sign up for an API Key <a href="http://www.stopforumspam.com/signup">here</a> and enter it in this field.',
+'FLAG_USER' => 'Flag User',
+'REQUIRE_USER_ACTIVATION' => 'Require User Activation',
+'REQUIRE_ADMIN_ACTIVATION' => 'Require Admin Activation',
+
 	'ADD_WORD'									=> 'Add Word',
 	'ALLOW_FIELD'								=> 'Allow',
 	'ASACP_ENABLE'								=> 'Enable Anti-Spam ACP',

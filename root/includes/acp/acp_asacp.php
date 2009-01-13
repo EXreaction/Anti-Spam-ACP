@@ -424,6 +424,11 @@ class acp_asacp
 					'asacp_spam_words_posting_action'	=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_approval_action', 'explain' => true),
 					'asacp_spam_words_pm_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 					'asacp_spam_words_profile_action'	=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
+
+					'legend4'				=> 'ASACP_SFS_SETTINGS',
+					'asacp_sfs_min_freq'	=> array('lang' => 'ASACP_SFS_MIN_FREQ', 'validate' => 'int:1', 'type' => 'text:6:10', 'explain' => true),
+					'asacp_sfs_action'		=> array('lang' => 'ASACP_SFS_ACTION', 'validate' => 'int:0:5', 'type' => 'custom', 'method' => 'sfs_action', 'explain' => true),
+					'asacp_sfs_key'			=> array('lang' => 'ASACP_SFS_KEY', 'validate' => 'string', 'type' => 'text:14:14', 'explain' => true),
 				);
 
 				$template->assign_vars(array(
@@ -448,6 +453,23 @@ class acp_asacp
 			'ERROR'			=> implode('<br />', $error),
 			'U_ACTION'		=> $this->u_action,
 		));
+	}
+
+	function sfs_action($value, $key)
+	{
+		global $user;
+
+		$key1	= ($value == 1) ? ' checked="checked"' : '';
+		$key2	= ($value == 2) ? ' checked="checked"' : '';
+		$key3	= ($value == 3) ? ' checked="checked"' : '';
+		$key4	= ($value == 4) ? ' checked="checked"' : '';
+		$key5	= ($value == 5) ? ' checked="checked"' : '';
+
+		return '<label><input type="radio" name="config[' . $key . ']" value="1"' . $key1 . ' class="radio" /> ' . $user->lang['NOTHING'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="2"' . $key2 . ' class="radio" /> ' . $user->lang['FLAG_USER'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="3"' . $key3 . ' class="radio" /> ' . $user->lang['REQUIRE_USER_ACTIVATION'] . '</label><br /><br />
+<label><input type="radio" name="config[' . $key . ']" value="4"' . $key4 . ' class="radio" /> ' . $user->lang['REQUIRE_ADMIN_ACTIVATION'] . '</label>
+<label><input type="radio" name="config[' . $key . ']" value="5"' . $key5 . ' class="radio" /> ' . $user->lang['DENY_SUBMISSION'] . '</label>';
 	}
 
 	function profile_fields_select($value, $key)
