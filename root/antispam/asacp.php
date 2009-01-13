@@ -12,15 +12,12 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.7.2');
+define('ASACP_VERSION', '0.9.0');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
 
 $user->add_lang('mods/asacp');
-
-// Debug
-//set_config('asacp_version', '0.7.1');
 
 if (!isset($config['asacp_version']) || version_compare(ASACP_VERSION, $config['asacp_version'], '>'))
 {
@@ -154,7 +151,7 @@ class antispam
 
 		if ($wrong_confirm)
 		{
-			antispam::add_log('LOG_INCORRECT_CODE', array($row['code'], $data['confirm_code']));
+			self::add_log('LOG_INCORRECT_CODE', array($row['code'], $data['confirm_code']));
 		}
 
 		if (!sizeof($error) && $config['asacp_sfs_action'] > 1)
@@ -256,8 +253,8 @@ class antispam
 
 		if ($config['asacp_spam_words_posting_action'] && self::spam_words($data))
 		{
-			$spam_message = antispam::build_spam_log_message($data);
-			antispam::add_log('LOG_SPAM_PROFILE_DENIED', $spam_message);
+			$spam_message = self::build_spam_log_message($data);
+			self::add_log('LOG_SPAM_PROFILE_DENIED', $spam_message);
 			$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 		}
 
@@ -364,7 +361,7 @@ class antispam
 
 			if ($config['asacp_spam_words_posting_action'] && self::spam_words($signature))
 			{
-				antispam::add_log('LOG_SPAM_SIGNATURE_DENIED', $signature);
+				self::add_log('LOG_SPAM_SIGNATURE_DENIED', $signature);
 				$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 			}
 
@@ -388,7 +385,7 @@ class antispam
 	*/
 	public static function page_header()
 	{
-		global $auth, $config, $db, $user;
+		global $auth, $config, $db, $user, $phpbb_root_path, $phpEx;
 
 		$user_id = request_var('u', 0);
 		$username = request_var('un', '', true);
@@ -401,6 +398,12 @@ class antispam
 			if ($row)
 			{
 				self::flagged_output($row['user_id'], $row, 'custom_fields');
+			}
+
+			if ($auth->acl_get('a_asacp_ban') && $user_id != $user->data['user_id'])
+			{
+				$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $user_id, true, $user->session_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
+				self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, 'custom_fields');
 			}
 		}
 
@@ -444,15 +447,30 @@ class antispam
 				$flagged_value = $user->lang['NO'] . ' [ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", "mode=user_flag&amp;u={$poster_id}&amp;p=$post_id") . '">' . $user->lang['USER_FLAG']. '</a> ]';
 			}
 
-			$template->assign_block_vars($template_block, array(
-				'PROFILE_FIELD_NAME'		=> $user->lang['USER_FLAGGED'],
-				'PROFILE_FIELD_VALUE'		=> $flagged_value,
-				'S_FIELD_VT'				=> true, // For compatibility with the Select viewable Custom Profiles Mod
-				'S_FIELD_VP'				=> true, // For compatibility with the Select viewable Custom Profiles Mod
-			));
+			self::cp_row_output($user->lang['USER_FLAGGED'], $flagged_value, $template_block);
 		}
 	}
 	//public static function flagged_output($poster_id, &$poster_row, $template_block, $post_id = 0)
+
+	/**
+	* Custom Profile row output
+	*
+	* @param mixed $name
+	* @param mixed $value
+	* @param mixed $template_block
+	*/
+	public static function cp_row_output($name, $value, $template_block)
+	{
+		global $template;
+
+		$template->assign_block_vars($template_block, array(
+			'PROFILE_FIELD_NAME'		=> $name,
+			'PROFILE_FIELD_VALUE'		=> $value,
+			'S_FIELD_VT'				=> true, // For compatibility with the Select viewable Custom Profiles Mod
+			'S_FIELD_VP'				=> true, // For compatibility with the Select viewable Custom Profiles Mod
+		));
+	}
+	//public static function cp_row_output($name, $value, $template_block)
 
 	/**
 	* Submit Post

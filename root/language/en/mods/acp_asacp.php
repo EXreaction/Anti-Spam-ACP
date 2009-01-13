@@ -30,6 +30,19 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'ASACP_BAN_USERNAME' => 'Ban Username',
+'ASACP_BAN_USERNAME_EXPLAIN' => 'Ban the username when a One Click Ban action is performed',
+'ASACP_BAN_SETTINGS' => 'One Click Ban Settings',
+'ASACP_BAN_DELETE_POSTS' => 'Delete Posts',
+'ASACP_BAN_DELETE_POSTS_EXPLAIN' => 'Delete the user\'s posts when a One Click Ban action is performed',
+'ASACP_BAN_DELETE_AVATAR' => 'Delete Avatar',
+'ASACP_BAN_DELETE_AVATAR_EXPLAIN' => 'Delete the user\'s Avatar when a One Click Ban action is performed',
+'ASACP_BAN_DELETE_SIGNATURE' => 'Delete Signature',
+'ASACP_BAN_DELETE_SIGNATURE_EXPLAIN' => 'Delete the user\'s Signature when a One Click Ban action is performed',
+'ASACP_BAN_DELETE_PROFILE_FIELDS' => 'Delete Profile Fields',
+'ASACP_BAN_DELETE_PROFILE_FIELDS_EXPLAIN' => 'Delete the user\'s Profile Information when a One Click Ban action is performed',
+'ASACP_BAN_MOVE_TO_GROUP' => 'Move to group',
+'ASACP_BAN_MOVE_TO_GROUP_EXPLAIN' => 'Move the user to the following group when a One Click Ban action is performed',
 'ASACP_SFS_SETTINGS' => 'Stop Forum Spam Settings',
 'ASACP_SFS_ACTION' => 'Stop Forum Spam Action',
 'ASACP_SFS_ACTION_EXPLAIN' => 'The action to perform when an account is registered and the profile information matches information stored on <a href="http://www.stopforumspam.com/">Stop Forum Spam</a>',

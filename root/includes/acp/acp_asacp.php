@@ -408,27 +408,35 @@ class acp_asacp
 				$this->page_title = 'ASACP_SETTINGS';
 
 				$options = array(
-					'legend1'					=> 'ASACP_SETTINGS',
-					'asacp_enable'				=> array('lang' => 'ASACP_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_log'					=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_user_flag_enable'	=> array('lang' => 'ASACP_USER_FLAG_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_notify_new_flag'		=> array('lang' => 'ASACP_NOTIFY_NEW_FLAG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'legend1'								=> 'ASACP_SETTINGS',
+					'asacp_enable'							=> array('lang' => 'ASACP_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_log'								=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_user_flag_enable'				=> array('lang' => 'ASACP_USER_FLAG_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_notify_new_flag'					=> array('lang' => 'ASACP_NOTIFY_NEW_FLAG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 
-					'legend2'				=> 'ASACP_REGISTER_SETTINGS',
-					'asacp_reg_captcha'		=> array('lang' => 'ASACP_REG_CAPTCHA', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'legend2'								=> 'ASACP_REGISTER_SETTINGS',
+					'asacp_reg_captcha'						=> array('lang' => 'ASACP_REG_CAPTCHA', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 
-					'legend3'							=> 'ASACP_SPAM_WORDS',
-					'asacp_spam_words_enable'			=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_spam_words_post_limit'		=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
-					'asacp_spam_words_flag_limit'		=> array('lang' => 'ASACP_SPAM_WORDS_FLAG_LIMIT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true),
-					'asacp_spam_words_posting_action'	=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_approval_action', 'explain' => true),
-					'asacp_spam_words_pm_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
-					'asacp_spam_words_profile_action'	=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
+					'legend3'								=> 'ASACP_SPAM_WORDS',
+					'asacp_spam_words_enable'				=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_spam_words_post_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
+					'asacp_spam_words_flag_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_FLAG_LIMIT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true),
+					'asacp_spam_words_posting_action'		=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_approval_action', 'explain' => true),
+					'asacp_spam_words_pm_action'			=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
+					'asacp_spam_words_profile_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 
-					'legend4'				=> 'ASACP_SFS_SETTINGS',
-					'asacp_sfs_min_freq'	=> array('lang' => 'ASACP_SFS_MIN_FREQ', 'validate' => 'int:1', 'type' => 'text:6:10', 'explain' => true),
-					'asacp_sfs_action'		=> array('lang' => 'ASACP_SFS_ACTION', 'validate' => 'int:0:5', 'type' => 'custom', 'method' => 'sfs_action', 'explain' => true),
-					'asacp_sfs_key'			=> array('lang' => 'ASACP_SFS_KEY', 'validate' => 'string', 'type' => 'text:14:14', 'explain' => true),
+					'legend4'								=> 'ASACP_SFS_SETTINGS',
+					'asacp_sfs_min_freq'					=> array('lang' => 'ASACP_SFS_MIN_FREQ', 'validate' => 'int:1', 'type' => 'text:6:10', 'explain' => true),
+					'asacp_sfs_action'						=> array('lang' => 'ASACP_SFS_ACTION', 'validate' => 'int:0:5', 'type' => 'custom', 'method' => 'sfs_action', 'explain' => true),
+					'asacp_sfs_key'							=> array('lang' => 'ASACP_SFS_KEY', 'validate' => 'string', 'type' => 'text:14:14', 'explain' => true),
+
+					'legend5'								=> 'ASACP_BAN_SETTINGS',
+					'asacp_ocban_username'					=> array('lang' => 'ASACP_BAN_USERNAME', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_ocban_move_to_group'				=> array('lang' => 'ASACP_BAN_MOVE_TO_GROUP', 'validate' => 'int:0', 'type' => 'custom', 'method' => 'group_list', 'explain' => true),
+					'asacp_ocban_delete_posts'				=> array('lang' => 'ASACP_BAN_DELETE_POSTS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_ocban_delete_avatar'				=> array('lang' => 'ASACP_BAN_DELETE_AVATAR', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_ocban_delete_signature'			=> array('lang' => 'ASACP_BAN_DELETE_SIGNATURE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_ocban_delete_profile_fields'		=> array('lang' => 'ASACP_BAN_DELETE_PROFILE_FIELDS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 				);
 
 				$template->assign_vars(array(
@@ -453,6 +461,30 @@ class acp_asacp
 			'ERROR'			=> implode('<br />', $error),
 			'U_ACTION'		=> $this->u_action,
 		));
+	}
+
+	function group_list($value, $key)
+	{
+		global $db, $user;
+
+		$return = '<select name="' . $key . '"><option value="0">--------</option>';
+
+		$sql = 'SELECT group_id, group_founder_manage, group_name FROM ' . GROUPS_TABLE;
+		$result = $db->sql_query($sql);
+
+		while ($row = $db->sql_fetchrow($result))
+		{
+			if (!$row['group_founder_manage'] || $user->data['user_type'] == USER_FOUNDER)
+			{
+				$lang = (isset($user->lang[$row['group_name']])) ? $user->lang[$row['group_name']] : ((isset($user->lang['G_' . $row['group_name']])) ? $user->lang['G_' . $row['group_name']] : $row['group_name']);
+				$return .= '<option value="' . $row['group_id'] . '">' . $lang . '</option>';
+			}
+		}
+		$db->sql_freeresult($result);
+
+		$return .= '</select>';
+
+		return $return;
 	}
 
 	function sfs_action($value, $key)

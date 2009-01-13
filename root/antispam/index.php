@@ -95,6 +95,90 @@ switch ($mode)
 		}
 	break;
 
+	case 'ocban' :
+		if (!$auth->acl_get('a_asacp_ban'))
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+
+		$sql = 'SELECT username, user_colour FROM ' . USERS_TABLE . ' WHERE user_id = ' . $user_id;
+		$result = $db->sql_query($sql);
+		$row = $db->sql_fetchrow($result);
+		$db->sql_freeresult($result);
+
+		if (!$row)
+		{
+			trigger_error('NO_USER');
+		}
+		$username = get_username_string('full', $user_id, $row['username'], $row['user_colour']);
+
+		if (confirm_box(true))
+		{
+			if ($config['asacp_ocban_username'])
+			{
+				user_ban('user', $username, 0, '', 0, '');
+			}
+
+			if ($config['asacp_ocban_move_to_group'])
+			{
+				$sql = 'SELECT group_id FROM ' . USER_GROUP_TABLE . ' WHERE user_id = ' . $user_id;
+				$result = $db->sql_query($sql);
+				while ($row = $db->sql_fetchrow($result))
+				{
+					group_user_del($row['group_id'], array($user_id), array($username));
+				}
+				$db->sql_freeresult($result);
+
+				group_user_add($move_to_group, array($user_id), array($username), false, true);
+			}
+
+			if ($config['asacp_ocban_delete_posts'])
+			{
+				delete_posts('poster_id', $user_id);
+			}
+
+			if ($config['asacp_ocban_delete_avatar'])
+			{
+				avatar_delete('user', $row, true);
+			}
+
+			if ($config['asacp_ocban_delete_signature'])
+			{
+				$sql = 'UPDATE ' . USERS_TABLE . '
+					SET ' .	$db->sql_build_array('UPDATE', array('user_sig' => '', 'user_sig_bbcode_uid' => '', 'user_sig_bbcode_bitfield' => '')) . '
+					WHERE user_id = ' . $user_id;
+				$db->sql_query($sql);
+			}
+
+			if ($config['asacp_ocban_delete_profile_fields'])
+			{
+				$sql_ary = array(
+					'user_birthday' 	=> '',
+					'user_from'			=> '',
+					'user_icq'			=> '',
+					'user_aim'			=> '',
+					'user_yim'			=> '',
+					'user_msnm'			=> '',
+					'user_jabber'		=> '',
+					'user_website'		=> '',
+					'user_occ'			=> '',
+					'user_interests'	=> '',
+				);
+				$sql = 'UPDATE ' . USERS_TABLE . '
+					SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
+					WHERE user_id = ' . $user_id;
+				$db->sql_query($sql);
+			}
+
+			trigger_error(sprintf($user->lang['ASACP_BAN_COMPLETE'], append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u=$user_id")));
+		}
+		else
+		{
+			$user->lang['ASACP_BAN_CONFIRM'] = sprintf($user->lang['ASACP_BAN_CONFIRM'], $username);
+			confirm_box(false, 'ASACP_BAN');
+		}
+	break;
+
 	default :
 		trigger_error('NO_MODE');
 	break;
