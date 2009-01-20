@@ -134,7 +134,7 @@ switch ($mode)
 				}
 				$db->sql_freeresult($result);
 
-				group_user_add($move_to_group, array($user_id), array($username), false, true);
+				group_user_add($config['asacp_ocban_move_to_group'], array($user_id), array($username), false, true);
 			}
 
 			if ($config['asacp_ocban_delete_posts'])
