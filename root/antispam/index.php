@@ -118,6 +118,10 @@ switch ($mode)
 			{
 				include($phpbb_root_path . 'includes/functions_user.' . $phpEx);
 			}
+			if (!function_exists('delete_posts'))
+			{
+				include($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
+			}
 
 			if ($config['asacp_ocban_username'])
 			{
