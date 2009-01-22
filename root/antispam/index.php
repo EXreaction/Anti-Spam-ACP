@@ -146,7 +146,7 @@ switch ($mode)
 				delete_posts('poster_id', $user_id);
 			}
 
-			if ($config['asacp_ocban_delete_avatar'])
+			if ($config['asacp_ocban_delete_avatar'] && $user_row['user_avatar'])
 			{
 				avatar_delete('user', $user_row, true);
 			}
