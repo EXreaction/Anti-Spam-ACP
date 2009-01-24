@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 70 2009-01-11 05:43:49Z EXreaction $
+ * @version $Id: umil.php 80 2009-01-18 22:15:52Z EXreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -1839,9 +1839,9 @@ class umil
 	*/
 	function table_exists($table_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		if (!function_exists('get_tables'))
 		{
@@ -1869,7 +1869,7 @@ class umil
 	*/
 	function table_add($table_name, $table_data = array())
 	{
-		global $db, $dbms, $table_prefix, $user;
+		global $db, $dbms, $user;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1881,7 +1881,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_ADD', $table_name);
 
@@ -1927,7 +1927,7 @@ class umil
 	*/
 	function table_remove($table_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1939,7 +1939,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_REMOVE', $table_name);
 
@@ -1960,9 +1960,9 @@ class umil
 	*/
 	function table_column_exists($table_name, $column_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		if (!class_exists('phpbb_db_tools'))
 		{
@@ -1981,7 +1981,7 @@ class umil
 	*/
 	function table_column_add($table_name, $column_name = '', $column_data = array())
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1993,7 +1993,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_COLUMN_ADD', $table_name, $column_name);
 
@@ -2021,7 +2021,7 @@ class umil
 	*/
 	function table_column_update($table_name, $column_name = '', $column_data = array())
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -2033,7 +2033,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_COLUMN_UPDATE', $table_name, $column_name);
 
@@ -2061,7 +2061,7 @@ class umil
 	*/
 	function table_column_remove($table_name, $column_name = '')
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -2073,7 +2073,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_COLUMN_REMOVE', $table_name, $column_name);
 
@@ -2101,9 +2101,9 @@ class umil
 	*/
 	function table_index_exists($table_name, $index_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		if (!class_exists('phpbb_db_tools'))
 		{
@@ -2130,7 +2130,7 @@ class umil
 	*/
 	function table_index_add($table_name, $index_name = '', $column = array())
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -2142,7 +2142,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_KEY_ADD', $table_name, $index_name);
 
@@ -2180,7 +2180,7 @@ class umil
 	*/
 	function table_index_remove($table_name, $index_name = '')
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -2192,7 +2192,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_KEY_REMOVE', $table_name, $index_name);
 
@@ -2716,6 +2716,19 @@ class umil
 		}
 
 		return $sql;
+	}
+
+	/**
+	* Get the real table name
+	*
+	* @param mixed $table_name
+	*/
+	function get_table_name(&$table_name)
+	{
+		global $table_prefix;
+
+		// Replacing phpbb_ with the $table_prefix, but, just in case we have a different table prefix with phpbb_ in it (say, like phpbb_3), we are replacing the table prefix with phpbb_ first to make sure we do not have issues.
+		$table_name = str_replace('phpbb_', $table_prefix, str_replace($table_prefix, 'phpbb_', $table_name));
 	}
 }
 
