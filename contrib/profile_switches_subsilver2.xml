@@ -4,7 +4,7 @@
 <mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.2.xsd">
 <header>
 	<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
-	<title lang="en">Anti-Spam ACP Profile Switches</title>
+	<title lang="en">Anti-Spam ACP Profile Switches [subsilver2]</title>
 	<description lang="en">Adds switches to the profile page to hide the profile fields when they can not be filled out.
 
 This should be installed if you plan on using the controls over Profile Field options, though it is not required.</description>
