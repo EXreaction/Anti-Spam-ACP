@@ -108,6 +108,8 @@ $lang = array_merge($lang, array(
 	'LATEST_VERSION'							=> 'Latest Version',
 	'LOCATION_POST_COUNT'						=> 'Location Post Count',
 	'LOCATION_POST_COUNT_EXPLAIN'				=> 'If Location is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
+	'LOG_VIEW_POST'								=> '%sView Post%s',
+	'LOG_VIEW_PROFILE'							=> '%sView Profile%s',
 
 	'NOTHING'									=> 'Nothing',
 	'NOT_AVAILABLE'								=> 'Not Available',
@@ -148,8 +150,6 @@ $lang = array_merge($lang, array(
 	'UCP_YIM_POST_COUNT_EXPLAIN'				=> 'If Yahoo Messenger is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
 
 	'VERSION'									=> 'Version',
-	'VIEW_POST'									=> '%sView Post%s',
-	'VIEW_PROFILE'								=> '%sView Profile%s',
 
 	'WEBSITE_POST_COUNT'						=> 'Website Post Count',
 	'WEBSITE_POST_COUNT_EXPLAIN'				=> 'If Website is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',

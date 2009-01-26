@@ -79,7 +79,7 @@ function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_
 				if ($log_type == 2 && isset($log_data_ary['post_id']))
 				{
 					$post_url = append_sid("{$phpbb_root_path}viewtopic.$phpEx", "p={$log_data_ary['post_id']}#p{$log_data_ary['post_id']}");
-					$log[$i]['action'] = $log[$i]['action'] . '<br />' . sprintf($user->lang['VIEW_POST'], '<a href="' . $post_url . '">', '</a>');
+					$log[$i]['action'] = $log[$i]['action'] . '<br />' . sprintf($user->lang['LOG_VIEW_POST'], '<a href="' . $post_url . '">', '</a>');
 					$log[$i]['action'] = bbcode_nl2br($log[$i]['action']);
 				}
 				else if ($log_type == 2 && isset($log_data_ary['pm']))
@@ -106,7 +106,7 @@ function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_
 				else if ($log_type == 2)
 				{
 					$viewprofile_url = append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u={$row['user_id']}");
-					$log[$i]['action'] = $log[$i]['action'] . '<br />' . sprintf($user->lang['VIEW_PROFILE'], '<a href="' . $viewprofile_url . '">', '</a>');
+					$log[$i]['action'] = $log[$i]['action'] . '<br />' . sprintf($user->lang['LOG_VIEW_PROFILE'], '<a href="' . $viewprofile_url . '">', '</a>');
 					$log[$i]['action'] = bbcode_nl2br($log[$i]['action']);
 				}
 				else
