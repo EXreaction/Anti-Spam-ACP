@@ -29,6 +29,11 @@ class spam_words
 			$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE);
 			while ($row = $db->sql_fetchrow($result))
 			{
+				if ($row['word_regex_auto'])
+				{
+					$row['word_text'] = $this->build_regex($row['word_text']);
+				}
+
 				$this->spam_words[] = $row;
 			}
 			$db->sql_freeresult($result);
@@ -47,19 +52,13 @@ class spam_words
 		{
 			foreach ($this->spam_words as $word)
 			{
-				if ($word['word_regex'])
+				if ($word['word_regex'] || $word['word_regex_auto'])
 				{
-					if (preg_match($word['word_text'], $text))
+					$matches = array();
+					preg_match_all($word['word_text'], $text, $matches);
+					if (isset($matches[0]))
 					{
-						$this->spam_flags++;
-					}
-				}
-				else if ($word['word_regex_auto'])
-				{
-					$word['word_text'] = $this->build_regex($word['word_text']);
-					if (preg_match($word['word_text'], $text))
-					{
-						$this->spam_flags++;
+						$this->spam_flags += sizeof($matches[0]);
 					}
 				}
 				else
@@ -88,7 +87,7 @@ class spam_words
 			'7'		=> 'tT7',
 			'8'		=> 'bB8',
 			'$'		=> 'sS$',
-			' '		=> '([\s-_+]+)?',
+			' '		=> '([\s\-_+]+)?',
 			'.'		=> '\.',
 			']'		=> '\]',
 			'*'		=> '\*',
@@ -111,7 +110,7 @@ class spam_words
 		}
 
 		$endings = array('#', '%', '!', '@', '$', '%', '^', '&', '/', '|');
-		
+
 		foreach ($endings as $ending)
 		{
 			if (!strpos($new_text, $ending))
