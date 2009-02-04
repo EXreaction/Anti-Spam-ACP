@@ -183,6 +183,9 @@ $versions = array(
 			'a_asacp_ban',
 		),
 	),
+	'0.9.1'		=> array(
+		'cache_purge'		=> array(),
+	),
 );
 
 function asacp_update($action, $version)

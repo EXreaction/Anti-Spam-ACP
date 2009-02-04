@@ -24,12 +24,12 @@ $mode = request_var('mode', '');
 $user_id = request_var('u', 0);
 $post_id = request_var('p', 0);
 
-$return = append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u=$user_id");
+$return_url = append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u=$user_id");
 if ($post_id)
 {
-	$return = append_sid("{$phpbb_root_path}viewtopic.$phpEx", "p=$post_id#p$post_id");
+	$return_url = append_sid("{$phpbb_root_path}viewtopic.$phpEx", "p=$post_id#p$post_id");
 }
-$return = '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $return . '">', '</a>');
+$return = '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $return_url . '">', '</a>');
 
 switch ($mode)
 {
