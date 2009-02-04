@@ -535,7 +535,7 @@ class antispam
 		$spam_words->messages = (!is_array($data)) ? array($data) : $data;
 		$spam_words->check_messages();
 
-		$flag_limit = (is_numeric($flag_limit) && $flag_limit > 0) ? $flag_limit : $config['asacp_spam_words_flag_limit'];
+		$flag_limit = (is_numeric($flag_limit) && $flag_limit > 0) ? (int) $flag_limit : $config['asacp_spam_words_flag_limit'];
 		return ($spam_words->spam_flags >= $flag_limit) ? true : false;
 	}
 	//public static function spam_words($data, $post_count = false)
@@ -654,9 +654,12 @@ class antispam
 			}
 
 			$errstr = $errno = '';
-			$version = get_remote_file('lithiumstudios.org', '/updatecheck', 'anti_spam_acp_3_version.txt', $errstr, $errno);
+			$version = get_remote_file('lithiumstudios.org', '/updatecheck', 'anti_spam_acp_3_version.txt', $errstr, $errno, 80, 1);
 
-			$cache->put('asacp_version', $version, 3600);
+			if ($version !== false)
+			{
+				$cache->put('asacp_version', $version, 3600);
+			}
 		}
 
 		return $version;

@@ -48,8 +48,12 @@ class spam_words
 			return;
 		}
 
+		$str_from = array('<', '>', '[', ']', '.', ':');
+		$str_to = array('&lt;', '&gt;', '&#91;', '&#93;', '&#46;', '&#58;');
+
 		foreach ($this->messages as $text)
 		{
+			$text = str_replace($str_to, $str_from, htmlspecialchars_decode($text));
 			foreach ($this->spam_words as $word)
 			{
 				if ($word['word_regex'] || $word['word_regex_auto'])
