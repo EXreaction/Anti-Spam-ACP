@@ -22,11 +22,11 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.9.1</mod-version>
+	<mod-version>0.9.2</mod-version>
 
 	<installation>
 		<level>easy</level>
-		<time>60</time>
+		<time>120</time>
 		<target-version>3.0.4</target-version>
 	</installation>
 </header>
@@ -35,5 +35,26 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 	<copy>
 		<file from="root/*.*" to="*.*" />
 	</copy>
+	<open src="includes/ucp/ucp_register.php">
+		<edit>
+			<find><![CDATA[			// START Anti-Spam ACP
+			$s_hidden_fields = array_merge($s_hidden_fields, $asacp_hidden);
+			// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[			// START Anti-Spam ACP
+			$s_hidden_fields = array_merge($s_hidden_fields, $asacp_hidden);
+			$asacp_coppa_url = '';
+			foreach ($asacp_hidden as $name => $value)
+			{
+				$asacp_coppa_url .= "&amp;$name=$value";
+			}
+			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[					'U_COPPA_NO'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=0' . $add_lang),
+					'U_COPPA_YES'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=1' . $add_lang),]]></find>
+			<action type="replace-with"><![CDATA[					'U_COPPA_NO'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=0' . $add_lang . $asacp_coppa_url),
+					'U_COPPA_YES'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=1' . $add_lang . $asacp_coppa_url),]]></action>
+		</edit>
+	</open>
 </action-group>
 </mod>

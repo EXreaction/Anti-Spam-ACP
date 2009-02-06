@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.9.1</mod-version>
+	<mod-version>0.9.2_dev</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -97,7 +97,18 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<find><![CDATA[$s_hidden_fields = ($confirm_id) ? array('confirm_id' => $confirm_id) : array();]]></find>
 			<action type="after-add"><![CDATA[			// START Anti-Spam ACP
 			$s_hidden_fields = array_merge($s_hidden_fields, $asacp_hidden);
+			$asacp_coppa_url = '';
+			foreach ($asacp_hidden as $name => $value)
+			{
+				$asacp_coppa_url .= "&amp;$name=$value";
+			}
 			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[					'U_COPPA_NO'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=0' . $add_lang),
+					'U_COPPA_YES'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=1' . $add_lang),]]></find>
+			<action type="replace-with"><![CDATA[					'U_COPPA_NO'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=0' . $add_lang . $asacp_coppa_url),
+					'U_COPPA_YES'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=1' . $add_lang . $asacp_coppa_url),]]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[			if (!sizeof($error))
