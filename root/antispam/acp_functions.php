@@ -202,7 +202,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 				FROM ' . LOG_TABLE . ' l, ' . USERS_TABLE . ' u
 				WHERE log_ip = \'' . $sql_ip . '\'
 				AND u.user_id = l.user_id
-				ORDER BY log_time desc';
+				ORDER BY log_time DESC';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
@@ -294,7 +294,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$total = $db->sql_fetchfield('total');
 			$sql = 'SELECT * FROM ' . POLL_VOTES_TABLE . '
 				WHERE vote_user_ip = \'' . $sql_ip . '\'
-				ORDER BY topic_id desc';
+				ORDER BY topic_id DESC';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
@@ -319,7 +319,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$sql = 'SELECT p.post_subject, p.topic_id, p.post_id, p.poster_id, u.username, u.user_colour, p.post_username, p.post_time FROM ' . POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 				WHERE poster_ip = \'' . $sql_ip . '\'
 				AND u.user_id = p.poster_id
-				ORDER BY post_time desc';
+				ORDER BY post_time DESC';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
@@ -347,7 +347,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$sql = 'SELECT p.msg_id, p.author_id, u.username, u.user_colour, p.message_time, message_subject, to_address, bcc_address FROM ' . PRIVMSGS_TABLE . ' p, ' . USERS_TABLE . ' u
 				WHERE author_ip = \'' . $sql_ip . '\'
 				AND u.user_id = p.author_id
-				ORDER BY message_time desc';
+				ORDER BY message_time DESC';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
@@ -373,7 +373,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$total = $db->sql_fetchfield('total');
 			$sql = 'SELECT user_id, username, user_regdate, user_email, user_colour  FROM ' . USERS_TABLE . '
 				WHERE user_ip = \'' . $sql_ip . '\'
-				ORDER BY user_regdate desc';
+				ORDER BY user_regdate DESC';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
@@ -387,7 +387,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 					$output .= asacp_display_table_head($row);
 				}
 
-				$row['user_regdate'] = $user->format_date('user_regdate');
+				$row['user_regdate'] = $user->format_date($row['user_regdate']);
 				$output .= asacp_display_table_row($row, $cnt);
 			}
 			$db->sql_freeresult($result);
