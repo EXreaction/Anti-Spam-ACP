@@ -55,6 +55,15 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<action type="replace-with"><![CDATA[					'U_COPPA_NO'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=0' . $add_lang . $asacp_coppa_url),
 					'U_COPPA_YES'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=1' . $add_lang . $asacp_coppa_url),]]></action>
 		</edit>
+		<edit>
+			<find><![CDATA[			// START Anti-Spam ACP
+			antispam::ucp_register($data, $error, $wrong_confirm);
+			// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[			// START Anti-Spam ACP
+			$data['captcha_code'] = (isset($row['code'])) ? $row['code'] : '';
+			antispam::ucp_register($data, $error, $wrong_confirm);
+			// END Anti-Spam ACP]]></action>
+		</edit>
 	</open>
 </action-group>
 </mod>

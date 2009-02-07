@@ -149,9 +149,9 @@ class antispam
 	{
 		global $config, $user;
 
-		if ($wrong_confirm)
+		if ($wrong_confirm && isset($data['captcha_code']))
 		{
-			self::add_log('LOG_INCORRECT_CODE', array($row['code'], $data['confirm_code']));
+			self::add_log('LOG_INCORRECT_CODE', array($data['captcha_code'], $data['confirm_code']));
 		}
 
 		if (!sizeof($error) && $config['asacp_sfs_action'] > 1)

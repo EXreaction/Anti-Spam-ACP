@@ -115,6 +115,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			{
 				$server_url = generate_board_url();]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			$data['captcha_code'] = (isset($row['code'])) ? $row['code'] : '';
 			antispam::ucp_register($data, $error, $wrong_confirm);
 			// END Anti-Spam ACP]]></action>
 		</edit>
