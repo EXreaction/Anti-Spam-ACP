@@ -413,6 +413,7 @@ class acp_asacp
 					'asacp_log'								=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_user_flag_enable'				=> array('lang' => 'ASACP_USER_FLAG_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_notify_new_flag'					=> array('lang' => 'ASACP_NOTIFY_NEW_FLAG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_profile_during_reg'				=> array('lang' => 'ASACP_PROFILE_DURING_REG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 
 					'legend2'								=> 'ASACP_REGISTER_SETTINGS',
 					'asacp_reg_captcha'						=> array('lang' => 'ASACP_REG_CAPTCHA', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),

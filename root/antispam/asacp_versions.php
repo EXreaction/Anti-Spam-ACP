@@ -186,6 +186,11 @@ $versions = array(
 	'0.9.1'		=> array(
 		'cache_purge'		=> array(),
 	),
+	'0.9.2'		=> array(
+		'config_add'	=> array(
+			array('asacp_profile_during_reg', false),
+		)
+	),
 );
 
 function asacp_update($action, $version)

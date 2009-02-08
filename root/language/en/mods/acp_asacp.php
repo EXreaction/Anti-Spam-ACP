@@ -61,6 +61,8 @@ $lang = array_merge($lang, array(
 	'ASACP_LOG_EXPLAIN'							=> 'If disabled new items will not be added to the spam log.',
 	'ASACP_NOTIFY_NEW_FLAG'						=> 'Notify on new Flag Log entry',
 	'ASACP_NOTIFY_NEW_FLAG_EXPLAIN'				=> 'Notify authorized users when a new item is added to the flag log.',
+	'ASACP_PROFILE_DURING_REG'					=> 'Display allowed profile fields during registration.',
+	'ASACP_PROFILE_DURING_REG_EXPLAIN'			=> 'If set to yes, any fields marked as allowed in the Profile Fields settings will be displayed during registration (except the Signature field).',
 	'ASACP_PROFILE_FIELDS'						=> 'Profile Fields',
 	'ASACP_PROFILE_FIELDS_EXPLAIN'				=> 'Allows you to set limits on when profile fields can be filled in for users.<br /><br /><strong>After submission, all of the fields will be resynced for all users to clear any fields they are not allowed to have filled in according to the new rules.',
 	'ASACP_REGISTER_SETTINGS'					=> 'Registration Settings',
@@ -132,7 +134,7 @@ $lang = array_merge($lang, array(
 	'REQUIRE_USER_ACTIVATION'					=> 'Require User Activation',
 
 	'SIGNATURE_POST_COUNT'						=> 'Signature Post Count',
-	'SIGNATURE_POST_COUNT_EXPLAIN'				=> 'If Signature is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
+	'SIGNATURE_POST_COUNT_EXPLAIN'				=> 'If Signature is set to Post Count, the user will be able to fill in that field after they have reached this many posts.<br /><br />Required settings for the signature are not the same as others.  Signatures can not be required during registration.',
 	'SPAM_WORD_ADD_SUCCESS'						=> 'Spam word added successfully.',
 	'SPAM_WORD_DELETE_SUCCESS'					=> 'Spam word deleted successfully.',
 	'SPAM_WORD_EDIT_SUCCESS'					=> 'Spam word edited successfully.',

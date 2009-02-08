@@ -12,7 +12,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.9.1');
+define('ASACP_VERSION', '0.9.2');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -26,18 +26,28 @@ if (!isset($config['asacp_version']) || version_compare(ASACP_VERSION, $config['
 
 class antispam
 {
-	// Profile Fields  First is the name for the template side, lang holds the language name for when giving an error, db holds the name of the field in the db used when resetting the fields to blank.
+	/**
+	* Profile Fields
+	*	First is the name for the template side (in ucp_profile_profile_info.html)
+	* 	lang holds the language name for when giving an error/displaying
+	*	db holds the name of the field in the db used when resetting the fields to blank.
+	*	field_type is the type used for building the field if required/available during registration
+	*	beyond that is custom information required for when creating the fields
+	*
+	* field type reference (from includes/functions_profile_fields)
+	*	var $profile_types = array(FIELD_INT => 'int', FIELD_STRING => 'string', FIELD_TEXT => 'text', FIELD_BOOL => 'bool', FIELD_DROPDOWN => 'dropdown', FIELD_DATE => 'date');
+	*/
 	public static $profile_fields = array(
-		'icq'			=> array('lang' => 'UCP_ICQ', 'db' => 'user_icq'),
-		'aim'			=> array('lang' => 'UCP_AIM', 'db' => 'user_aim'),
-		'msn'			=> array('lang' => 'UCP_MSNM', 'db' => 'user_msnm'),
-		'yim'			=> array('lang' => 'UCP_YIM', 'db' => 'user_yim'),
-		'jabber'		=> array('lang' => 'UCP_JABBER', 'db' => 'user_jabber'),
-		'website'		=> array('lang' => 'WEBSITE', 'db' => 'user_website'),
-		'location'		=> array('lang' => 'LOCATION', 'db' => 'user_from'),
-		'occupation'	=> array('lang' => 'OCCUPATION', 'db' => 'user_occ'),
-		'interests'		=> array('lang' => 'INTERESTS', 'db' => 'user_interests'),
-		'signature'		=> array('lang' => 'SIGNATURE', 'db' => 'user_sig'),
+		'icq'			=> array('lang' => 'UCP_ICQ', 'db' => 'user_icq', 'field_type' => FIELD_STRING),
+		'aim'			=> array('lang' => 'UCP_AIM', 'db' => 'user_aim', 'field_type' => FIELD_STRING),
+		'msn'			=> array('lang' => 'UCP_MSNM', 'db' => 'user_msnm', 'field_type' => FIELD_STRING),
+		'yim'			=> array('lang' => 'UCP_YIM', 'db' => 'user_yim', 'field_type' => FIELD_STRING),
+		'jabber'		=> array('lang' => 'UCP_JABBER', 'db' => 'user_jabber', 'field_type' => FIELD_STRING),
+		'website'		=> array('lang' => 'WEBSITE', 'db' => 'user_website', 'field_type' => FIELD_STRING),
+		'location'		=> array('lang' => 'LOCATION', 'db' => 'user_from', 'field_type' => FIELD_STRING),
+		'occupation'	=> array('lang' => 'OCCUPATION', 'db' => 'user_occ', 'field_type' => FIELD_STRING),
+		'interests'		=> array('lang' => 'INTERESTS', 'db' => 'user_interests', 'field_type' => FIELD_STRING),
+		'signature'		=> array('lang' => 'SIGNATURE', 'db' => 'user_sig', 'field_type' => 'disabled'),
 	);
 
 	// True if marked as Stop Forum Spam as a spam user
@@ -50,11 +60,59 @@ class antispam
 	{
 		global $config, $db, $phpbb_root_path, $phpEx, $template, $user;
 
-		if (!$config['asacp_enable'] || !$config['asacp_reg_captcha'])
+		if (!$config['asacp_enable'])
 		{
 			return array();
 		}
 
+		// Profile fields stuff
+		$cp = new custom_profile();
+
+		foreach (self::$profile_fields as $field => $data)
+		{
+			if ($data['field_type'] == 'disabled')
+			{
+				continue;
+			}
+
+			// Special stuff for $cp->process_field_row
+			$data['var_name'] = $data['field_ident'] = $field;
+			$data['lang_default_value'] = '';
+
+			switch ($config['asacp_profile_' . $field])
+			{
+				case 1 :
+					// Required Field
+					$template->assign_block_vars('profile_fields', array(
+						'FIELD_ID'		=> $field,
+						'LANG_NAME'		=> (isset($user->lang[$data['lang']])) ? $user->lang[$data['lang']] : $data['lang'],
+						'S_REQUIRED'	=> true,
+						'LANG_EXPLAIN'	=> (isset($user->lang[$data['lang'] . '_EXPLAIN'])) ? $user->lang[$data['lang'] . '_EXPLAIN'] : '',
+						'FIELD' 		=> $cp->process_field_row('change', $data),
+					));
+				break;
+
+				case 2 :
+					if ($config['asacp_profile_during_reg'])
+					{
+						// Normal Field
+						$template->assign_block_vars('profile_fields', array(
+							'FIELD_ID'		=> $field,
+							'LANG_NAME'		=> (isset($user->lang[$data['lang']])) ? $user->lang[$data['lang']] : $data['lang'],
+							'LANG_EXPLAIN'	=> (isset($user->lang[$data['lang'] . '_EXPLAIN'])) ? $user->lang[$data['lang'] . '_EXPLAIN'] : '',
+							'FIELD' 		=> $cp->process_field_row('change', $data),
+						));
+					}
+				break;
+			}
+		}
+
+		if (!$config['asacp_reg_captcha'])
+		{
+			return array();
+		}
+
+		// Captcha stuff
 		$asacp_id = request_var('asacp_id', '');
 		$asacp_code = request_var('asacp_code', '');
 
@@ -149,11 +207,56 @@ class antispam
 	{
 		global $config, $user;
 
+		if (!$config['asacp_enable'])
+		{
+			return;
+		}
+
+		// Profile fields stuff
+		foreach (self::$profile_fields as $field => $ary)
+		{
+			if ($ary['field_type'] == 'disabled')
+			{
+				continue;
+			}
+
+			switch ($config['asacp_profile_' . $field])
+			{
+				case 1 :
+					// Required
+					if (isset($_POST[$field]) && !request_var($field, ''))
+					{
+						$error[] = sprintf($user->lang['FIELD_REQUIRED'], $user->lang[$ary['lang']]);
+					}
+				break;
+
+				case 2 :
+					// Normal
+					if (!$config['asacp_profile_during_reg'] && isset($_POST[$field]) && request_var($field, ''))
+					{
+						$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang[$ary['lang']], 0);
+					}
+				break;
+
+				case 3 :
+					// Never allowed
+				case 4 :
+					// Post Count
+					if (isset($_POST[$field]) && request_var($field, ''))
+					{
+						$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang[$ary['lang']], 0);
+					}
+				break;
+			}
+		}
+
+		// Captcha stuff
 		if ($wrong_confirm && isset($data['captcha_code']))
 		{
 			self::add_log('LOG_INCORRECT_CODE', array($data['captcha_code'], $data['confirm_code']));
 		}
 
+		// Stop Forum Spam stuff
 		if (!sizeof($error) && $config['asacp_sfs_action'] > 1)
 		{
 			if (!function_exists('get_remote_file'))
@@ -230,12 +333,49 @@ class antispam
 	*/
 	public static function sfs_register($user_id)
 	{
-		global $config, $db;
+		global $config, $db, $phpbb_root_path, $phpEx;
 
+		if (!$config['asacp_enable'])
+		{
+			return;
+		}
+
+		// stuff to be updated
+		$profile_data = array();
+
+		// Stop forum Spam stuff
 		if (self::$sfs_spam && $config['asacp_sfs_action'] == 2)
 		{
-			$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flagged = 1 WHERE user_id = ' . (int) $user_id);
+			$profile_data['user_flagged'] = 1;
 		}
+
+		// Profile fields stuff
+		foreach (self::$profile_fields as $field => $ary)
+		{
+			if ($ary['field_type'] == 'disabled')
+			{
+				continue;
+			}
+
+			switch ($config['asacp_profile_' . $field])
+			{
+				case 1 :
+					// Required
+					$profile_data[$ary['db']] = utf8_normalize_nfc(request_var($field, '', true));
+				break;
+
+				case 2 :
+					// Normal
+					if ($config['asacp_profile_during_reg'])
+					{
+						$profile_data[$ary['db']] = utf8_normalize_nfc(request_var($field, '', true));
+					}
+				break;
+			}
+		}
+
+		// Update time
+		$db->sql_query('UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $profile_data) . ' WHERE user_id = ' . (int) $user_id);
 	}
 	//public static function sfs_register($user_id)
 
