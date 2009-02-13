@@ -17,8 +17,6 @@ define('ASACP_VERSION', '0.9.2');
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
 
-$user->add_lang('mods/asacp');
-
 if (!isset($config['asacp_version']) || version_compare(ASACP_VERSION, $config['asacp_version'], '>'))
 {
 	include($phpbb_root_path . 'antispam/update_asacp.' . $phpEx);
@@ -64,6 +62,8 @@ class antispam
 		{
 			return array();
 		}
+
+		$user->add_lang('mods/asacp');
 
 		// Profile fields stuff
 		$cp = new custom_profile();
@@ -391,6 +391,8 @@ class antispam
 			return;
 		}
 
+		$user->add_lang('mods/asacp');
+
 		if ($config['asacp_spam_words_posting_action'] && self::spam_words($data))
 		{
 			$spam_message = self::build_spam_log_message($data);
@@ -451,6 +453,8 @@ class antispam
 			return;
 		}
 
+		$user->add_lang('mods/asacp');
+
 		foreach (self::$profile_fields as $field => $lang)
 		{
 			switch ($config['asacp_profile_' . $field])
@@ -490,6 +494,8 @@ class antispam
 			return;
 		}
 
+		$user->add_lang('mods/asacp');
+
 		$submit = (isset($_POST['submit'])) ? true : false;
 
 		if ($submit)
@@ -526,6 +532,11 @@ class antispam
 	public static function page_header()
 	{
 		global $auth, $config, $db, $user, $phpbb_root_path, $phpEx;
+
+		if (!isset($user->lang['ASACP_BAN']))
+		{
+			$user->add_lang('mods/asacp');
+		}
 
 		$user_id = request_var('u', 0);
 		$username = request_var('un', '', true);
@@ -578,6 +589,11 @@ class antispam
 		{
 			global $phpbb_root_path, $phpEx, $user, $template;
 
+			if (!isset($user->lang['USER_FLAGGED']))
+			{
+				$user->add_lang('mods/asacp');
+			}
+
 			if ($poster_row['user_flagged'])
 			{
 				$flagged_value = '<span class="error">' . $user->lang['YES'] . '</span> [ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", "mode=user_unflag&amp;u={$poster_id}&amp;p=$post_id") . '">' . $user->lang['USER_UNFLAG']. '</a> ]';
@@ -622,7 +638,12 @@ class antispam
 	*/
 	public static function submit_post($mode, $post_id)
 	{
-		global $user;
+		global $config, $user;
+
+		if (!$config['asacp_enable'])
+		{
+			return;
+		}
 
 		$post_id = (int) $post_id;
 

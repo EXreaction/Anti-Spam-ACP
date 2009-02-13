@@ -18,7 +18,7 @@ include($phpbb_root_path . 'common.' . $phpEx);
 // Start session management
 $user->session_begin();
 $auth->acl($user->data);
-$user->setup();
+$user->setup('mods/asacp');
 
 $mode = request_var('mode', '');
 $user_id = request_var('u', 0);
