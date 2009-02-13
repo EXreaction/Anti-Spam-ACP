@@ -32,6 +32,38 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<target-version>3.0.4</target-version>
 	</installation>
 
+	<history>
+		<entry>
+			<date>2009-01-13</date>
+			<rev-version>0.9.0</rev-version>
+			<changelog lang="en">
+				<change>Release Candidate 1</change>
+			</changelog>
+		</entry>
+		<entry>
+			<date>2009-02-04</date>
+			<rev-version>0.9.1</rev-version>
+			<changelog lang="en">
+				<change>ModX 1.2.2</change>
+				<change>[Change] antispam/acp_asacp.php renamed to antisam/acp_functions.php</change>
+				<change>[Change] Timeout limit for checking for a newer version is now 1 second.</change>
+				<change>[Fix] Spam Words checker not properly counting number of matches of a regex/auto-regex word (#5)</change>
+				<change>[Fix] Multiple Bugs in One Click Ban Fixed</change>
+			</changelog>
+		</entry>
+		<entry>
+			<date>2009-02-13</date>
+			<rev-version>0.9.2_dev</rev-version>
+			<changelog lang="en">
+				<change>[Change] Any profile fields that are required are now required during registration as well.  Optionally you may have it show the normal allowed fields during registration as well.</change>
+				<change>[Fix] Stuck in loop when registering with COPPA on (#6)</change>
+				<change>[Fix] Registration date shows up as "01 jan 1970 01:00" in IP Search (#7)</change>
+				<change>[Fix] Bad CAPTCHA input during Registration logs incorrectly (#8)</change>
+				<change>[Fix] Invalid parameters on posting.php/viewtopic.php can cause fatal errors (#10)</change>
+			</changelog>
+		</entry>
+	</history>
+
 	<link-group>
 		<link type="contrib" href="contrib/profile_switches.xml" lang="en">Profile Switches Install [Recommended]</link>
 		<link type="template" href="subsilver2.xml" lang="en">subsilver2</link>
