@@ -60,6 +60,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>[Fix] Registration date shows up as "01 jan 1970 01:00" in IP Search (#7)</change>
 				<change>[Fix] Bad CAPTCHA input during Registration logs incorrectly (#8)</change>
 				<change>[Fix] Invalid parameters on posting.php/viewtopic.php can cause fatal errors (#10)</change>
+				<change>[Fix] Bad redirect when selecting No on antispam/index.php (#11)</change>
 			</changelog>
 		</entry>
 	</history>

@@ -24,10 +24,14 @@ $mode = request_var('mode', '');
 $user_id = request_var('u', 0);
 $post_id = request_var('p', 0);
 
-$return_url = append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u=$user_id");
+$return_url = append_sid("{$phpbb_root_path}index.$phpEx");
 if ($post_id)
 {
 	$return_url = append_sid("{$phpbb_root_path}viewtopic.$phpEx", "p=$post_id#p$post_id");
+}
+else if ($user_id)
+{
+	$return_url = append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u=$user_id");
 }
 $return = '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $return_url . '">', '</a>');
 
@@ -231,5 +235,8 @@ switch ($mode)
 		trigger_error('NO_MODE');
 	break;
 }
+
+// Should not get here (unless No selected for the confirm_box)
+redirect($return_url);
 
 ?>
