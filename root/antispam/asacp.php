@@ -542,19 +542,46 @@ class antispam
 		$username = request_var('un', '', true);
 		if (request_var('mode', '') == 'viewprofile' && ($user_id || $username))
 		{
-			$sql = 'SELECT user_id, user_flagged FROM ' . USERS_TABLE . ' WHERE ' . (($user_id) ? 'user_id = ' . $user_id : "username_clean = '" . $db->sql_escape(utf8_clean_string($username)) . "'");
+			$sql = 'SELECT user_id, user_ip, user_flagged FROM ' . USERS_TABLE . ' WHERE ' . (($user_id) ? 'user_id = ' . $user_id : "username_clean = '" . $db->sql_escape(utf8_clean_string($username)) . "'");
 			$result = $db->sql_query($sql);
-			$row = $db->sql_fetchrow($result);
+			$user_row = $db->sql_fetchrow($result);
+			$db->sql_freeresult($result);
 
-			if ($row)
+			if ($user_row)
 			{
-				self::flagged_output($row['user_id'], $row, 'custom_fields');
-			}
+				// Output Flagged section
+				self::flagged_output($user_row['user_id'], $user_row, 'custom_fields');
 
-			if ($auth->acl_get('a_asacp_ban') && $user_id != $user->data['user_id'])
-			{
-				$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $user_id, true, $user->session_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
-				self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, 'custom_fields');
+				// Output One Click Ban section
+				if ($auth->acl_get('a_asacp_ban') && $user_id != $user->data['user_id'])
+				{
+					$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $user_id, true, $user->session_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
+					self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, 'custom_fields');
+				}
+
+				// Output IP Search section
+				if ($auth->acl_get('a_asacp_ip_search'))
+				{
+					$ip_search = array();
+					$u_ip_search = '<a href="' . append_sid("{$phpbb_root_path}adm/index.$phpEx", 'i=asacp&amp;mode=ip_search&amp;ip={IP}', true, $user->session_id) . '">{IP}</a>';
+
+					if ($user_row['user_ip'])
+					{
+						$ip_search[] = str_replace('{IP}', $user_row['user_ip'], $u_ip_search);
+					}
+
+					$sql = 'SELECT DISTINCT(poster_ip) FROM ' . POSTS_TABLE . '
+						WHERE poster_id = ' . $user_id . "
+						AND poster_ip <> '" . $user_row['user_ip'] . "'";
+					$result = $db->sql_query($sql);
+					while ($row = $db->sql_fetchrow($result))
+					{
+						$ip_search[] = str_replace('{IP}', $row['poster_ip'], $u_ip_search);
+					}
+					$db->sql_freeresult($result);
+
+					self::cp_row_output($user->lang['IP_SEARCH'], implode('<br />', $ip_search), 'custom_fields');
+				}
 			}
 		}
 

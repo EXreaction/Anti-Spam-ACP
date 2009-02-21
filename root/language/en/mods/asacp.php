@@ -37,6 +37,8 @@ $lang = array_merge($lang, array(
 
 	'FOUNDER_ONLY'			=> 'You must be a Board Founder to access this page.',
 
+	'IP_SEARCH'				=> 'IP Search',
+
 	'PROFILE_SPAM_DENIED'	=> 'One or more of the fields entered was marked as spam.',
 
 	'REMOVE_ASACP'			=> 'Remove Anti-Spam ACP',
