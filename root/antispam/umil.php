@@ -2225,7 +2225,7 @@ class umil
 	*
 	* @return array|bool False if there was any error, or an array (each line in the file as a value)
 	*/
-	function version_check($url, $path, $file)
+	function version_check($url, $path, $file, $timeout = 10, $port = 80)
 	{
 		if (!function_exists('get_remote_file'))
 		{
@@ -2235,7 +2235,8 @@ class umil
 		}
 
 		$errstr = $errno = '';
-		$info = get_remote_file($url, $path, $file, $errstr, $errno);
+
+		$info = get_remote_file($url, $path, $file, $errstr, $errno, $port, $timeout);
 
 		if ($info === false)
 		{
