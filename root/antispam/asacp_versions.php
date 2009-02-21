@@ -186,7 +186,7 @@ $versions = array(
 	'0.9.1'		=> array(
 		'cache_purge'		=> array(),
 	),
-	'0.9.2'		=> array(
+	'1.0.0'		=> array(
 		'config_add'	=> array(
 			array('asacp_profile_during_reg', false),
 		)

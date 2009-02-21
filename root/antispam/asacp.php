@@ -12,7 +12,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '0.9.2');
+define('ASACP_VERSION', '1.0.0');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');

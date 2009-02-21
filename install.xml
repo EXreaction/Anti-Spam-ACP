@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>0.9.2_dev</mod-version>
+	<mod-version>1.0.0</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -52,10 +52,11 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</changelog>
 		</entry>
 		<entry>
-			<date>2009-02-13</date>
-			<rev-version>0.9.2_dev</rev-version>
+			<date>2009-02-20</date>
+			<rev-version>1.0.0</rev-version>
 			<changelog lang="en">
 				<change>[Change] Any profile fields that are required are now required during registration as well.  Optionally you may have it show the normal allowed fields during registration as well.</change>
+				<change>[Change] Added IP Search section to the View Profile page to quickly search any IP Address the user registered or posted with.</change>
 				<change>[Fix] Stuck in loop when registering with COPPA on (#6)</change>
 				<change>[Fix] Registration date shows up as "01 jan 1970 01:00" in IP Search (#7)</change>
 				<change>[Fix] Bad CAPTCHA input during Registration logs incorrectly (#8)</change>
