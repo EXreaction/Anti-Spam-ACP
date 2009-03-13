@@ -18,7 +18,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('UMIL_VERSION', '1.0.0-RC1');
+define('UMIL_VERSION', '1.0.0-RC2');
 
 /**
 * Multicall instructions
@@ -344,31 +344,39 @@ class umil
 				{
 					if ($method == 'custom')
 					{
-						if (function_exists($params))
+						if (!is_array($params))
 						{
-							$return = call_user_func($params, $action, $version);
-							if (is_string($return))
-							{
-								$this->umil_start($return);
-								$this->umil_end();
-							}
-							else if (is_array($return) && isset($return['command']))
-							{
-								if (is_array($return['command']))
-								{
-									call_user_func_array(array($this, 'umil_start'), $return['command']);
-								}
-								else
-								{
-									$this->umil_start($return['command']);
-								}
+							$params = array($params);
+						}
 
-								if (isset($return['result']))
+						foreach ($params as $function_name)
+						{
+							if (function_exists($function_name))
+							{
+								$return = call_user_func($function_name, $action, $version);
+								if (is_string($return))
 								{
-									$this->result($return['result']);
+									$this->umil_start($return);
+									$this->umil_end();
 								}
+								else if (is_array($return) && isset($return['command']))
+								{
+									if (is_array($return['command']))
+									{
+										call_user_func_array(array($this, 'umil_start'), $return['command']);
+									}
+									else
+									{
+										$this->umil_start($return['command']);
+									}
 
-								$this->umil_end();
+									if (isset($return['result']))
+									{
+										$this->result($return['result']);
+									}
+
+									$this->umil_end();
+								}
 							}
 						}
 					}
@@ -421,31 +429,39 @@ class umil
 				{
 					if ($method == 'custom')
 					{
-						if (function_exists($params))
+						if (!is_array($params))
 						{
-							$return = call_user_func($params, $action, $version);
-							if (is_string($return))
-							{
-								$this->umil_start($return);
-								$this->umil_end();
-							}
-							else if (is_array($return) && isset($return['command']))
-							{
-								if (is_array($return['command']))
-								{
-									call_user_func_array(array($this, 'umil_start'), $return['command']);
-								}
-								else
-								{
-									$this->umil_start($return['command']);
-								}
+							$params = array($params);
+						}
 
-								if (isset($return['result']))
+						foreach ($params as $function_name)
+						{
+							if (function_exists($function_name))
+							{
+								$return = call_user_func($function_name, $action, $version);
+								if (is_string($return))
 								{
-									$this->result($return['result']);
+									$this->umil_start($return);
+									$this->umil_end();
 								}
+								else if (is_array($return) && isset($return['command']))
+								{
+									if (is_array($return['command']))
+									{
+										call_user_func_array(array($this, 'umil_start'), $return['command']);
+									}
+									else
+									{
+										$this->umil_start($return['command']);
+									}
 
-								$this->umil_end();
+									if (isset($return['result']))
+									{
+										$this->result($return['result']);
+									}
+
+									$this->umil_end();
+								}
 							}
 						}
 					}
@@ -1125,11 +1141,10 @@ class umil
 			$basename = (isset($data['module_basename'])) ? $data['module_basename'] : '';
 			$basename = str_replace(array('/', '\\'), '', $basename);
 			$class = str_replace(array('/', '\\'), '', $class);
-			$include_path = ($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path;
 			$info_file = "$class/info/{$class}_$basename.$phpEx";
 
 			// The manual and automatic ways both failed...
-			if (!file_exists($include_path . $info_file))
+			if (!file_exists((($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path) . $info_file))
 			{
 				$this->umil_start('MODULE_ADD', $class, 'UNKNOWN');
 				return $this->umil_end('FAIL');
@@ -1139,7 +1154,7 @@ class umil
 
 			if (!class_exists($classname))
 			{
-				include($include_path . $info_file);
+				include((($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path) . $info_file);
 			}
 
 			$info = new $classname;
@@ -1156,6 +1171,7 @@ class umil
 						'module_langname'	=> $module_info['title'],
 						'module_mode'		=> $mode,
 						'module_auth'		=> $module_info['auth'],
+						'module_display'	=> (isset($module_info['display'])) ? $module_info['display'] : true,
 					);
 
 					// Run the "manual" way with the data we've collected.
@@ -1269,10 +1285,9 @@ class umil
 			// Automatic method
 			$basename = str_replace(array('/', '\\'), '', $module['module_basename']);
 			$class = str_replace(array('/', '\\'), '', $class);
-			$include_path = ($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path;
 			$info_file = "$class/info/{$class}_$basename.$phpEx";
 
-			if (!file_exists($include_path . $info_file))
+			if (!file_exists((($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path) . $info_file))
 			{
 				return;
 			}
@@ -1281,7 +1296,7 @@ class umil
 
 			if (!class_exists($classname))
 			{
-				include($include_path . $info_file);
+				include((($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path) . $info_file);
 			}
 
 			$info = new $classname;
@@ -1864,8 +1879,7 @@ class umil
 	/**
 	* Table Add
 	*
-	* Currently this only supports input from the array format of db_tools or create_schema_files.
-	* Input of a MySQL formatted creation query is a planned option for the future (that method would create the array format required from the SQL query)
+	* This only supports input from the array format of db_tools or create_schema_files.
 	*/
 	function table_add($table_name, $table_data = array())
 	{
@@ -1907,14 +1921,23 @@ class umil
 		}
 
 		$db_tools = new phpbb_db_tools($db);
-		$available_dbms = get_available_dbms($dbms);
 
-		$sql_query = $this->create_table_sql($table_name, $table_data);
-		$sql_query = split_sql_file($sql_query, $available_dbms[$dbms]['DELIM']);
-
-		foreach ($sql_query as $sql)
+		if (method_exists($db_tools, 'sql_create_table'))
 		{
-			$db->sql_query($sql);
+			// Added in 3.0.5
+			$db_tools->sql_create_table($table_name, $table_data);
+		}
+		else
+		{
+			$available_dbms = get_available_dbms($dbms);
+
+			$sql_query = $this->create_table_sql($table_name, $table_data);
+			$sql_query = split_sql_file($sql_query, $available_dbms[$dbms]['DELIM']);
+
+			foreach ($sql_query as $sql)
+			{
+				$db->sql_query($sql);
+			}
 		}
 
 		return $this->umil_end();
@@ -1948,7 +1971,23 @@ class umil
 			return $this->umil_end('TABLE_NOT_EXIST', $table_name);
 		}
 
-		$db->sql_query('DROP TABLE ' . $table_name);
+		if (!class_exists('phpbb_db_tools'))
+		{
+			global $phpbb_root_path, $phpEx;
+			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
+		}
+
+		$db_tools = new phpbb_db_tools($db);
+
+		if (method_exists($db_tools, 'sql_table_drop'))
+		{
+			// Added in 3.0.5
+			$db_tools->sql_table_drop($table_name);
+		}
+		else
+		{
+			$db->sql_query('DROP TABLE ' . $table_name);
+		}
 
 		return $this->umil_end();
 	}
@@ -2683,7 +2722,7 @@ class umil
 			case 'mysql_41':
 				// Remove last line delimiter...
 				$sql = substr($sql, 0, -2);
-				$sql .= "\n) CHARACTER SET `utf8` COLLATE `utf8_bin`;\n\n";
+				$sql .= "\n) CHARACTER SET utf8 COLLATE utf8_bin;\n\n";
 			break;
 
 			// Create Generator
