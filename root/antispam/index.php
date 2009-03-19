@@ -189,7 +189,7 @@ switch ($mode)
 				$data = array(
 					'username'	=> $user_row['username'],
 					'email'		=> $user_row['user_email'],
-					'ip_addr'	=> $user->ip,
+					'ip_addr'	=> $user_row['user_ip'],
 					'api_key'	=> $config['asacp_sfs_key'],
 				);
 
