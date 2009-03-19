@@ -64,6 +64,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>[Fix] Bad redirect when selecting No on antispam/index.php (#11)</change>
 			</changelog>
 		</entry>
+		<entry>
+			<date>2009-00-00</date>
+			<rev-version>1.0.1-dev</rev-version>
+			<changelog lang="en">
+				<change>[Fix] Sending incorrect information to Stop Forum Spam #33</change>
+			</changelog>
+		</entry>
 	</history>
 
 	<link-group>
