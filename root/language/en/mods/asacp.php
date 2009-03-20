@@ -39,6 +39,8 @@ $lang = array_merge($lang, array(
 
 	'IP_SEARCH'				=> 'IP Search',
 
+	'MORE'					=> 'More',
+
 	'PROFILE_SPAM_DENIED'	=> 'One or more of the fields entered was marked as spam.',
 
 	'REMOVE_ASACP'			=> 'Remove Anti-Spam ACP',

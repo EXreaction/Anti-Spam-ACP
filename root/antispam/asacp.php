@@ -575,13 +575,20 @@ class antispam
 
 					$sql = 'SELECT DISTINCT(poster_ip) FROM ' . POSTS_TABLE . '
 						WHERE poster_id = ' . $user_id . "
-						AND poster_ip <> '" . $user_row['user_ip'] . "'";
-					$result = $db->sql_query($sql);
+						AND poster_ip <> '" . $user_row['user_ip'] . "'
+						ORDER BY post_id DESC";
+					$result = $db->sql_query_limit($sql, 5);
 					while ($row = $db->sql_fetchrow($result))
 					{
 						$ip_search[] = str_replace('{IP}', $row['poster_ip'], $u_ip_search);
 					}
 					$db->sql_freeresult($result);
+
+					if (($user_row['user_ip'] && sizeof($ip_search) == 6) || (!$user_row['user_ip'] && sizeof($ip_search) == 5))
+					{
+						$ip_search[4] = '<a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=display_ips&amp;u=' . $user_id) . '">' . $user->lang['MORE'] . '...</a>';
+						unset($ip_search[5]);
+					}
 
 					self::cp_row_output($user->lang['IP_SEARCH'], implode('<br />', $ip_search), 'custom_fields');
 				}

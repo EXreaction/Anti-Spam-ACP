@@ -37,6 +37,44 @@ $return = '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $re
 
 switch ($mode)
 {
+	case 'display_ips' :
+		if (!$auth->acl_get('a_asacp_ip_search'))
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+
+		$sql = 'SELECT user_ip FROM ' . USERS_TABLE . ' WHERE user_id = ' . $user_id;
+		$result = $db->sql_query($sql);
+		$user_row = $db->sql_fetchrow($result);
+		$db->sql_freeresult($result);
+
+		if (!$user_row)
+		{
+			trigger_error('NO_USER');
+		}
+
+		$ip_search = array();
+		$u_ip_search = '<a href="' . append_sid("{$phpbb_root_path}adm/index.$phpEx", 'i=asacp&amp;mode=ip_search&amp;ip={IP}', true, $user->session_id) . '">{IP}</a>';
+
+		if ($user_row['user_ip'])
+		{
+			$ip_search[] = str_replace('{IP}', $user_row['user_ip'], $u_ip_search);
+		}
+
+		$sql = 'SELECT DISTINCT(poster_ip) FROM ' . POSTS_TABLE . '
+			WHERE poster_id = ' . $user_id . "
+			AND poster_ip <> '" . $user_row['user_ip'] . "'
+			ORDER BY post_id DESC";
+		$result = $db->sql_query($sql);
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$ip_search[] = str_replace('{IP}', $row['poster_ip'], $u_ip_search);
+		}
+		$db->sql_freeresult($result);
+
+		trigger_error(implode('<br />', $ip_search) . $return);
+	break;
+
 	case 'user_flag' :
 		if (!$auth->acl_get('a_asacp_user_flag'))
 		{
