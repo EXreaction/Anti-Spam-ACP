@@ -69,6 +69,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<rev-version>1.0.1-dev</rev-version>
 			<changelog lang="en">
 				<change>[Fix] Sending incorrect information to Stop Forum Spam #33</change>
+				<change>[Fix] Limit the number of IP addresses shown in the user's profile to 4 or 5 #22</change>
 			</changelog>
 		</entry>
 	</history>
