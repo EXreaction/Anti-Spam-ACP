@@ -739,7 +739,7 @@ class umil
 							{
 								if (!($fp = @fopen("{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file", 'r')))
 								{
-									return $this->umil_end('FAIL');
+									return $this->umil_end('FILE_COULD_NOT_READ', "{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file");
 								}
 								$template_data = fread($fp, filesize("{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file"));
 								fclose($fp);
@@ -1126,6 +1126,13 @@ class umil
 			return;
 		}
 
+		// Prevent stupid things like trying to add a module with no name or any data on it
+		if (empty($data))
+		{
+			$this->umil_start('MODULE_ADD', $class, 'UNKNOWN');
+			return $this->umil_end('FAIL');
+		}
+
         // Allows '' to be sent
 		$parent = (!$parent) ? 0 : $parent;
 
@@ -1146,7 +1153,7 @@ class umil
 			// The manual and automatic ways both failed...
 			if (!file_exists((($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path) . $info_file))
 			{
-				$this->umil_start('MODULE_ADD', $class, 'UNKNOWN');
+				$this->umil_start('MODULE_ADD', $class, $info_file);
 				return $this->umil_end('FAIL');
 			}
 
@@ -1198,10 +1205,15 @@ class umil
 
 			if (!$row)
 			{
-				return $this->umil_end('FAIL');
+				return $this->umil_end('PARENT_NOT_EXIST');
 			}
 
-			$data['parent_id'] = $row['module_id'];
+			$parent = $data['parent_id'] = $row['module_id'];
+		}
+
+		if ($this->module_exists($class, $parent, $data['module_langname']))
+		{
+			return $this->umil_end('MODULE_ALREADY_EXIST');
 		}
 
 		if (!class_exists('acp_modules'))
@@ -1279,7 +1291,8 @@ class umil
 			// Failed.
 			if (!isset($module['module_basename']))
 			{
-				return;
+				$this->umil_start('MODULE_REMOVE', $class, 'UNKNOWN');
+				return $this->umil_end('FAIL');
 			}
 
 			// Automatic method
@@ -1289,7 +1302,8 @@ class umil
 
 			if (!file_exists((($include_path === false) ? $phpbb_root_path . 'includes/' : $include_path) . $info_file))
 			{
-				return;
+				$this->umil_start('MODULE_REMOVE', $class, $info_file);
+				return $this->umil_end('FAIL');
 			}
 
 			$classname = "{$class}_{$basename}_info";
@@ -1906,7 +1920,7 @@ class umil
 
 		if (!is_array($table_data))
 		{
-			return $this->umil_end('FAIL');
+			return $this->umil_end('NO_TABLE_DATA');
 		}
 
 		if (!function_exists('get_available_dbms'))
