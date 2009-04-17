@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.0</mod-version>
+	<mod-version>1.0.1-dev</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -70,6 +70,8 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<changelog lang="en">
 				<change>[Fix] Sending incorrect information to Stop Forum Spam #33</change>
 				<change>[Fix] Limit the number of IP addresses shown in the user's profile to 4 or 5 #22</change>
+				<change>[Fix] Forgot to add the language file in ucp_pm_compose and posting #36</change>
+				<change>[Change] New option to ignore the post count limit for guest posting on the Spam Words check (so it always checks for guests) #37</change>
 			</changelog>
 		</entry>
 	</history>
@@ -90,6 +92,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<action type="before-add"><![CDATA[		// START Anti-Spam ACP
 		if ($config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
 		{
+			$user->add_lang('mods/asacp');
 			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
 			$error[] = $user->lang['SPAM_DENIED'];
 		}
@@ -219,6 +222,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		switch ($config['asacp_spam_words_posting_action'])
 		{
 			case 1 :
+				$user->add_lang('mods/asacp');
 				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $message_parser->message));
 				$error[] = $user->lang['SPAM_DENIED'];
 			break;
