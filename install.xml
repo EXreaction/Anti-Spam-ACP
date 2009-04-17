@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.1-dev</mod-version>
+	<mod-version>1.0.1</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -65,8 +65,8 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</changelog>
 		</entry>
 		<entry>
-			<date>2009-00-00</date>
-			<rev-version>1.0.1-dev</rev-version>
+			<date>2009-04-17</date>
+			<rev-version>1.0.1</rev-version>
 			<changelog lang="en">
 				<change>[Fix] Sending incorrect information to Stop Forum Spam #33</change>
 				<change>[Fix] Limit the number of IP addresses shown in the user's profile to 4 or 5 #22</change>

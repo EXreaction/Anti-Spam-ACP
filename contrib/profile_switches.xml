@@ -9,7 +9,7 @@
 
 This should be installed if you plan on using the controls over Profile Field options, though it is not required.</description>
 
-	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.3 are not supported.
 
 Support by the author is only provided at http://www.lithiumstudios.org
 A small fee is required for support by the author unless otherwise specified by the author in the release topic.
@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.0</mod-version>
+	<mod-version>1.0.1</mod-version>
 
 	<installation>
 		<level>intermediate</level>

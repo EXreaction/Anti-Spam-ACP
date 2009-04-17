@@ -7,7 +7,7 @@
 	<title lang="en">Anti-Spam ACP</title>
 	<description lang="en">Prevents spam on your phpBB3 forum.</description>
 
-	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.3 are not supported.
 
 Support by the author is only provided at http://www.lithiumstudios.org
 A small fee is required for support by the author unless otherwise specified by the author in the release topic.
