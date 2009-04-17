@@ -12,7 +12,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '1.0.0');
+define('ASACP_VERSION', '1.0.1');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -713,15 +713,24 @@ class antispam
 	{
 		global $cache, $config, $db, $user;
 
-		if ($post_count === false)
-		{
-			$post_count = $user->data['user_posts'];
-		}
-
-		if (!$config['asacp_enable'] || !$config['asacp_spam_words_enable'] || ($post_count > $config['asacp_spam_words_post_limit'] && $config['asacp_spam_words_post_limit'] > 0))
+		if (!$config['asacp_enable'] || !$config['asacp_spam_words_enable'])
 		{
 			return false;
 		}
+
+		if ($user->data['is_registered'] || !$config['asacp_spam_words_guest_always'])
+		{
+			if ($post_count === false)
+			{
+				$post_count = $user->data['user_posts'];
+			}
+
+			if ($post_count > $config['asacp_spam_words_post_limit'] && $config['asacp_spam_words_post_limit'] > 0)
+			{
+				return false;
+			}
+		}
+		// else the user is a guest and the guest always check is on.
 
 		if (!class_exists('spam_words'))
 		{

@@ -420,6 +420,7 @@ class acp_asacp
 
 					'legend3'								=> 'ASACP_SPAM_WORDS',
 					'asacp_spam_words_enable'				=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_spam_words_guest_always'			=> array('lang' => 'ASACP_SPAM_WORDS_GUEST_ALWAYS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_spam_words_post_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
 					'asacp_spam_words_flag_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_FLAG_LIMIT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true),
 					'asacp_spam_words_posting_action'		=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_approval_action', 'explain' => true),

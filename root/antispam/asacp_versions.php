@@ -189,7 +189,12 @@ $versions = array(
 	'1.0.0'		=> array(
 		'config_add'	=> array(
 			array('asacp_profile_during_reg', false),
-		)
+		),
+	),
+	'1.0.1'		=> array(
+		'config_add'	=> array(
+			array('asacp_spam_words_guest_always', 1),
+		),
 	),
 );
 
