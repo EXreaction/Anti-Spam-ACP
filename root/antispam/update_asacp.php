@@ -14,10 +14,20 @@ if (!defined('IN_PHPBB'))
 
 if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
 {
-	trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+	if (!file_exists($phpbb_root_path . 'antispam/umil.' . $phpEx))
+	{
+		trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+	}
+	else
+	{
+		include($phpbb_root_path . 'antispam/umil.' . $phpEx);
+	}
+}
+else
+{
+	include($phpbb_root_path . 'umil/umil.' . $phpEx);
 }
 
-include($phpbb_root_path . 'umil/umil.' . $phpEx);
 $umil = new umil(true);
 
 include($phpbb_root_path . 'antispam/asacp_versions.' . $phpEx);
