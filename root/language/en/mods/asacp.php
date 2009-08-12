@@ -33,7 +33,7 @@ $lang = array_merge($lang, array(
 	'ASACP_BAN'				=> 'One Click Ban',
 	'ASACP_BAN_COMPLETE'	=> 'You have successfully banned the user.<br /><br /><a href="%s">Click here to return to the user\'s profile.</a>',
 	'ASACP_BAN_CONFIRM'		=> 'Are you sure you want to ban the user %s?  All of the actions as specified in the Anti-Spam ACP Settings to perform during a One Click Ban will be performed on this user.<br /><br /><strong>This can not be undone!</strong>',
-	'ASACP_CREDITS'			=> 'Protected by <a href="http://www.lithiumstudios.org" target="_blank">Anti-Spam ACP</a>',
+	'ASACP_CREDITS'			=> 'Protected by <a href="http://www.lithiumstudios.org">Anti-Spam ACP</a>',
 
 	'FOUNDER_ONLY'			=> 'You must be a Board Founder to access this page.',
 
