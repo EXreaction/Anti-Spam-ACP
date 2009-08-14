@@ -75,7 +75,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</changelog>
 		</entry>
 		<entry>
-			<date>2009-00-00</date>
+			<date>2009-08-15</date>
 			<rev-version>1.0.2</rev-version>
 			<changelog lang="en">
 				<change>3.0.6+ support</change>
@@ -148,7 +148,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			{
 				$server_url = generate_board_url();]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
-			antispam::ucp_register($user_id);
+			antispam::ucp_register($user_id, $error);
 			// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
