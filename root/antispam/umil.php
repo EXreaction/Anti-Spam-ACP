@@ -232,7 +232,7 @@ class umil
 		$args = func_get_args();
 		$this->command = call_user_func_array(array($this, 'get_output_text'), $args);
 
-		$this->result = $user->lang['SUCCESS'];
+		$this->result = (isset($user->lang['SUCCESS'])) ? $user->lang['SUCCESS'] : 'SUCCESS';
 		$this->db->sql_return_on_error(true);
 
 		//$this->db->sql_transaction('begin');

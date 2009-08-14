@@ -32,7 +32,8 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ADD_WORD'									=> 'Add Word',
 	'ALLOW_FIELD'								=> 'Allow',
-	'ASACP_BAN_CLEAR_OUTBOX'					=> 'Clear the user\'s PM outbox',
+	'ASACP_BAN_CLEAR_OUTBOX'					=> 'Clear user\'s PM outbox',
+	'ASACP_BAN_CLEAR_OUTBOX_EXPLAIN'			=> 'Removes all PMs from the user\'s outbox',
 	'ASACP_BAN_DELETE_AVATAR'					=> 'Delete Avatar',
 	'ASACP_BAN_DELETE_AVATAR_EXPLAIN'			=> 'Delete the user\'s Avatar when a One Click Ban action is performed',
 	'ASACP_BAN_DELETE_POSTS'					=> 'Delete Posts',

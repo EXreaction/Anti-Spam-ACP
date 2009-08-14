@@ -75,7 +75,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</changelog>
 		</entry>
 		<entry>
-			<date>2009-08-15</date>
+			<date>2009-00-00</date>
 			<rev-version>1.0.2</rev-version>
 			<changelog lang="en">
 				<change>3.0.6+ support</change>
@@ -215,7 +215,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 	// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
-			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message);]]></find>
+			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message, ($update_message || $update_subject) ? true : false);]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
 			if ($asacp_is_spam)
 			{
