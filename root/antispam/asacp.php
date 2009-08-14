@@ -491,7 +491,7 @@ class antispam
 						$ip_search[] = str_replace('{IP}', $user_row['user_ip'], $u_ip_search);
 					}
 
-					$sql = 'SELECT DISTINCT(poster_ip) FROM ' . POSTS_TABLE . '
+					$sql = 'SELECT DISTINCT(poster_ip), post_id FROM ' . POSTS_TABLE . '
 						WHERE poster_id = ' . $user_id . "
 						AND poster_ip <> '" . $user_row['user_ip'] . "'
 						ORDER BY post_id DESC";

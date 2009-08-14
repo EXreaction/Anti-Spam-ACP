@@ -143,6 +143,7 @@ $lang = array_merge($lang, array(
 	'SPAM_WORD_DELETE_SUCCESS'					=> 'Spam word deleted successfully.',
 	'SPAM_WORD_EDIT_SUCCESS'					=> 'Spam word edited successfully.',
 	'SPAM_WORD_TEXT'							=> 'Spam Word Text',
+	'SPAM_WORD_TEXT_EXPLAIN'					=> 'If using a regular expression, make sure you format it properly for <a href="http://us2.php.net/manual/en/function.preg-match.php">preg_match</a> (including the pattern delimiter)',
 
 	'UCP_AIM_POST_COUNT'						=> 'AOL Instant Messenger Post Count',
 	'UCP_AIM_POST_COUNT_EXPLAIN'				=> 'If AOL Instant Messenger is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
