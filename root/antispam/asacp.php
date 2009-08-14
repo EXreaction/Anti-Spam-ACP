@@ -12,7 +12,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '1.0.1');
+define('ASACP_VERSION', '1.0.2');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -111,88 +111,6 @@ class antispam
 		{
 			return array();
 		}
-
-		// Captcha stuff
-		$asacp_id = request_var('asacp_id', '');
-		$asacp_code = request_var('asacp_code', '');
-
-		$wrong_confirm = true;
-		if ($asacp_id)
-		{
-			$sql = 'SELECT code
-				FROM ' . CONFIRM_TABLE . "
-				WHERE confirm_id = '" . $db->sql_escape($asacp_id) . "'
-					AND session_id = '" . $db->sql_escape($user->session_id) . "'
-					AND confirm_type = " . CONFIRM_REG;
-			$result = $db->sql_query($sql);
-			$row = $db->sql_fetchrow($result);
-			$db->sql_freeresult($result);
-
-			if ($row)
-			{
-				if (strcasecmp($row['code'], $asacp_code) === 0)
-				{
-					$wrong_confirm = false;
-				}
-				else
-				{
-					self::add_log('LOG_INCORRECT_CODE', array($row['code'], $asacp_code));
-				}
-			}
-		}
-
-		if ($wrong_confirm)
-		{
-			$user->confirm_gc(CONFIRM_REG);
-
-			$sql = 'SELECT COUNT(session_id) AS attempts
-				FROM ' . CONFIRM_TABLE . "
-				WHERE session_id = '" . $db->sql_escape($user->session_id) . "'
-					AND confirm_type = " . CONFIRM_REG;
-			$result = $db->sql_query($sql);
-			$attempts = (int) $db->sql_fetchfield('attempts');
-			$db->sql_freeresult($result);
-
-			if ($config['max_reg_attempts'] && $attempts > $config['max_reg_attempts'])
-			{
-				trigger_error('TOO_MANY_REGISTERS');
-			}
-
-			$code = gen_rand_string(mt_rand(5, 8));
-			$asacp_id = md5(unique_id($user->ip));
-			$seed = hexdec(substr(unique_id(), 4, 10));
-
-			// compute $seed % 0x7fffffff
-			$seed -= 0x7fffffff * floor($seed / 0x7fffffff);
-
-			$sql = 'INSERT INTO ' . CONFIRM_TABLE . ' ' . $db->sql_build_array('INSERT', array(
-				'confirm_id'	=> (string) $asacp_id,
-				'session_id'	=> (string) $user->session_id,
-				'confirm_type'	=> (int) CONFIRM_REG,
-				'code'			=> (string) $code,
-				'seed'			=> (int) $seed,
-			));
-			$db->sql_query($sql);
-
-			$template->assign_vars(array(
-				'CONFIRM_IMG'			=> '<img src="' . append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=confirm&amp;id=' . $asacp_id . '&amp;type=' . CONFIRM_REG) . '" alt="" title="" />',
-
-				'S_CONFIRM_CODE_WRONG'	=> (isset($_POST['submit'])) ? true : false,
-				'S_HIDDEN_FIELDS'		=> '<input type="hidden" name="asacp_id" value="' . $asacp_id . '" />',
-				'S_UCP_ACTION'			=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register'),
-
-				'L_CONFIRM_EXPLAIN'		=> sprintf($user->lang['CONFIRM_EXPLAIN'], '<a href="mailto:' . htmlspecialchars($config['board_contact']) . '">', '</a>'),
-			));
-
-			return false;
-		}
-		else
-		{
-			return array(
-				'asacp_id'		=> $asacp_id,
-				'asacp_code'	=> $asacp_code,
-			);
-		}
 	}
 	//public static function ucp_preregister()
 
@@ -201,9 +119,8 @@ class antispam
 	*
 	* @param array $data Data from ucp_register
 	* @param array $error
-	* @param boolean $wrong_confirm
 	*/
-	public static function ucp_register($data, &$error, $wrong_confirm)
+	public static function ucp_register($data, &$error)
 	{
 		global $config, $user;
 
@@ -248,12 +165,6 @@ class antispam
 					}
 				break;
 			}
-		}
-
-		// Captcha stuff
-		if ($wrong_confirm && isset($data['captcha_code']))
-		{
-			self::add_log('LOG_INCORRECT_CODE', array($data['captcha_code'], $data['confirm_code']));
 		}
 
 		// Stop Forum Spam stuff
@@ -331,7 +242,7 @@ class antispam
 	*
 	* @param mixed $user_id
 	*/
-	public static function sfs_register($user_id)
+	public static function ucp_postregister($user_id, $user_row)
 	{
 		global $config, $db, $phpbb_root_path, $phpEx;
 
@@ -347,6 +258,11 @@ class antispam
 		if (self::$sfs_spam && $config['asacp_sfs_action'] == 2)
 		{
 			$profile_data['user_flagged'] = 1;
+			add_log('admin', 'LOG_USER_FLAGGED', $user_row['username']);
+		}
+		else if (self::$sfs_spam && ($config['asacp_sfs_action'] == 3 || $config['asacp_sfs_action'] == 4))
+		{
+			self::add_log('LOG_USER_SFS_ACTIVATION', array($user_id));
 		}
 
 		// Profile fields stuff
@@ -552,6 +468,8 @@ class antispam
 
 			if ($user_row)
 			{
+				$user_id = $user_row['user_id'];
+
 				// Output Flagged section
 				self::flagged_output($user_row['user_id'], $user_row, 'custom_fields');
 

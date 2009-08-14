@@ -4,10 +4,10 @@
 <mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.2.xsd">
 <header>
 	<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
-	<title lang="en">Anti-Spam ACP - Subsilver</title>
+	<title lang="en">Anti-Spam ACP</title>
 	<description lang="en">Prevents spam on your phpBB3 forum.</description>
 
-	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.3 are not supported.
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.6 are not supported.
 
 If you will be using the profile field controls you should install the profile switches instructions in the contrib/ folder.
 
@@ -24,12 +24,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.1</mod-version>
+	<mod-version>1.0.2</mod-version>
 
 	<installation>
 		<level>intermediate</level>
 		<time>120</time>
-		<target-version>3.0.5</target-version>
+		<target-version>3.0.6</target-version>
 	</installation>
 
 	<link-group>

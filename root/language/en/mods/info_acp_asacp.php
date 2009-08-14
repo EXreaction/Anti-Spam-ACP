@@ -47,6 +47,7 @@ $lang = array_merge($lang, array(
 	'LOG_EDITED_POST'				=> 'Edited a post',
 	'LOG_INCORRECT_CODE'			=> 'Entered in wrong confirm code.',
 	'LOG_INCORRECT_CODE_DATA'		=> 'Code Shown: "%s"<br />Code Entered: "%s"',
+	'LOG_USER_SFS_ACTIVATION'		=> '%s registered and was flagged as a possible spam account by Stop Forum Spam.',
 	'LOG_SENT_PM'					=> 'Sent a PM<br />To list: %s',
 	'LOG_SPAM_PM_DENIED'			=> 'A private message was flagged as spam and denied from being sent.<br />The message subject was:<br />%s<br /><br />The message was:<br />%s',
 	'LOG_SPAM_POST_DENIED'			=> 'A post was flagged as spam and denied from posting.<br />The message subject was:<br />%s<br /><br />The message was:<br />%s',

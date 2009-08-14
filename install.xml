@@ -7,7 +7,7 @@
 	<title lang="en">Anti-Spam ACP</title>
 	<description lang="en">Prevents spam on your phpBB3 forum.</description>
 
-	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.3 are not supported.
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.6 are not supported.
 
 If you will be using the profile field controls you should install the profile switches instructions in the contrib/ folder.
 
@@ -24,12 +24,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.1</mod-version>
+	<mod-version>1.0.2</mod-version>
 
 	<installation>
 		<level>intermediate</level>
 		<time>600</time>
-		<target-version>3.0.4</target-version>
+		<target-version>3.0.6</target-version>
 	</installation>
 
 	<history>
@@ -74,10 +74,20 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>[Change] New option to ignore the post count limit for guest posting on the Spam Words check (so it always checks for guests) #37</change>
 			</changelog>
 		</entry>
+		<entry>
+			<date>2009-08-15</date>
+			<rev-version>1.0.2</rev-version>
+			<changelog lang="en">
+				<change>3.0.6+ support</change>
+				<change>Multiple bugs fixed</change>
+				<change>Pre-registration captcha removed</change>
+			</changelog>
+		</entry>
 	</history>
 
 	<link-group>
 		<link type="contrib" href="contrib/profile_switches.xml" lang="en">Profile Switches Install [Recommended]</link>
+		<link type="contrib" href="contrib/profile_switches_subsilver2.xml" lang="en">subsilver2 Profile Switches Install [Recommended]</link>
 		<link type="template" href="subsilver2.xml" lang="en">subsilver2</link>
 	</link-group>
 </header>
@@ -130,53 +140,23 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<edit>
 			<find><![CDATA[include($phpbb_root_path . 'includes/functions_profile_fields.' . $phpEx);]]></find>
 			<action type="after-add"><![CDATA[		// START Anti-Spam ACP
-		$asacp_hidden = antispam::ucp_preregister();
-		if ($asacp_hidden === false)
-		{
-			$this->tpl_name = 'antispam/ucp_register';
-			return;
-		}
+		antispam::ucp_preregister();
 		// END Anti-Spam ACP]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[$s_hidden_fields = ($confirm_id) ? array('confirm_id' => $confirm_id) : array();]]></find>
-			<action type="after-add"><![CDATA[			// START Anti-Spam ACP
-			$s_hidden_fields = array_merge($s_hidden_fields, $asacp_hidden);
-			$asacp_coppa_url = '';
-			foreach ($asacp_hidden as $name => $value)
-			{
-				$asacp_coppa_url .= "&amp;$name=$value";
-			}
-			// END Anti-Spam ACP]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[					'U_COPPA_NO'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=0' . $add_lang),
-					'U_COPPA_YES'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=1' . $add_lang),]]></find>
-			<action type="replace-with"><![CDATA[					'U_COPPA_NO'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=0' . $add_lang . $asacp_coppa_url),
-					'U_COPPA_YES'		=> append_sid("{$phpbb_root_path}ucp.$phpEx", 'mode=register&amp;coppa=1' . $add_lang . $asacp_coppa_url),]]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[			if (!sizeof($error))
 			{
 				$server_url = generate_board_url();]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
-			$data['captcha_code'] = (isset($row['code'])) ? $row['code'] : '';
-			antispam::ucp_register($data, $error, $wrong_confirm);
+			antispam::ucp_register($user_id);
 			// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
 			<find><![CDATA[				// Register user...
 				$user_id = user_add($user_row, $cp_data);]]></find>
-			<action type="after-add"><![CDATA[
-				// START Anti-Spam ACP
-				antispam::sfs_register($user_id);
+			<action type="after-add"><![CDATA[				// START Anti-Spam ACP
+				antispam::ucp_postregister($user_id, $user_row);
 				// END Anti-Spam ACP]]></action>
-		</edit>
-		<edit>
-			<find><![CDATA[$s_hidden_fields = build_hidden_fields($s_hidden_fields);]]></find>
-			<action type="before-add"><![CDATA[		// START Anti-Spam ACP
-		$s_hidden_fields = array_merge($s_hidden_fields, $asacp_hidden);
-		// END Anti-Spam ACP]]></action>
 		</edit>
     </open>
 	<open src="includes/functions.php">
@@ -216,7 +196,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 			<find><![CDATA[// Store message, sync counters]]></find>
 			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
 	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
-	$is_spam = false;
+	$asacp_is_spam = false;
 	if ($config['asacp_spam_words_posting_action'] && antispam::spam_words(array($sc_title, $message_parser->message)))
 	{
 		switch ($config['asacp_spam_words_posting_action'])
@@ -228,9 +208,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 			break;
 
 			case 2 :
-				// Not the nicest way to do it, but by far the easiest.
-				$config['enable_queue_trigger'] = true;
-				$config['queue_trigger_posts'] = $user->data['user_posts'] + 1;
+				$asacp_is_spam = true;
 			break;
 		}
 	}
@@ -238,9 +216,19 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		</edit>
 		<edit>
 			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message);]]></find>
+			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
+			if ($asacp_is_spam)
+			{
+				$data['force_approved_state'] = false;
+			}
+			// END Anti-Spam ACP]]></action>
 			<action type="after-add"><![CDATA[			// START Anti-Spam ACP
 			antispam::submit_post($mode, $data['post_id']);
 			// END Anti-Spam ACP]]></action>
+		</edit>
+		<edit>
+			<find><![CDATA[if (!$auth->acl_get('f_noapprove', $data['forum_id']) && !$auth->acl_get('m_approve', $data['forum_id']))]]></find>
+			<action type="replace-with"><![CDATA[if ($asacp_is_spam || (!$auth->acl_get('f_noapprove', $data['forum_id']) && !$auth->acl_get('m_approve', $data['forum_id'])))]]></action>
 		</edit>
     </open>
 	<open src="viewtopic.php">

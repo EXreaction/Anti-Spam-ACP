@@ -196,6 +196,14 @@ $versions = array(
 			array('asacp_spam_words_guest_always', 1),
 		),
 	),
+	'1.0.2'		=> array(
+		'config_add'		=> array(
+			array('asacp_ocban_clear_outbox', true),
+		),
+		'table_index_add'	=> array(
+			array('phpbb_spam_words', 'word_text'),
+		),
+	),
 );
 
 function asacp_update($action, $version)

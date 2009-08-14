@@ -120,7 +120,9 @@ class acp_asacp
 					break;
 
 					default :
-						$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE);
+						$sql = 'SELECT * FROM ' . SPAM_WORDS_TABLE . '
+							ORDER BY word_text ASC';
+						$result = $db->sql_query($sql);
 						while ($row = $db->sql_fetchrow($result))
 						{
 							$template->assign_block_vars('spam_words', array(
@@ -415,10 +417,7 @@ class acp_asacp
 					'asacp_notify_new_flag'					=> array('lang' => 'ASACP_NOTIFY_NEW_FLAG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_profile_during_reg'				=> array('lang' => 'ASACP_PROFILE_DURING_REG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 
-					'legend2'								=> 'ASACP_REGISTER_SETTINGS',
-					'asacp_reg_captcha'						=> array('lang' => 'ASACP_REG_CAPTCHA', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-
-					'legend3'								=> 'ASACP_SPAM_WORDS',
+					'legend2'								=> 'ASACP_SPAM_WORDS',
 					'asacp_spam_words_enable'				=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_spam_words_guest_always'			=> array('lang' => 'ASACP_SPAM_WORDS_GUEST_ALWAYS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_spam_words_post_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
@@ -427,15 +426,16 @@ class acp_asacp
 					'asacp_spam_words_pm_action'			=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 					'asacp_spam_words_profile_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 
-					'legend4'								=> 'ASACP_SFS_SETTINGS',
+					'legend3'								=> 'ASACP_SFS_SETTINGS',
 					'asacp_sfs_min_freq'					=> array('lang' => 'ASACP_SFS_MIN_FREQ', 'validate' => 'int:1', 'type' => 'text:6:10', 'explain' => true),
 					'asacp_sfs_action'						=> array('lang' => 'ASACP_SFS_ACTION', 'validate' => 'int:0:5', 'type' => 'custom', 'method' => 'sfs_action', 'explain' => true),
 					'asacp_sfs_key'							=> array('lang' => 'ASACP_SFS_KEY', 'validate' => 'string', 'type' => 'text:14:14', 'explain' => true),
 
-					'legend5'								=> 'ASACP_BAN_SETTINGS',
+					'legend4'								=> 'ASACP_BAN_SETTINGS',
 					'asacp_ocban_username'					=> array('lang' => 'ASACP_BAN_USERNAME', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_move_to_group'				=> array('lang' => 'ASACP_BAN_MOVE_TO_GROUP', 'validate' => 'int:0', 'type' => 'custom', 'method' => 'group_list', 'explain' => true),
 					'asacp_ocban_delete_posts'				=> array('lang' => 'ASACP_BAN_DELETE_POSTS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_ocban_clear_outbox'				=> array('lang' => 'ASACP_BAN_CLEAR_OUTBOX', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_delete_avatar'				=> array('lang' => 'ASACP_BAN_DELETE_AVATAR', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_delete_signature'			=> array('lang' => 'ASACP_BAN_DELETE_SIGNATURE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_delete_profile_fields'		=> array('lang' => 'ASACP_BAN_DELETE_PROFILE_FIELDS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),

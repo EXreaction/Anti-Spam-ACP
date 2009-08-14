@@ -201,6 +201,38 @@ switch ($mode)
 				$db->sql_query($sql);
 			}
 
+			if ($config['asacp_ocban_clear_outbox'])
+			{
+				$msg_ids = array();
+
+				$sql = 'SELECT msg_id
+					FROM ' . PRIVMSGS_TO_TABLE . "
+					WHERE author_id = $user_id
+						AND folder_id = " . PRIVMSGS_OUTBOX;
+				$result = $db->sql_query($sql);
+
+				if ($row = $db->sql_fetchrow($result))
+				{
+					if (!function_exists('delete_pm'))
+					{
+						include($phpbb_root_path . 'includes/functions_privmsgs.' . $phpEx);
+					}
+
+					do
+					{
+						$msg_ids[] = (int) $row['msg_id'];
+					}
+					while ($row = $db->sql_fetchrow($result));
+
+					$db->sql_freeresult($result);
+
+					delete_pm($user_id, $msg_ids, PRIVMSGS_OUTBOX);
+
+					add_log('admin', 'LOG_USER_DEL_OUTBOX', $user_row['username']);
+				}
+				$db->sql_freeresult($result);
+			}
+
 			if ($config['asacp_ocban_delete_profile_fields'])
 			{
 				$sql_ary = array(
