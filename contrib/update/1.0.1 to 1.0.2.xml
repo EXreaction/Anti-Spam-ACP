@@ -72,7 +72,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			antispam::ucp_register($data, $error, $wrong_confirm);
 			// END Anti-Spam ACP]]></find>
 			<action type="replace-with"><![CDATA[			// START Anti-Spam ACP
-			antispam::ucp_register($user_id, $error);
+			antispam::ucp_register($data, $error);
 			// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>

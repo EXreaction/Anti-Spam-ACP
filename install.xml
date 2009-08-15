@@ -148,7 +148,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			{
 				$server_url = generate_board_url();]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
-			antispam::ucp_register($user_id, $error);
+			antispam::ucp_register($data, $error);
 			// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
