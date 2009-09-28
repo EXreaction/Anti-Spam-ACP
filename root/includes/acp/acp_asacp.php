@@ -80,6 +80,11 @@ class acp_asacp
 
 						if ($submit)
 						{
+							if ($word_data['word_regex'] && substr($word_data['word_text'], 0, 1) != substr($word_data['word_text'], -1))
+							{
+								trigger_error('SPAM_WORD_TEXT_EXPLAIN');
+							}
+
 							if ($action == 'add')
 							{
 								$db->sql_query('INSERT INTO ' . SPAM_WORDS_TABLE . ' ' . $db->sql_build_array('INSERT', $word_data));

@@ -81,6 +81,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>3.0.6+ support</change>
 				<change>Multiple bugs fixed</change>
 				<change>Pre-registration captcha removed</change>
+				<change>A few sanity checks</change>
 			</changelog>
 		</entry>
 	</history>
