@@ -198,7 +198,7 @@ $versions = array(
 	),
 	'1.0.2'		=> array(
 		'config_add'		=> array(
-			array('asacp_ocban_clear_outbox', true),
+			array('asacp_ocban_clear_outbox', false),
 		),
 		'table_index_add'	=> array(
 			array('phpbb_spam_words', 'word_text'),
