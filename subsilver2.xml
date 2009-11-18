@@ -4,7 +4,7 @@
 <mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.3.xsd">
 <header>
 	<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
-	<title lang="en">Anti-Spam ACP</title>
+	<title lang="en">Anti-Spam ACP [subsilver2]</title>
 	<description lang="en">Prevents spam on your phpBB3 forum.</description>
 
 	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.6 are not supported.
