@@ -488,7 +488,7 @@ class acp_asacp
 			if (!$row['group_founder_manage'] || $user->data['user_type'] == USER_FOUNDER)
 			{
 				$lang = (isset($user->lang[$row['group_name']])) ? $user->lang[$row['group_name']] : ((isset($user->lang['G_' . $row['group_name']])) ? $user->lang['G_' . $row['group_name']] : $row['group_name']);
-				$return .= '<option value="' . $row['group_id'] . (($value == $row['group_id']) ? ' selected="selected"' : '') . '">' . $lang . '</option>';
+				$return .= '<option value="' . $row['group_id'] . '"' . (($value == $row['group_id']) ? ' selected="selected"' : '') . '>' . $lang . '</option>';
 			}
 		}
 		$db->sql_freeresult($result);
