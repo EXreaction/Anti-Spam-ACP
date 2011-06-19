@@ -90,6 +90,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<rev-version>1.0.3</rev-version>
 			<changelog lang="en">
 				<change>URL Encode stopforumspam request #118</change>
+				<change>Allow pattern modifiers on spam word regular expressions #162</change>
 			</changelog>
 		</entry>
 	</history>

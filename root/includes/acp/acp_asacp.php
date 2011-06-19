@@ -80,9 +80,13 @@ class acp_asacp
 
 						if ($submit)
 						{
-							if ($word_data['word_regex'] && substr($word_data['word_text'], 0, 1) != substr($word_data['word_text'], -1))
+							if ($word_data['word_regex'])
 							{
-								trigger_error('SPAM_WORD_TEXT_EXPLAIN');
+								  $delim = substr($word_data['word_text'], 0, 1);
+                  if (strrpos($word_data['word_text'], $delim) == 0)
+                  {
+                      trigger_error('SPAM_WORD_TEXT_EXPLAIN');
+                  }
 							}
 
 							if ($action == 'add')
