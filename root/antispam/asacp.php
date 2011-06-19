@@ -177,8 +177,8 @@ class antispam
 			}
 
 			$stop_forum_spam_urls = array(
-				'api?username=' . $data['username'],
-				'api?email=' . $data['email'],
+				'api?username=' . urlencode($data['username']),
+				'api?email=' . urlencode($data['email']),
 				//'api?ip=' . $user->ip,
 			);
 

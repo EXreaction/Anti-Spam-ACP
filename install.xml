@@ -24,12 +24,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.2</mod-version>
+	<mod-version>1.0.3</mod-version>
 
 	<installation>
 		<level>intermediate</level>
 		<time>600</time>
-		<target-version>3.0.6</target-version>
+		<target-version>3.0.9</target-version>
 	</installation>
 
 	<history>
@@ -83,6 +83,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>Multiple bugs fixed</change>
 				<change>Pre-registration captcha removed</change>
 				<change>A few sanity checks</change>
+			</changelog>
+		</entry>
+		<entry>
+			<date>2011-06-18</date>
+			<rev-version>1.0.3</rev-version>
+			<changelog lang="en">
+				<change>URL Encode stopforumspam request #118</change>
 			</changelog>
 		</entry>
 	</history>
