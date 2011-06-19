@@ -229,6 +229,7 @@ class antispam
 					break;
 
 					case 5 :
+            $user->add_lang('mods/antispam');
 						$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 					break;
 				}

@@ -92,6 +92,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>URL Encode stopforumspam request #118</change>
 				<change>Allow pattern modifiers on spam word regular expressions #162</change>
 				<change>Fix group selected on one click ban settings #163</change>
+				<change>Fix PHP Notice of Undefined index: PROFILE_SPAM_DENIED #166</change>
 			</changelog>
 		</entry>
 	</history>
