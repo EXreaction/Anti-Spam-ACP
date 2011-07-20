@@ -204,7 +204,8 @@ $versions = array(
       array('phpbb_spam_words', 'word_text'),
     ),
   ),
-	'1.0.3'		=> array(),
+  '1.0.3'       => array(),
+	'1.0.3-pl1'		=> array(),
 );
 
 function asacp_update($action, $version)

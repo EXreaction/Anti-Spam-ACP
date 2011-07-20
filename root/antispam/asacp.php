@@ -12,7 +12,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '1.0.3');
+define('ASACP_VERSION', '1.0.3-pl1');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -229,7 +229,7 @@ class antispam
 					break;
 
 					case 5 :
-            $user->add_lang('mods/antispam');
+            $user->add_lang('mods/asacp');
 						$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 					break;
 				}
