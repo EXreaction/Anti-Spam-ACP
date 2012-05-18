@@ -522,10 +522,10 @@ class antispam
 			}
 		}
 
-		if ($user->data['user_flag_new'] && $config['asacp_notify_new_flag'] && $auth->acl_get('a_asacp_user_flag'))
+		if ($user->data['user_flag_new'] && $config['asacp_notify_new_flag'] && $auth->acl_get('m_asacp_user_flag'))
 		{
 			global $phpbb_root_path, $phpEx, $template;
-			$template->assign_var('U_USER_FLAG_NEW', append_sid("{$phpbb_root_path}adm/index.$phpEx", 'i=asacp&amp;mode=flag', true, $user->session_id));
+			$template->assign_var('U_USER_FLAG_NEW', append_sid("{$phpbb_root_path}antispam/index.$phpEx","mode=view_flag_log"));
 		}
 	}
 	//public static function page_header()
@@ -544,7 +544,7 @@ class antispam
 	{
 		global $auth, $config;
 
-		if (!$config['asacp_enable'] || !$config['asacp_user_flag_enable'] || !$auth->acl_get('a_asacp_user_flag'))
+		if (!$config['asacp_enable'] || !$config['asacp_user_flag_enable'] || !$auth->acl_get('m_asacp_user_flag'))
 		{
 			return;
 		}

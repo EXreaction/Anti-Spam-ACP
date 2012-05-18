@@ -75,8 +75,229 @@ switch ($mode)
 		trigger_error(implode('<br />', $ip_search) . $return);
 	break;
 
+	case 'view_flag_log' :
+		if (!$auth->acl_get('m_asacp_user_flag'))
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+
+		$user->add_lang(array('acp/common', 'acp/board', 'mods/acp_asacp', 'mods/info_acp_asacp', 'install'));
+		include($phpbb_root_path . 'antispam/acp_functions.' . $phpEx);
+
+		$error = $notify = array();
+		$submit = (isset($_POST['submit'])) ? true : false;
+		$action = request_var('action', '');
+
+		add_form_key('as_acp');
+		if ($submit && !check_form_key('as_acp'))
+		{
+			trigger_error($user->lang['FORM_INVALID'] . ' ' . append_sid("{$phpbb_root_path}antispam/index.$phpEx","mode=view_flag_log"), E_USER_WARNING);
+		}
+
+		// Reset the user flag new notification
+		if ($user->data['user_flag_new'])
+		{
+			$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 0 WHERE user_id = ' . $user->data['user_id']);
+		}
+
+		$user->add_lang('mcp');
+
+		// Set up general vars
+		$start		= request_var('start', 0);
+		$deletemark = (!empty($_POST['delmarked'])) ? true : false;
+		$deleteall	= (!empty($_POST['delall'])) ? true : false;
+		$marked		= request_var('mark', array(0));
+
+		// Sort keys
+		$sort_days	= request_var('st', 0);
+		$sort_key	= request_var('sk', 't');
+		$sort_dir	= request_var('sd', 'd');
+
+		// Delete entries if requested and able
+		if (($deletemark || $deleteall) && $auth->acl_get('a_clearlogs'))
+		{
+			if (confirm_box(true))
+			{
+				$where_sql = '';
+
+				if ($deletemark && sizeof($marked))
+				{
+					$sql_in = array();
+					foreach ($marked as $mark)
+					{
+						$sql_in[] = $mark;
+					}
+					$where_sql = ' AND ' . $db->sql_in_set('log_id', $sql_in);
+					unset($sql_in);
+				}
+
+				if ($where_sql || $deleteall)
+				{
+					$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 0');
+
+					$sql = 'DELETE FROM ' . SPAM_LOG_TABLE . '
+						WHERE log_type = ' . (($mode == 'log') ? 1 : 2) .
+						$where_sql;
+					$db->sql_query($sql);
+
+					if ($deleteall)
+					{
+						add_log('admin', 'LOG_CLEAR_SPAM_LOG');
+					}
+				}
+			}
+			else
+			{
+				confirm_box(false, $user->lang['CONFIRM_OPERATION'], build_hidden_fields(array(
+					'start'		=> $start,
+					'delmarked'	=> $deletemark,
+					'delall'	=> $deleteall,
+					'mark'		=> $marked,
+					'st'		=> $sort_days,
+					'sk'		=> $sort_key,
+					'sd'		=> $sort_dir,
+					'mode'		=> $mode,
+					'action'	=> append_sid("{$phpbb_root_path}antispam/index.$phpEx","mode=view_flag_log")))
+				);
+			}
+		}
+
+		// Sorting
+		$limit_days = array(0 => $user->lang['ALL_ENTRIES'], 1 => $user->lang['1_DAY'], 7 => $user->lang['7_DAYS'], 14 => $user->lang['2_WEEKS'], 30 => $user->lang['1_MONTH'], 90 => $user->lang['3_MONTHS'], 180 => $user->lang['6_MONTHS'], 365 => $user->lang['1_YEAR']);
+		$sort_by_text = array('t' => $user->lang['SORT_DATE'], 'u' => $user->lang['SORT_USERNAME'], 'i' => $user->lang['SORT_IP'], 'o' => $user->lang['SORT_ACTION']);
+		$sort_by_sql = array('t' => 'l.log_time', 'u' => 'u.username_clean', 'i' => 'l.log_ip', 'o' => 'l.log_operation');
+
+		$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
+		gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
+
+		// Define where and sort sql for use in displaying logs
+		$sql_days = ($sort_days) ? (time() - ($sort_days * 86400)) : 0;
+		$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
+
+		// Grab log data
+		$log_data = array();
+		$log_count = 0;
+
+		view_spam_log('flag', $log_data, $log_count, $config['topics_per_page'], $start, '', $sql_days, $sql_sort);
+
+		$template->assign_vars(array(
+			'L_TITLE'		=> $user->lang['ASACP_FLAG_LOG'],
+			'L_EXPLAIN'		=> '',
+
+			'S_ON_PAGE'		=> on_page($log_count, $config['topics_per_page'], $start),
+			'PAGINATION'	=> generate_pagination(append_sid("{$phpbb_root_path}antispam/index.$phpEx","mode=view_flag_log&$u_sort_param"), $log_count, $config['topics_per_page'], $start, true),
+
+			'S_LIMIT_DAYS'	=> $s_limit_days,
+			'S_SORT_KEY'	=> $s_sort_key,
+			'S_SORT_DIR'	=> $s_sort_dir,
+			'S_CLEARLOGS'	=> $auth->acl_get('a_clearlogs'),
+		));
+
+		foreach ($log_data as $row)
+		{
+			$template->assign_block_vars('log', array(
+				'USERNAME'			=> $row['username_full'],
+				'REPORTEE_USERNAME'	=> ($row['reportee_username'] && $row['user_id'] != $row['reportee_id']) ? $row['reportee_username_full'] : '',
+
+				'IP'				=> '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i=asacp&amp;mode=ip_search&amp;ip={$row['ip']}") . '">' . $row['ip'] . '</a>',
+				'DATE'				=> $user->format_date($row['time']),
+				'ACTION'			=> $row['action'],
+				'DATA'				=> (sizeof($row['data'])) ? @vsprintf($user->lang[$row['operation'] . '_DATA'], $row['data']) : '',
+				'ID'				=> $row['id'],
+			));
+		}
+
+		page_header($user->lang['ASACP_FLAG_LOG'], false);
+
+		$template->set_filenames(array(
+			'body' => 'antispam/acp_logs.html',
+		));
+
+		page_footer();
+	break;
+	//case 'flag' :
+
+	case 'flag_list' :
+		if (!$auth->acl_get('m_asacp_user_flag'))
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+
+		$user->add_lang(array('acp/common', 'acp/board', 'mods/acp_asacp', 'mods/info_acp_asacp', 'install', 'memberlist'));
+		include($phpbb_root_path . 'antispam/acp_functions.' . $phpEx);
+
+		$error = $notify = array();
+		$submit = (isset($_POST['submit'])) ? true : false;
+		$action = request_var('action', '');
+
+		add_form_key('as_acp');
+		if ($submit && !check_form_key('as_acp'))
+		{
+			trigger_error($user->lang['FORM_INVALID'] . ' ' . append_sid("{$phpbb_root_path}antispam/index.$phpEx","mode=view_flag_log"), E_USER_WARNING);
+		}
+
+		$start = request_var('start', 0);
+		$limit = request_var('limit', 20);
+
+		$db->sql_query('SELECT count(user_id) as cnt FROM ' . USERS_TABLE . ' WHERE user_flagged = 1');
+		$total = $db->sql_fetchfield('cnt');
+
+		$sql = 'SELECT user_id, username, user_colour, user_ip, user_posts FROM ' . USERS_TABLE . ' WHERE user_flagged = 1';
+		$result = $db->sql_query_limit($sql, $limit, $start);
+
+		$cnt = 0;
+		$output = '';
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$row['username'] = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
+
+			if ($auth->acl_get('a_asacp_ip_search'))
+			{
+				$row['user_ip'] = '<a href="' . append_sid("{$phpbb_root_path}adm/index.$phpEx", "i=asacp&amp;mode=ip_search&amp;ip={$row['user_ip']}", true, $user->session_id) . '">' . $row['user_ip'] . '</a>';
+			}
+
+			if ($auth->acl_get('a_user'))
+			{
+				$row[$user->lang['ACTION']] = '<a href="' . append_sid("{$phpbb_root_path}adm/index.$phpEx", "i=users&amp;mode=overview&amp;u={$row['user_id']}", true, $user->session_id) . '">' . $user->lang['USER_ADMIN'] . '</a>';
+			}
+
+			unset($row['user_id'], $row['user_colour']);
+
+			$cnt++;
+			if ($cnt == 1)
+			{
+				$output .= asacp_display_table_head($row);
+			}
+
+			$output .= asacp_display_table_row($row, $cnt);
+		}
+		$db->sql_freeresult($result);
+
+		$template->assign_vars(array(
+			'L_TITLE'			=> $user->lang['ASACP_FLAG_LIST'],
+			'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_FLAG_LIST_EXPLAIN'],
+
+			'S_DATA_OUTPUT'		=> true,
+		));
+
+		$template->assign_block_vars('data_output', array(
+			'TITLE'			=> $user->lang['USERS'],
+			'DATA'			=> $output,
+			'PAGINATION'	=> ($total) ? generate_pagination(append_sid("{$phpbb_root_path}antispam/index.$phpEx","mode=view_flag_log&amp;limit=$limit"), $total, $limit, $start, true, 'data_output') : '',
+		));
+
+		page_header($user->lang['ASACP_FLAG_LIST'], false);
+
+		$template->set_filenames(array(
+			'body' => 'antispam/acp_asacp.html',
+		));
+
+		page_footer();
+	break;
+	//case 'flag_list' :
+
 	case 'user_flag' :
-		if (!$auth->acl_get('a_asacp_user_flag'))
+		if (!$auth->acl_get('m_asacp_user_flag'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -107,7 +328,7 @@ switch ($mode)
 	break;
 
 	case 'user_unflag' :
-		if (!$auth->acl_get('a_asacp_user_flag'))
+		if (!$auth->acl_get('m_asacp_user_flag'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}

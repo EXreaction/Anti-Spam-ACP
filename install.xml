@@ -87,10 +87,11 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</changelog>
 		</entry>
 		<entry>
-			<date>2012-05-17</date>
+			<date>2012-05-18</date>
 			<rev-version>1.0.4</rev-version>
 			<changelog lang="en">
 				<change>Change a_asacp_ban permission to m_asacp_ban (allow moderators to one click ban)</change>
+				<change>Change a_asacp_user_flag permission to m_asacp_user_flag (allow moderators to flag users and view the flag list)</change>
 				<change>Do not show the One Click Ban link in a user's profile if they are already banned</change>
 				<change>Display the list of actions to be taken when using the One Click Ban</change>
 				<change>Require the submission of evidence when submitting to Stop Forum Spam from One Click Ban</change>

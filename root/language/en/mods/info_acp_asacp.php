@@ -86,9 +86,9 @@ $lang = array_merge($lang, array(
 		'cat'						=> 'settings',
 	),
 
-	'acl_a_asacp_user_flag'			=> array(
+	'acl_m_asacp_user_flag'			=> array(
 		'lang'						=> 'Can Flag users, view the Flag Log, and view the Flagged User List',
-		'cat'						=> 'settings',
+		'cat'						=> 'misc',
 	),
 
 ));

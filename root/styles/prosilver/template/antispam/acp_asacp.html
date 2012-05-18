@@ -1,0 +1,159 @@
+<!-- INCLUDE antispam/adm_header.html -->
+
+<a name="maincontent"></a>
+
+<!-- IF U_BACK -->
+	<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
+<!-- ENDIF -->
+
+<h1>{L_TITLE}</h1>
+
+<p>{L_TITLE_EXPLAIN}</p>
+
+<!-- IF ERROR -->
+	<div class="errorbox">
+		<h3>{L_WARNING}</h3>
+		<p>{ERROR}</p>
+	</div>
+<!-- ENDIF -->
+
+<!-- IF S_SETTINGS -->
+	<fieldset>
+		<legend></legend>
+	<dl>
+		<dt><label>{L_CURRENT_VERSION}</label></dt>
+		<dd><strong>{CURRENT_VERSION}</strong></dd>
+	</dl>
+	<dl>
+		<dt><label>{L_LATEST_VERSION}</label></dt>
+		<dd><strong>{LATEST_VERSION}</strong></dd>
+	</dl>
+	</fieldset>
+<!-- ENDIF -->
+
+<!-- IF .options -->
+<form id="asacp_settings" method="post" action="{U_ACTION}">
+	<!-- BEGIN options -->
+		<!-- IF options.S_LEGEND -->
+			<!-- IF not options.S_FIRST_ROW -->
+				</fieldset>
+			<!-- ENDIF -->
+			<fieldset>
+				<legend>{options.LEGEND}</legend>
+		<!-- ELSE -->
+
+			<dl>
+				<dt><label for="{options.KEY}">{options.TITLE}:</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
+				<dd>{options.CONTENT}</dd>
+			</dl>
+
+		<!-- ENDIF -->
+	<!-- END options -->
+	</fieldset>
+
+	<fieldset class="submit-buttons">
+		<legend>{L_SUBMIT}</legend>
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		{S_HIDDEN_FIELDS}
+		{S_FORM_TOKEN}
+	</fieldset>
+</form>
+<!-- ENDIF -->
+
+<!-- IF S_DATA_OUTPUT -->
+	<!-- BEGIN data_output -->
+		<h2>{data_output.TITLE}</h2>
+		<table cellspacing="1" cellpadding="0">
+			{data_output.DATA}
+		</table>
+		<!-- IF data_output.PAGINATION -->
+		<div class="pagination">
+			<span>{data_output.PAGINATION}</span>
+		</div>
+		<!-- ENDIF -->
+	<!-- BEGINELSE -->
+		<!-- IF not S_DISPLAY_IP_INPUT -->
+		<div class="errorbox">
+			<h3>{L_WARNING}</h3>
+			<p>{L_NO_ITEMS}<br /><a href="{U_BACK_NONE}">&laquo; {L_BACK}</a></p>
+		</div>
+		<!-- ENDIF -->
+	<!-- END data_output -->
+<!-- ENDIF -->
+
+<!-- IF S_DISPLAY_IP_INPUT -->
+	<form id="asacp_ip_search" method="post" action="{U_ACTION}">
+		<fieldset>
+			<dl>
+				<dt><label for="ip">{L_ASACP_IP_SEARCH}:</label></dt>
+				<dd><input id="ip" type="text" size="25" name="ip" value="" /></dd>
+			</dl>
+		</fieldset>
+		<fieldset class="submit-buttons">
+			<legend>{L_SUBMIT}</legend>
+			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />
+			{S_HIDDEN_FIELDS}
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+<!-- ENDIF -->
+
+<!-- IF S_SPAM_WORDS -->
+	<!-- IF S_SPAM_WORD_LIST -->
+		<form id="asacp_spam_words" method="post" action="{U_ACTION}">
+			<fieldset class="quick">
+				<input type="hidden" name="action" value="add" />
+				<input type="text" name="word_text" value="" />
+				<input class="button2" name="quick_submit" type="submit" value="{L_ADD_WORD}" />
+				{S_FORM_TOKEN}
+			</fieldset>
+		</form>
+
+		<table cellspacing="1" cellpadding="0">
+			<tr>
+				<th style="width: 50%;">{L_SPAM_WORD_TEXT}</th>
+				<th>{L_REGEX}</th>
+				<th>{L_REGEX_AUTO}</th>
+				<th>{L_ACTIONS}</th>
+			</tr>
+			<!-- BEGIN spam_words -->
+			<tr class="row<!-- IF spam_words.S_ROW_COUNT is even -->1<!-- ELSE -->2<!-- ENDIF -->">
+				<td>{spam_words.TEXT}</td>
+				<td><!-- IF spam_words.REGEX -->{L_YES}<!-- ELSE -->{L_NO}<!-- ENDIF --></td>
+				<td><!-- IF spam_words.REGEX_AUTO -->{L_YES}<!-- ELSE -->{L_NO}<!-- ENDIF --></td>
+				<td>
+					<a href="{spam_words.U_EDIT}">{L_EDIT}</a> | <a href="{spam_words.U_DELETE}">{L_DELETE}</a>
+				</td>
+			</tr>
+			<!-- BEGINELSE -->
+			<tr class="row1"><td colspan="4">{L_NO_SPAM_WORDS}</td></tr>
+			<!-- END spam_words -->
+		</table>
+	<!-- ELSE -->
+		<form id="asacp_spam_words" method="post" action="{U_WORD_ACTION}">
+			<fieldset>
+				<dl>
+					<dt><label for="word_text">{L_SPAM_WORD_TEXT}:</label><br /><span>{L_SPAM_WORD_TEXT_EXPLAIN}</dt>
+					<dd><input id="word_text" type="text" size="25" name="word_text" value="{WORD_TEXT}" /></dd>
+				</dl>
+				<dl>
+					<dt><label for="word_regex">{L_REGEX}:</label><br /><span>{L_REGEX_EXPLAIN}</dt>
+					<dd><input type="radio" id="word_regex" name="word_regex" value="1" class="radio"<!-- IF WORD_REGEX --> checked="checked"<!-- ENDIF -->> {L_YES} &nbsp;<input type="radio" id="word_regex" name="word_regex" value="0" class="radio"<!-- IF not WORD_REGEX --> checked="checked"<!-- ENDIF -->> {L_NO}</dd>
+				</dl>
+				<dl>
+					<dt><label for="word_regex_auto">{L_REGEX_AUTO}:</label><br /><span>{L_REGEX_AUTO_EXPLAIN}</dt>
+					<dd><input type="radio" id="word_regex_auto" name="word_regex_auto" value="1" class="radio"<!-- IF WORD_REGEX_AUTO --> checked="checked"<!-- ENDIF -->> {L_YES} &nbsp;<input type="radio" id="word_regex_auto" name="word_regex_auto" value="0" class="radio"<!-- IF not WORD_REGEX_AUTO --> checked="checked"<!-- ENDIF -->> {L_NO}</dd>
+				</dl>
+			</fieldset>
+			<fieldset class="submit-buttons">
+				<legend>{L_SUBMIT}</legend>
+				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />
+				{S_HIDDEN_FIELDS}
+				{S_FORM_TOKEN}
+			</fieldset>
+		</form>
+	<!-- ENDIF -->
+<!-- ENDIF -->
+
+<!-- INCLUDE antispam/adm_footer.html -->

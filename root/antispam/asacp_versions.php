@@ -209,10 +209,24 @@ $versions = array(
   '1.0.4'  		=> array(
 		'permission_add'	=> array(
 			'm_asacp_ban',
+			'm_asacp_user_flag',
 		),
+
+		'permission_set' => array(
+			array('ROLE_MOD_FULL', array(
+				'm_asacp_ban',
+				'm_asacp_user_flag',
+			)),
+			array('ROLE_MOD_STANDARD', array(
+				'm_asacp_user_flag',
+			)),
+		),
+
 		'permission_remove'	=> array(
 			'a_asacp_ban',
+			'a_asacp_user_flag',
 		),
+
 		'config_add'    => array(
 			array('asacp_ocban_deactivate', false),
 		),
