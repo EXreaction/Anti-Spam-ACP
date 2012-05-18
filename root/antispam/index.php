@@ -176,6 +176,12 @@ switch ($mode)
 				$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flagged = 0 WHERE user_id = ' . $user_id);
 			}
 
+			// Deactivate the user
+			if ($config['asacp_ocban_deactivate'])
+			{
+				user_active_flip('deactivate', $user_id, INACTIVE_MANUAL);
+			}
+
 			// Move the user to a certain group
 			if ($config['asacp_ocban_move_to_group'])
 			{
@@ -311,6 +317,10 @@ switch ($mode)
 			if ($config['asacp_ocban_username'])
 			{
 				$ban_actions[] = $user->lang['ASACP_BAN_USERNAME'];
+			}
+			if ($config['asacp_ocban_deactivate'])
+			{
+				$ban_actions[] = $user->lang['ASACP_BAN_DEACTIVATE_USER'];
 			}
 			if ($config['asacp_ocban_move_to_group'])
 			{

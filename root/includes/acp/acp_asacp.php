@@ -442,6 +442,7 @@ class acp_asacp
 
 					'legend4'								=> 'ASACP_BAN_SETTINGS',
 					'asacp_ocban_username'					=> array('lang' => 'ASACP_BAN_USERNAME', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+					'asacp_ocban_deactivate'				=> array('lang' => 'ASACP_BAN_DEACTIVATE_USER', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_move_to_group'				=> array('lang' => 'ASACP_BAN_MOVE_TO_GROUP', 'validate' => 'int:0', 'type' => 'custom', 'method' => 'group_list', 'explain' => true),
 					'asacp_ocban_delete_posts'				=> array('lang' => 'ASACP_BAN_DELETE_POSTS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_clear_outbox'				=> array('lang' => 'ASACP_BAN_CLEAR_OUTBOX', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),

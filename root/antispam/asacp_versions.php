@@ -210,9 +210,11 @@ $versions = array(
 		'permission_add'	=> array(
 			'm_asacp_ban',
 		),
-
 		'permission_remove'	=> array(
 			'a_asacp_ban',
+		),
+		'config_add'    => array(
+			array('asacp_ocban_deactivate', false),
 		),
   ),
 );
