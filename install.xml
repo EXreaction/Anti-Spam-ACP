@@ -95,6 +95,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>Display the list of actions to be taken when using the One Click Ban</change>
 				<change>Require the submission of evidence when submitting to Stop Forum Spam from One Click Ban</change>
 				<change>Give the option to submit a ban reason and ban reason shown to the user when using the One Click Ban (#112)</change>
+				<change>Remove the flag on a user's account if their username is banned through One Click Ban (#165)</change>
 			</changelog>
 		</entry>
 	</history>

@@ -171,6 +171,9 @@ switch ($mode)
 			if ($config['asacp_ocban_username'])
 			{
 				user_ban('user', $user_row['username'], 0, '', false, utf8_normalize_nfc(request_var('ban_reason', '', true)), utf8_normalize_nfc(request_var('ban_reason_shown', '', true)));
+
+				// Remove the flag on the user's account if they are banned
+				$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flagged = 0 WHERE user_id = ' . $user_id);
 			}
 
 			// Move the user to a certain group
