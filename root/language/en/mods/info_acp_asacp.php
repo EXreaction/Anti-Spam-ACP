@@ -62,8 +62,8 @@ $lang = array_merge($lang, array(
 	),
 
 	'acl_m_asacp_ban'				=> array(
-		'lang'						=> 'Can One Click Ban users',
-		'cat'						=> 'settings',
+		'lang'						=> 'Can "One Click Ban" users<br /><em>See .MODS-&gt;Anti-Spam ACP Settings.</em>',
+		'cat'						=> 'misc',
 	),
 
 	'acl_a_asacp_ip_search'			=> array(
