@@ -17,7 +17,7 @@ if (!defined('IN_PHPBB'))
 *
 * @param string $type The type of log.  spam for the normal spam log, flag for an event by a flagged user.
 */
-function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_ip = '', $limit_days = 0, $sort_by = 'l.log_time DESC')
+function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_ip = '', $limit_days = 0, $sort_by = 'l.log_time DESC', $keywords = '')
 {
 	global $db, $user, $auth, $phpEx, $phpbb_root_path, $phpbb_admin_path;
 
@@ -35,12 +35,72 @@ function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_
 		break;
 	}
 
+	// Use no preg_quote for $keywords because this would lead to sole backslashes being added
+	// We also use an OR connection here for spaces and the | string. Currently, regex is not supported for searching (but may come later).
+	$keywords = preg_split('#[\s|]+#u', utf8_strtolower($keywords), 0, PREG_SPLIT_NO_EMPTY);
+	$sql_keywords = '';
+
+	if (!empty($keywords))
+	{
+		$keywords_pattern = array();
+
+		// Build pattern and keywords...
+		for ($i = 0, $num_keywords = sizeof($keywords); $i < $num_keywords; $i++)
+		{
+			$keywords_pattern[] = preg_quote($keywords[$i], '#');
+			$keywords[$i] = $db->sql_like_expression($db->any_char . $keywords[$i] . $db->any_char);
+		}
+
+		$keywords_pattern = '#' . implode('|', $keywords_pattern) . '#ui';
+
+		$operations = array();
+		foreach ($user->lang as $key => $value)
+		{
+			if (substr($key, 0, 4) == 'LOG_' && preg_match($keywords_pattern, $value))
+			{
+				$operations[] = $key;
+			}
+		}
+
+		$sql_keywords = 'AND (';
+		if (!empty($operations))
+		{
+			$sql_keywords .= $db->sql_in_set('l.log_operation', $operations) . ' OR ';
+		}
+		$sql_keywords .= 'LOWER(l.log_data) ' . implode(' OR LOWER(l.log_data) ', $keywords) . ')';
+	}
+
+	if ($log_count !== false)
+	{
+		$sql = 'SELECT COUNT(l.log_id) AS total_entries
+			FROM ' . SPAM_LOG_TABLE . ' l, ' . USERS_TABLE . " u
+			WHERE l.log_type = $log_type
+				AND l.user_id = u.user_id
+				AND l.log_time >= $limit_days
+				" . (($sql_ip) ? "AND l.log_ip = '$sql_ip'" : '') . "
+				$sql_keywords";
+		$result = $db->sql_query($sql);
+		$log_count = (int) $db->sql_fetchfield('total_entries');
+		$db->sql_freeresult($result);
+	}
+
+	// $log_count may be false here if false was passed in for it,
+	// because in this case we did not run the COUNT() query above.
+	// If we ran the COUNT() query and it returned zero rows, return;
+	// otherwise query for logs below.
+	if ($log_count === 0)
+	{
+		// Save the queries, because there are no logs to display
+		return 0;
+	}
+
 	$sql = "SELECT l.*, u.username, u.username_clean, u.user_colour
 		FROM " . SPAM_LOG_TABLE . " l, " . USERS_TABLE . " u
 		WHERE l.log_type = " . $log_type . "
 			AND u.user_id = l.user_id
 			" . (($limit_days) ? "AND l.log_time >= $limit_days" : '') . "
 			" . (($sql_ip) ? "AND l.log_ip = '$sql_ip'" : '') . "
+			$sql_keywords
 		ORDER BY $sort_by";
 	$result = $db->sql_query_limit($sql, $limit, $offset);
 
@@ -134,6 +194,89 @@ function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_
 	return;
 }
 
+/**
+* Clear the spam log
+*
+* @param string $mode (flag|log)
+* @param bool $deleteall Delete all or $marked
+* @param array $marked Array of marked log ids to delete
+* @param string $keywords
+*/
+function clear_spam_log($mode, $deleteall, $marked = array(), $keywords = '')
+{
+	global $db;
+
+	$where_sql = '';
+
+	if (!$deleteall && sizeof($marked))
+	{
+		$sql_in = array();
+		foreach ($marked as $mark)
+		{
+			$sql_in[] = $mark;
+		}
+		$where_sql = ' AND ' . $db->sql_in_set('log_id', $sql_in);
+		unset($sql_in);
+	}
+
+	if ($where_sql || $deleteall)
+	{
+		// Use no preg_quote for $keywords because this would lead to sole backslashes being added
+		// We also use an OR connection here for spaces and the | string. Currently, regex is not supported for searching (but may come later).
+		$keywords = preg_split('#[\s|]+#u', utf8_strtolower($keywords), 0, PREG_SPLIT_NO_EMPTY);
+		$sql_keywords = '';
+
+		if ($deleteall && !empty($keywords))
+		{
+			$keywords_pattern = array();
+
+			// Build pattern and keywords...
+			for ($i = 0, $num_keywords = sizeof($keywords); $i < $num_keywords; $i++)
+			{
+				$keywords_pattern[] = preg_quote($keywords[$i], '#');
+				$keywords[$i] = $db->sql_like_expression($db->any_char . $keywords[$i] . $db->any_char);
+			}
+
+			$keywords_pattern = '#' . implode('|', $keywords_pattern) . '#ui';
+
+			$operations = array();
+			foreach ($user->lang as $key => $value)
+			{
+				if (substr($key, 0, 4) == 'LOG_' && preg_match($keywords_pattern, $value))
+				{
+					$operations[] = $key;
+				}
+			}
+
+			$sql_keywords = ' AND (';
+			if (!empty($operations))
+			{
+				$sql_keywords .= $db->sql_in_set('l.log_operation', $operations) . ' OR ';
+			}
+			$sql_keywords .= 'LOWER(log_data) ' . implode(' OR LOWER(log_data) ', $keywords) . ')';
+		}
+
+		$sql = 'DELETE FROM ' . SPAM_LOG_TABLE . '
+			WHERE log_type = ' . (($mode == 'log') ? 1 : 2) .
+			$where_sql .
+			$sql_keywords;
+		$db->sql_query($sql);
+
+		if ($deleteall)
+		{
+			if ($mode == 'log')
+			{
+				add_log('admin', 'LOG_CLEAR_SPAM_LOG');
+			}
+			else
+			{
+				$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 0');
+				add_log('admin', 'LOG_CLEAR_FLAG_LOG');
+			}
+		}
+	}
+}
+
 function asacp_display_table_head($row)
 {
 	$output = '<tr>';
@@ -148,7 +291,7 @@ function asacp_display_table_head($row)
 
 function asacp_display_table_row($row, $cnt)
 {
-	$output = '<tr class="row' . ($cnt % 2 + 1) . '">';
+	$output = '<tr class="row' . ($cnt % 2 + 1) . ' bg' . ($cnt % 2 + 1) . '">';
 	foreach ($row as $name => $data)
 	{
 		$output .= '<td>' . $data . '</td>';
@@ -160,7 +303,7 @@ function asacp_display_table_row($row, $cnt)
 
 function asacp_display_ip_search($type, $ip, $url, $start = 0)
 {
-	global $db, $template, $user, $phpbb_admin_path, $phpbb_root_path, $phpEx;
+	global $auth, $db, $template, $user, $phpbb_admin_path, $phpbb_root_path, $phpEx;
 
 	if (!$ip)
 	{
@@ -195,14 +338,22 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 		// case 'bot_check' :
 
 		case 'logs' :
+			// Those without admin log viewing permission can only see moderation logs
+			$log_type_sql = '';
+			if (!$auth->acl_get('a_viewlogs'))
+			{
+				$log_type_sql = ' AND log_type = ' . LOG_MOD;
+			}
+
 			$db->sql_query('SELECT count(log_id) AS total FROM ' . LOG_TABLE . '
-				WHERE log_ip = \'' . $sql_ip . '\'');
+				WHERE log_ip = \'' . $sql_ip . '\'' . $log_type_sql);
 			$total = $db->sql_fetchfield('total');
 			$sql = 'SELECT l.user_id, l.log_time, l.forum_id, l.topic_id, l.log_operation, l.log_data, u.username, u.user_colour
-				FROM ' . LOG_TABLE . ' l,' . USERS_TABLE . ' u
-				WHERE log_ip = \'' . $sql_ip . '\'
+				FROM ' . LOG_TABLE . ' l,' . USERS_TABLE . " u
+				WHERE log_ip = '$sql_ip'
 				AND u.user_id = l.user_id
-				ORDER BY log_time DESC';
+				$log_type_sql
+				ORDER BY log_time DESC";
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
 			{
@@ -231,6 +382,11 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 		// case 'logs' :
 
 		case 'spam_log' :
+			if (!$auth->acl_get('m_asacp_spam_log'))
+			{
+				return;
+			}
+
 			$db->sql_query('SELECT count(log_id) AS total FROM ' . SPAM_LOG_TABLE . '
 				WHERE log_ip = \'' . $sql_ip . '\'
 				AND log_type = 1');
@@ -260,6 +416,11 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 		//case 'spam_log' :
 
 		case 'flag_log' :
+			if (!$auth->acl_get('m_asacp_user_flag'))
+			{
+				return;
+			}
+
 			$db->sql_query('SELECT count(log_id) AS total FROM ' . SPAM_LOG_TABLE . '
 				WHERE log_ip = \'' . $sql_ip . '\'
 				AND log_type = 2');
@@ -313,12 +474,16 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 		// case 'poll_votes' :
 
 		case 'posts' :
+			$readable_forums = array_keys($auth->acl_getf('f_read', true));
+
 			$db->sql_query('SELECT count(post_id) AS total FROM ' . POSTS_TABLE . '
-				WHERE poster_ip = \'' . $sql_ip . '\'');
+				WHERE poster_ip = \'' . $sql_ip . '\'
+				AND ' . $db->sql_in_set('forum_id', $readable_forums));
 			$total = $db->sql_fetchfield('total');
 			$sql = 'SELECT p.post_subject, p.topic_id, p.post_id, p.poster_id, u.username, u.user_colour, p.post_username, p.post_time FROM ' . POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 				WHERE poster_ip = \'' . $sql_ip . '\'
 				AND u.user_id = p.poster_id
+				AND ' . $db->sql_in_set('p.forum_id', $readable_forums) . '
 				ORDER BY post_time DESC';
 			$result = $db->sql_query_limit($sql, $limit, $start);
 			while ($row = $db->sql_fetchrow($result))
@@ -378,7 +543,11 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			while ($row = $db->sql_fetchrow($result))
 			{
 				$row['username'] = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
-				$row[$user->lang['ACTIONS']] = '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", 'i=users&amp;mode=overview&amp;u=' . $row['user_id']) . '">' . $user->lang['USER_ADMIN'] . '</a>';;
+
+				if ($auth->acl_get('a_user'))
+				{
+					$row[$user->lang['ACTIONS']] = '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", 'i=users&amp;mode=overview&amp;u=' . $row['user_id']) . '">' . $user->lang['USER_ADMIN'] . '</a>';
+				}
 				unset($row['user_id'], $row['user_colour']);
 
 				$cnt++;
@@ -400,7 +569,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			asacp_display_ip_search('logs', $ip, $url);
 			asacp_display_ip_search('spam_log', $ip, $url);
 			asacp_display_ip_search('flag_log', $ip, $url);
-			asacp_display_ip_search('poll_votes', $ip, $url);
+			//asacp_display_ip_search('poll_votes', $ip, $url);
 			asacp_display_ip_search('posts', $ip, $url);
 			asacp_display_ip_search('privmsgs', $ip, $url);
 			asacp_display_ip_search('users', $ip, $url);

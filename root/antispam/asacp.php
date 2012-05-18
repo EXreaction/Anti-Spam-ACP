@@ -490,10 +490,10 @@ class antispam
 				}
 
 				// Output IP Search section
-				if ($auth->acl_get('a_asacp_ip_search'))
+				if ($auth->acl_get('m_asacp_ip_search'))
 				{
 					$ip_search = array();
-					$u_ip_search = '<a href="' . append_sid("{$phpbb_root_path}adm/index.$phpEx", 'i=asacp&amp;mode=ip_search&amp;ip={IP}', true, $user->session_id) . '">{IP}</a>';
+					$u_ip_search = '<a href="' . append_sid("{$phpbb_root_path}mcp.$phpEx", 'i=asacp&amp;mode=ip_search&amp;ip={IP}', true, $user->session_id) . '">{IP}</a>';
 
 					if ($user_row['user_ip'])
 					{
@@ -525,7 +525,7 @@ class antispam
 		if ($user->data['user_flag_new'] && $config['asacp_notify_new_flag'] && $auth->acl_get('m_asacp_user_flag'))
 		{
 			global $phpbb_root_path, $phpEx, $template;
-			$template->assign_var('U_USER_FLAG_NEW', append_sid("{$phpbb_root_path}antispam/index.$phpEx","mode=view_flag_log"));
+			$template->assign_var('U_USER_FLAG_NEW', append_sid("{$phpbb_root_path}mcp.$phpEx","i=asacp&amp;mode=flag"));
 		}
 	}
 	//public static function page_header()

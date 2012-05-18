@@ -90,14 +90,19 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<date>2012-05-18</date>
 			<rev-version>1.0.4</rev-version>
 			<changelog lang="en">
+				<change>Move a number of functions (Spam and Flag Logs, Flagged User List, IP Search) into the MCP so that moderators may user the functions without needing administrative permissions (see next changes)</change>
 				<change>Change a_asacp_ban permission to m_asacp_ban (allow moderators to one click ban)</change>
 				<change>Change a_asacp_user_flag permission to m_asacp_user_flag (allow moderators to flag users and view the flag list)</change>
+				
+				<change>Enable the Keyword Search in the Spam and Flag Logs</change>
+				
 				<change>Do not show the One Click Ban link in a user's profile if they are already banned</change>
 				<change>Display the list of actions to be taken when using the One Click Ban</change>
 				<change>Require the submission of evidence when submitting to Stop Forum Spam from One Click Ban</change>
 				<change>Give the option to submit a ban reason and ban reason shown to the user when using the One Click Ban (#112)</change>
 				<change>Remove the flag on a user's account if their username is banned through the One Click Ban (#165)</change>
 				<change>Option to deactivate the user when using the One Click Ban (#165)</change>
+				
 				<change>Fix spam words action on user profiles (#181)</change>
 			</changelog>
 		</entry>

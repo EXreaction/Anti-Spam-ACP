@@ -56,42 +56,6 @@ $lang = array_merge($lang, array(
 	'LOG_SPAM_SIGNATURE_DENIED'		=> 'Signature was flagged as spam.<br />The signature was:<br />%s',
 	'LOG_USER_FLAGGED'				=> '%s was flagged.',
 	'LOG_USER_UNFLAGGED'			=> 'The flag on %s was removed.',
-
-	'acl_a_asacp'					=> array(
-		'lang'						=> 'Can manage Anti-Spam ACP',
-		'cat'						=> 'settings',
-	),
-
-	'acl_m_asacp_ban'				=> array(
-		'lang'						=> 'Can "One Click Ban" users<br /><em>See .MODS-&gt;Anti-Spam ACP Settings.</em>',
-		'cat'						=> 'misc',
-	),
-
-	'acl_m_asacp_ip_search'			=> array(
-		'lang'						=> 'Can use IP Search',
-		'cat'						=> 'misc',
-	),
-
-	'acl_a_asacp_profile_fields'	=> array(
-		'lang'						=> 'Can change Profile Fields settings',
-		'cat'						=> 'settings',
-	),
-
-	'acl_a_asacp_spam_log'			=> array(
-		'lang'						=> 'Can view Spam Log',
-		'cat'						=> 'settings',
-	),
-
-	'acl_a_asacp_spam_words'		=> array(
-		'lang'						=> 'Can manage Spam Words',
-		'cat'						=> 'settings',
-	),
-
-	'acl_m_asacp_user_flag'			=> array(
-		'lang'						=> 'Can Flag users, view the Flag Log, and view the Flagged User List',
-		'cat'						=> 'misc',
-	),
-
 ));
 
 ?>

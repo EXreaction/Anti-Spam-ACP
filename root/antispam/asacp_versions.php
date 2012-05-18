@@ -210,25 +210,38 @@ $versions = array(
 		'permission_add'	=> array(
 			'm_asacp_ban',
 			'm_asacp_user_flag',
+			'm_asacp_ip_search',
+			'm_asacp_spam_log',
 		),
 
 		'permission_set' => array(
 			array('ROLE_MOD_FULL', array(
 				'm_asacp_ban',
 				'm_asacp_user_flag',
+				'm_asacp_ip_search',
+				'm_asacp_spam_log',
 			)),
 			array('ROLE_MOD_STANDARD', array(
 				'm_asacp_user_flag',
+				'm_asacp_ip_search',
+				'm_asacp_spam_log',
 			)),
 		),
 
 		'permission_remove'	=> array(
 			'a_asacp_ban',
 			'a_asacp_user_flag',
+			'a_asacp_ip_search',
+			'a_asacp_spam_log',
 		),
 
 		'config_add'    => array(
 			array('asacp_ocban_deactivate', false),
+		),
+
+		'module_add'	=> array(
+			array('mcp', 0, 'ANTISPAM'),
+			array('mcp', 'ANTISPAM', array('module_basename' => 'asacp')),
 		),
   ),
 );

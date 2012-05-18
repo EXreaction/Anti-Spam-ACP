@@ -1,0 +1,63 @@
+<!-- INCLUDE mcp_header.html -->
+
+<a name="maincontent"></a>
+
+<!-- IF U_BACK -->
+	<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
+<!-- ENDIF -->
+
+<h2>{L_TITLE}</h2>
+
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+<!-- IF ERROR -->
+	<div class="errorbox">
+		<h3>{L_WARNING}</h3>
+		<p>{ERROR}</p>
+	</div>
+<!-- ENDIF -->
+
+<!-- IF S_DATA_OUTPUT -->
+	<!-- BEGIN data_output -->
+		<h2>{data_output.TITLE}</h2>
+		<table cellspacing="1" cellpadding="0" class="table1">
+			{data_output.DATA}
+		</table>
+		<!-- IF data_output.PAGINATION -->
+		<div class="pagination">
+			<span>{data_output.PAGINATION}</span>
+		</div>
+		<!-- ENDIF -->
+		<br /><br />
+	<!-- BEGINELSE -->
+		<!-- IF not S_DISPLAY_IP_INPUT -->
+		<div class="errorbox">
+			<h3>{L_WARNING}</h3>
+			<p>{L_NO_ITEMS}<br /><a href="{U_BACK_NONE}">&laquo; {L_BACK}</a></p>
+		</div>
+		<!-- ENDIF -->
+	<!-- END data_output -->
+<!-- ENDIF -->
+
+<!-- IF S_DISPLAY_IP_INPUT -->
+	<form id="asacp_ip_search" method="post" action="{U_ACTION}">
+		<fieldset>
+			<dl>
+				<dt><label for="ip">{L_ASACP_IP_SEARCH}:</label></dt>
+				<dd><input id="ip" type="text" size="25" name="ip" value="" /></dd>
+			</dl>
+		</fieldset>
+		<fieldset class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />
+			{S_HIDDEN_FIELDS}
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+<!-- ENDIF -->
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- INCLUDE mcp_footer.html -->

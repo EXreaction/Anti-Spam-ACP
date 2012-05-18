@@ -15,16 +15,16 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class acp_asacp
+class mcp_asacp
 {
 	var $u_action;
 
 	function main($id, $mode)
 	{
 		global $db, $user, $auth, $template, $cache;
-		global $config, $phpbb_admin_path, $phpbb_root_path, $phpEx;
+		global $config, $phpbb_root_path, $phpEx;
 
-		$user->add_lang(array('acp/board', 'mods/asacp', 'mods/acp_asacp', 'install'));
+		$user->add_lang(array('acp/board', 'mods/asacp', 'mods/acp_asacp', 'install', 'acp/common'));
 		include($phpbb_root_path . 'antispam/acp_functions.' . $phpEx);
 
 		$error = $notify = array();
@@ -41,123 +41,8 @@ class acp_asacp
 
 		switch ($mode)
 		{
-			case 'spam_words' :
-				$this->tpl_name = 'acp_asacp';
-				$this->page_title = 'ASACP_SPAM_WORDS';
-
-				$word_id = request_var('w', 0);
-				$word_data = array(
-					'word_text'			=> utf8_normalize_nfc(request_var('word_text', '', true)),
-					'word_regex'		=> request_var('word_regex', 0),
-					'word_regex_auto'	=> request_var('word_regex_auto', 0),
-				);
-				switch ($action)
-				{
-					case 'edit' :
-						if (!$word_id)
-						{
-							trigger_error('NO_SPAM_WORD');
-						}
-						$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE . ' WHERE word_id = ' . $word_id);
-						$word = $db->sql_fetchrow($result);
-						if (!$word)
-						{
-                            trigger_error('NO_SPAM_WORD');
-						}
-
-						if (!$submit)
-						{
-							$word_data = $word;
-						}
-					case 'add' :
-						$template->assign_vars(array(
-							'WORD_TEXT'			=> $word_data['word_text'],
-							'WORD_REGEX'		=> ($word_data['word_regex']) ? true : false,
-							'WORD_REGEX_AUTO'	=> ($word_data['word_regex_auto']) ? true : false,
-							'S_ADD'				=> ($action == 'add') ? true : false,
-							'U_WORD_ACTION'		=> $this->u_action . '&amp;action=' . $action . (($action == 'edit') ? '&amp;w=' . $word_id : ''),
-						));
-
-						if ($submit)
-						{
-							if ($word_data['word_regex'])
-							{
-								  $delim = substr($word_data['word_text'], 0, 1);
-					              if (strrpos($word_data['word_text'], $delim) == 0)
-					              {
-					                  trigger_error('SPAM_WORD_TEXT_EXPLAIN');
-					              }
-							}
-
-							if ($action == 'add')
-							{
-								$db->sql_query('INSERT INTO ' . SPAM_WORDS_TABLE . ' ' . $db->sql_build_array('INSERT', $word_data));
-								$cache->destroy('_spam_words');
-								trigger_error($user->lang['SPAM_WORD_ADD_SUCCESS'] . adm_back_link($this->u_action));
-							}
-							else
-							{
-								$db->sql_query('UPDATE ' . SPAM_WORDS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $word_data) . ' WHERE word_id = ' . $word_id);
-								$cache->destroy('_spam_words');
-								trigger_error($user->lang['SPAM_WORD_EDIT_SUCCESS'] . adm_back_link($this->u_action));
-							}
-						}
-					break;
-
-					case 'delete' :
-						if (!$word_id)
-						{
-							trigger_error('NO_SPAM_WORD');
-						}
-						$result = $db->sql_query('SELECT * FROM ' . SPAM_WORDS_TABLE . ' WHERE word_id = ' . $word_id);
-						$word = $db->sql_fetchrow($result);
-						if (!$word)
-						{
-                            trigger_error('NO_SPAM_WORD');
-						}
-
-						if (confirm_box(true))
-						{
-							$db->sql_query('DELETE FROM ' . SPAM_WORDS_TABLE . ' WHERE word_id = ' . $word_id);
-							$cache->destroy('_spam_words');
-							trigger_error($user->lang['SPAM_WORD_DELETE_SUCCESS'] . adm_back_link($this->u_action));
-						}
-						else
-						{
-							confirm_box(false, 'DELETE_SPAM_WORD');
-						}
-					break;
-
-					default :
-						$sql = 'SELECT * FROM ' . SPAM_WORDS_TABLE . '
-							ORDER BY word_text ASC';
-						$result = $db->sql_query($sql);
-						while ($row = $db->sql_fetchrow($result))
-						{
-							$template->assign_block_vars('spam_words', array(
-								'TEXT'			=> $row['word_text'],
-								'REGEX'			=> $row['word_regex'],
-								'REGEX_AUTO'	=> $row['word_regex_auto'],
-								'U_DELETE'		=> append_sid($this->u_action . '&amp;action=delete&amp;w=' . $row['word_id']),
-								'U_EDIT'		=> append_sid($this->u_action . '&amp;action=edit&amp;w=' . $row['word_id']),
-							));
-						}
-						$db->sql_freeresult($result);
-						$template->assign_var('S_SPAM_WORD_LIST', true);
-					break;
-				}
-
-				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang['ASACP_SPAM_WORDS'],
-					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_SPAM_WORDS_EXPLAIN'],
-
-					'S_SPAM_WORDS'		=> true,
-				));
-			break;
-			//case 'spam_words' :
-
 			case 'ip_search' :
-				$this->tpl_name = 'acp_asacp';
+				$this->tpl_name = 'antispam/mcp_asacp';
 				$this->page_title = 'ASACP_IP_SEARCH';
 
 				$ip = request_var('ip', '');
@@ -181,7 +66,7 @@ class acp_asacp
 
 			case 'log' :
 			case 'flag' :
-				$this->tpl_name = 'acp_logs';
+				$this->tpl_name = 'mcp_logs';
 
 				if ($mode == 'log')
 				{
@@ -286,7 +171,7 @@ class acp_asacp
 						'USERNAME'			=> $row['username_full'],
 						'REPORTEE_USERNAME'	=> ($row['reportee_username'] && $row['user_id'] != $row['reportee_id']) ? $row['reportee_username_full'] : '',
 
-						'IP'				=> '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i={$id}&amp;mode=ip_search&amp;ip={$row['ip']}") . '">' . $row['ip'] . '</a>',
+						'IP'				=> '<a href="' . append_sid("{$phpbb_root_path}mcp.$phpEx", "i={$id}&amp;mode=ip_search&amp;ip={$row['ip']}") . '">' . $row['ip'] . '</a>',
 						'DATE'				=> $user->format_date($row['time']),
 						'ACTION'			=> $row['action'],
 						'DATA'				=> (sizeof($row['data'])) ? @vsprintf($user->lang[$row['operation'] . '_DATA'], $row['data']) : '',
@@ -299,7 +184,7 @@ class acp_asacp
 
 			case 'flag_list' :
 				$user->add_lang('memberlist');
-				$this->tpl_name = 'acp_asacp';
+				$this->tpl_name = 'antispam/mcp_asacp';
 				$this->page_title = 'ASACP_FLAG_LIST';
 
 				$start = request_var('start', 0);
@@ -319,12 +204,12 @@ class acp_asacp
 
 					if ($auth->acl_get('m_asacp_ip_search'))
 					{
-						$row['user_ip'] = '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i={$id}&amp;mode=ip_search&amp;ip={$row['user_ip']}") . '">' . $row['user_ip'] . '</a>';
+						$row['user_ip'] = '<a href="' . append_sid("{$phpbb_root_path}mcp.$phpEx", "i={$id}&amp;mode=ip_search&amp;ip={$row['user_ip']}") . '">' . $row['user_ip'] . '</a>';
 					}
 
 					if ($auth->acl_get('a_user'))
 					{
-						$row[$user->lang['ACTION']] = '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", "i=users&amp;mode=overview&amp;u={$row['user_id']}") . '">' . $user->lang['USER_ADMIN'] . '</a>';
+						$row[$user->lang['ACTION']] = '<a href="' . append_sid("{$phpbb_root_path}adm/index.$phpEx", "i=users&amp;mode=overview&amp;u={$row['user_id']}", true, $user->session_id) . '">' . $user->lang['USER_ADMIN'] . '</a>';
 					}
 
 					unset($row['user_id'], $row['user_colour']);
@@ -354,103 +239,8 @@ class acp_asacp
 			break;
 			//case 'flag_list' :
 
-			case 'profile_fields' :
-				$user->add_lang('ucp');
-				$this->tpl_name = 'acp_asacp';
-				$this->page_title = 'ASACP_PROFILE_FIELDS';
-
-				$options = array(
-					'legend1'				=> 'ASACP_PROFILE_FIELDS',
-				);
-
-				$cfg_array = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $config;
-				foreach (antispam::$profile_fields as $field => $ary)
-				{
-					if ($submit)
-					{
-						switch ($cfg_array['asacp_profile_' . $field])
-						{
-							case 1 :
-								// Required
-							break;
-
-							case 2 :
-								// Normal
-							break;
-
-							case 3 :
-								// Never allowed
-								$sql = 'UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', array($ary['db'] => ''));
-								$db->sql_query($sql);
-							break;
-
-							case 4 :
-								// Post Count
-								$sql = 'UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', array($ary['db'] => '')) . '
-									WHERE user_posts < ' . (int) $cfg_array['asacp_profile_' . $field . '_post_limit'];
-								$db->sql_query($sql);
-							break;
-						}
-					}
-
-					$options['asacp_profile_' . $field] = array('lang' => $ary['lang'], 'validate' => 'int:1:4', 'type' => 'custom', 'method' => 'profile_fields_select', 'explain' => false);
-					$options['asacp_profile_' . $field . '_post_limit'] = array('lang' => $ary['lang'] . '_POST_COUNT', 'validate' => 'int:1:99999', 'type' => 'text:40:255', 'explain' => true);
-				}
-
-				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang['ASACP_PROFILE_FIELDS'],
-					'L_TITLE_EXPLAIN'	=> $user->lang['ASACP_PROFILE_FIELDS_EXPLAIN'],
-				));
-			break;
-			//case 'profile_fields' :
-
-			default :
-				$this->tpl_name = 'acp_asacp';
-				$this->page_title = 'ASACP_SETTINGS';
-
-				$options = array(
-					'legend1'								=> 'ASACP_SETTINGS',
-					'asacp_enable'							=> array('lang' => 'ASACP_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_log'								=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_user_flag_enable'				=> array('lang' => 'ASACP_USER_FLAG_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_notify_new_flag'					=> array('lang' => 'ASACP_NOTIFY_NEW_FLAG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-
-					'legend2'								=> 'ASACP_PROFILE_FIELDS',
-					'asacp_profile_during_reg'				=> array('lang' => 'ASACP_PROFILE_DURING_REG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-
-					'legend3'								=> 'ASACP_SPAM_WORDS',
-					'asacp_spam_words_enable'				=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_spam_words_guest_always'			=> array('lang' => 'ASACP_SPAM_WORDS_GUEST_ALWAYS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_spam_words_post_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
-					'asacp_spam_words_flag_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_FLAG_LIMIT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true),
-					'asacp_spam_words_posting_action'		=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_approval_action', 'explain' => true),
-					'asacp_spam_words_pm_action'			=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
-					'asacp_spam_words_profile_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
-
-					'legend4'								=> 'ASACP_SFS_SETTINGS',
-					'asacp_sfs_min_freq'					=> array('lang' => 'ASACP_SFS_MIN_FREQ', 'validate' => 'int:1', 'type' => 'text:6:10', 'explain' => true),
-					'asacp_sfs_action'						=> array('lang' => 'ASACP_SFS_ACTION', 'validate' => 'int:0:5', 'type' => 'custom', 'method' => 'sfs_action', 'explain' => true),
-					'asacp_sfs_key'							=> array('lang' => 'ASACP_SFS_KEY', 'validate' => 'string', 'type' => 'text:14:14', 'explain' => true),
-
-					'legend5'								=> 'ASACP_BAN_SETTINGS',
-					'asacp_ocban_username'					=> array('lang' => 'ASACP_BAN_USERNAME', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_ocban_deactivate'				=> array('lang' => 'ASACP_BAN_DEACTIVATE_USER', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_ocban_move_to_group'				=> array('lang' => 'ASACP_BAN_MOVE_TO_GROUP', 'validate' => 'int:0', 'type' => 'custom', 'method' => 'group_list', 'explain' => true),
-					'asacp_ocban_delete_posts'				=> array('lang' => 'ASACP_BAN_DELETE_POSTS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_ocban_clear_outbox'				=> array('lang' => 'ASACP_BAN_CLEAR_OUTBOX', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_ocban_delete_avatar'				=> array('lang' => 'ASACP_BAN_DELETE_AVATAR', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_ocban_delete_signature'			=> array('lang' => 'ASACP_BAN_DELETE_SIGNATURE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-					'asacp_ocban_delete_profile_fields'		=> array('lang' => 'ASACP_BAN_DELETE_PROFILE_FIELDS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
-				);
-
-				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang['ASACP_SETTINGS'],
-					'L_TITLE_EXPLAIN'	=> '',
-					'S_SETTINGS'		=> true,
-
-					'CURRENT_VERSION'	=> ASACP_VERSION,
-					'LATEST_VERSION'	=> $this->asacp_latest_version(),
-				));
+			default:
+				trigger_error('NO_MODE');
 			break;
 		}
 		// switch($mode)
