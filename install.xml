@@ -91,6 +91,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<rev-version>1.0.4</rev-version>
 			<changelog lang="en">
 				<change>Change a_asacp_ban permission to m_asacp_ban (allow moderators to one click ban)</change>
+				<change>Do not show the One Click Ban link in a user's profile if they are already banned</change>
 			</changelog>
 		</entry>
 	</history>
