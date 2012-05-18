@@ -197,15 +197,24 @@ $versions = array(
 		),
 	),
   '1.0.2'    => array(
-    'config_add'    => array(
-      array('asacp_ocban_clear_outbox', false),
-    ),
-    'table_index_add'  => array(
-      array('phpbb_spam_words', 'word_text'),
-    ),
+		'config_add'    => array(
+		  array('asacp_ocban_clear_outbox', false),
+		),
+		'table_index_add'  => array(
+		  array('phpbb_spam_words', 'word_text'),
+		),
   ),
   '1.0.3'       => array(),
-	'1.0.3-pl1'		=> array(),
+  '1.0.3-pl1'	=> array(),
+  '1.0.4'  		=> array(
+		'permission_add'	=> array(
+			'm_asacp_ban',
+		),
+
+		'permission_remove'	=> array(
+			'a_asacp_ban',
+		),
+  ),
 );
 
 function asacp_update($action, $version)

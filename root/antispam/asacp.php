@@ -475,7 +475,7 @@ class antispam
 				self::flagged_output($user_row['user_id'], $user_row, 'custom_fields');
 
 				// Output One Click Ban section
-				if ($auth->acl_get('a_asacp_ban') && $user_id != $user->data['user_id'])
+				if ($auth->acl_get('m_asacp_ban') && $user_id != $user->data['user_id'])
 				{
 					$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $user_id, true, $user->session_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
 					self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, 'custom_fields');

@@ -61,7 +61,7 @@ $lang = array_merge($lang, array(
 		'cat'						=> 'settings',
 	),
 
-	'acl_a_asacp_ban'				=> array(
+	'acl_m_asacp_ban'				=> array(
 		'lang'						=> 'Can One Click Ban users',
 		'cat'						=> 'settings',
 	),

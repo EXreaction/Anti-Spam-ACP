@@ -24,12 +24,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.3-pl1</mod-version>
+	<mod-version>1.0.4-dev</mod-version>
 
 	<installation>
 		<level>intermediate</level>
 		<time>600</time>
-		<target-version>3.0.9</target-version>
+		<target-version>3.0.10</target-version>
 	</installation>
 
 	<history>
@@ -84,6 +84,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<rev-version>1.0.3-pl1</rev-version>
 			<changelog lang="en">
 				<change>Link to the wrong language file causing errors</change>
+			</changelog>
+		</entry>
+		<entry>
+			<date>2012-05-17</date>
+			<rev-version>1.0.4</rev-version>
+			<changelog lang="en">
+				<change>Change a_asacp_ban permission to m_asacp_ban (allow moderators to one click ban)</change>
 			</changelog>
 		</entry>
 	</history>

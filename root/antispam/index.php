@@ -138,7 +138,7 @@ switch ($mode)
 	break;
 
 	case 'ocban' :
-		if (!$auth->acl_get('a_asacp_ban'))
+		if (!$auth->acl_get('m_asacp_ban'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
