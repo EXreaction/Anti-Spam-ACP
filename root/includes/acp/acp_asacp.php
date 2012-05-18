@@ -434,7 +434,7 @@ class acp_asacp
 					'asacp_spam_words_post_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
 					'asacp_spam_words_flag_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_FLAG_LIMIT', 'validate' => 'int:1', 'type' => 'text:40:255', 'explain' => true),
 					'asacp_spam_words_posting_action'		=> array('lang' => 'ASACP_SPAM_WORDS_POSTING_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_approval_action', 'explain' => true),
-					'asacp_spam_words_pm_action'			=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
+					'asacp_spam_words_pm_action'			=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 					'asacp_spam_words_profile_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 
 					'legend4'								=> 'ASACP_SFS_SETTINGS',

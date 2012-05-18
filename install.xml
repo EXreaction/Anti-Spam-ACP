@@ -97,6 +97,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>Give the option to submit a ban reason and ban reason shown to the user when using the One Click Ban (#112)</change>
 				<change>Remove the flag on a user's account if their username is banned through the One Click Ban (#165)</change>
 				<change>Option to deactivate the user when using the One Click Ban (#165)</change>
+				<change>Fix spam words action on user profiles (#181)</change>
 			</changelog>
 		</entry>
 	</history>

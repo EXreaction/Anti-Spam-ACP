@@ -229,7 +229,7 @@ class antispam
 					break;
 
 					case 5 :
-            $user->add_lang('mods/asacp');
+            			$user->add_lang('mods/asacp');
 						$error[] = $user->lang['PROFILE_SPAM_DENIED'];
 					break;
 				}
@@ -313,7 +313,7 @@ class antispam
 
 		$user->add_lang('mods/asacp');
 
-		if ($config['asacp_spam_words_posting_action'] && self::spam_words($data))
+		if ($config['asacp_spam_words_profile_action'] && self::spam_words($data))
 		{
 			$spam_message = self::build_spam_log_message($data);
 			self::add_log('LOG_SPAM_PROFILE_DENIED', $spam_message);
@@ -425,7 +425,7 @@ class antispam
 				$error[] = sprintf($user->lang['FIELD_TOO_LONG'], $user->lang['SIGNATURE'], 0);
 			}
 
-			if ($config['asacp_spam_words_posting_action'] && self::spam_words($signature))
+			if ($config['asacp_spam_words_profile_action'] && self::spam_words($signature))
 			{
 				self::add_log('LOG_SPAM_SIGNATURE_DENIED', $signature);
 				$error[] = $user->lang['PROFILE_SPAM_DENIED'];
