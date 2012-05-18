@@ -7,9 +7,47 @@
 	<h2>{MESSAGE_TITLE}</h2>
 	<p>{MESSAGE_TEXT}</p>
 
+	<br />
+
+	<p>{L_ASACP_BAN_ACTIONS}</p>
+
+	<br />
+
+	<!-- IF S_BAN_USER -->
+	<fieldset class="fields1">
+		<h3>{L_ASACP_BAN_REASON}</h3>
+		<p>{L_ASACP_BAN_REASON_EXPLAIN}</p>
+		<div>
+			<textarea name="ban_reason" id="ban_reason" rows="5" cols="76" class="inputbox">{BAN_REASON}</textarea>
+		</div>
+
+		<h3>{L_ASACP_BAN_REASON_SHOWN_TO_USER}</h3>
+		<p>{L_ASACP_BAN_REASON_SHOWN_TO_USER_EXPLAIN}</p>
+		<div>
+			<textarea name="ban_reason_shown" id="ban_reason_shown" rows="5" cols="76" class="inputbox">{BAN_REASON_SHOWN_TO_USER}</textarea>
+		</div>
+	</fieldset>
+
+	<br />
+	<!-- ENDIF -->
+
+	<!-- IF S_SFS_SUBMIT -->
+	<fieldset class="fields1">
+		<h3>{L_STOP_FORUM_SPAM}</h3>
+		<input type="checkbox" name="sfs_submit"<!-- IF SFS_SUBMIT --> checked="checked"<!-- ENDIF --> /> {L_SFS_SUBMIT}
+		<br /><br /><br />
+
+		<p<!-- IF SFS_EVIDENCE_ERROR --> class="error"<!-- ENDIF -->>{L_ASACP_EVIDENCE_SFS}</p>
+		<div>
+			<textarea name="sfs_evidence" id="sfs_evidence" rows="15" cols="76" class="inputbox">{SFS_EVIDENCE}</textarea>
+		</div>
+	</fieldset>
+
+	<br />
+	<!-- ENDIF -->
+
 	<fieldset class="submit-buttons">
 		{S_HIDDEN_FIELDS}
-		<!-- IF S_SFS_SUBMIT --><input type="checkbox" name="sfs_submit" /> {L_SFS_SUBMIT}<br /><br /><!-- ENDIF -->
 		<input type="submit" name="confirm" value="{L_YES}" class="button2" />&nbsp;
 		<input type="submit" name="cancel" value="{L_NO}" class="button2" />
 	</fieldset>

@@ -154,7 +154,9 @@ switch ($mode)
 		}
 		$username = get_username_string('full', $user_id, $user_row['username'], $user_row['user_colour']);
 
-		if (confirm_box(true))
+		$error = (isset($_POST['sfs_submit']) && !request_var('sfs_evidence', '')) ? true : false;
+
+		if (confirm_box(true) && !$error)
 		{
 			if (!function_exists('user_ban'))
 			{
@@ -165,11 +167,13 @@ switch ($mode)
 				include($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
 			}
 
+			// Ban the user
 			if ($config['asacp_ocban_username'])
 			{
-				user_ban('user', $user_row['username'], 0, '', 0, '');
+				user_ban('user', $user_row['username'], 0, '', false, utf8_normalize_nfc(request_var('ban_reason', '', true)), utf8_normalize_nfc(request_var('ban_reason_shown', '', true)));
 			}
 
+			// Move the user to a certain group
 			if ($config['asacp_ocban_move_to_group'])
 			{
 				$sql = 'SELECT group_id FROM ' . USER_GROUP_TABLE . ' WHERE user_id = ' . $user_id;
@@ -183,16 +187,19 @@ switch ($mode)
 				group_user_add($config['asacp_ocban_move_to_group'], array($user_id), array($username), false, true);
 			}
 
+			// Delete the user's posts
 			if ($config['asacp_ocban_delete_posts'])
 			{
 				delete_posts('poster_id', $user_id);
 			}
 
+			// Delete the user's avatar
 			if ($config['asacp_ocban_delete_avatar'] && $user_row['user_avatar'])
 			{
 				avatar_delete('user', $user_row, true);
 			}
 
+			// Delete the user's signature
 			if ($config['asacp_ocban_delete_signature'])
 			{
 				$sql = 'UPDATE ' . USERS_TABLE . '
@@ -201,6 +208,7 @@ switch ($mode)
 				$db->sql_query($sql);
 			}
 
+			// Clear the user's outbox
 			if ($config['asacp_ocban_clear_outbox'])
 			{
 				$msg_ids = array();
@@ -233,6 +241,7 @@ switch ($mode)
 				$db->sql_freeresult($result);
 			}
 
+			// Empty the user's profile fields
 			if ($config['asacp_ocban_delete_profile_fields'])
 			{
 				$sql_ary = array(
@@ -260,6 +269,7 @@ switch ($mode)
 					'username'	=> $user_row['username'],
 					'email'		=> $user_row['user_email'],
 					'ip_addr'	=> $user_row['user_ip'],
+					'evidence'	=> substr(utf8_normalize_nfc(request_var('sfs_evidence', '', true)), 0, 7999), // Evidence is limited to 8,000 characters
 					'api_key'	=> $config['asacp_sfs_key'],
 				);
 
@@ -268,12 +278,7 @@ switch ($mode)
 				$fp = @fsockopen($domain, 80, $errno, $errstr, 5);
 				if ($fp)
 				{
-					$post = '';
-					foreach ($data as $name => $value)
-					{
-						$post .= "&$name=$value";
-					}
-					$post = substr($post, 1);
+					$post = http_build_query($data);
 
 				    $out = "POST /add HTTP/1.0\r\n";
 				    $out .= "Host: $domain\r\n";
@@ -291,13 +296,64 @@ switch ($mode)
 		}
 		else
 		{
-			if ($config['asacp_sfs_key'])
+			if (isset($_REQUEST['confirm_key']) && $error)
 			{
-				$template->assign_var('S_SFS_SUBMIT', true);
+				// Hack to fix the confirm_box if we need to come back to it because of an error
+				unset($_REQUEST['confirm_key']);
 			}
 
+			// Build the ban actions string
+			$user->add_lang('mods/acp_asacp');
+			$ban_actions = array();
+			if ($config['asacp_ocban_username'])
+			{
+				$ban_actions[] = $user->lang['ASACP_BAN_USERNAME'];
+			}
+			if ($config['asacp_ocban_move_to_group'])
+			{
+				$sql = 'SELECT group_name FROM ' . GROUPS_TABLE . ' WHERE group_id = ' . $config['asacp_ocban_move_to_group'];
+				$result = $db->sql_query($sql);
+				$group_name = $db->sql_fetchfield('group_name');
+				$db->sql_freeresult($result);
+
+				$group_name = (isset($user->lang['G_' . $group_name])) ? $user->lang['G_' . $group_name] : $group_name;
+
+				$ban_actions[] = $user->lang['ASACP_BAN_MOVE_TO_GROUP'] . ': ' . $group_name;
+			}
+			if ($config['asacp_ocban_delete_posts'])
+			{
+				$ban_actions[] = $user->lang['ASACP_BAN_DELETE_POSTS'];
+			}
+			if ($config['asacp_ocban_delete_avatar'])
+			{
+				$ban_actions[] = $user->lang['ASACP_BAN_DELETE_AVATAR'];
+			}
+			if ($config['asacp_ocban_delete_signature'])
+			{
+				$ban_actions[] = $user->lang['ASACP_BAN_DELETE_SIGNATURE'];
+			}
+			if ($config['asacp_ocban_clear_outbox'])
+			{
+				$ban_actions[] = $user->lang['ASACP_BAN_CLEAR_OUTBOX'];
+			}
+			if ($config['asacp_ocban_delete_profile_fields'])
+			{
+				$ban_actions[] = $user->lang['ASACP_BAN_DELETE_PROFILE_FIELDS'];
+			}
+
+			$template->assign_vars(array(
+				'S_BAN_USER'			=> $config['asacp_ocban_username'],
+				'S_SFS_SUBMIT'			=> ($config['asacp_sfs_key']) ? true : false,
+				'BAN_REASON'			=> utf8_normalize_nfc(request_var('ban_reason', '', true)),
+				'SFS_SUBMIT'			=> (isset($_POST['sfs_submit'])) ? true : false,
+				'SFS_EVIDENCE'			=> utf8_normalize_nfc(request_var('sfs_evidence', '', true)),
+				'SFS_EVIDENCE_ERROR'	=> ($error) ? true : false,
+
+				'L_ASACP_BAN_ACTIONS'	=> sprintf($user->lang['ASACP_BAN_ACTIONS'], implode(', ', $ban_actions)),
+			));
+
 			$user->lang['ASACP_BAN_CONFIRM'] = sprintf($user->lang['ASACP_BAN_CONFIRM'], $username);
-			confirm_box(false, 'ASACP_BAN', '', 'antispam/oc_ban.html');
+			confirm_box(false, 'ASACP_BAN', '', 'antispam/oc_ban.html', "antispam/index.{$phpEx}?mode=ocban&amp;u=$user_id");
 		}
 	break;
 
