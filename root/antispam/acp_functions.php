@@ -198,8 +198,8 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			$db->sql_query('SELECT count(log_id) AS total FROM ' . LOG_TABLE . '
 				WHERE log_ip = \'' . $sql_ip . '\'');
 			$total = $db->sql_fetchfield('total');
-			$sql = 'SELECT l.log_id, l.log_type, l.user_id, u.username, u.user_colour, l.log_time, l.forum_id, l.topic_id, l.reportee_id, l.log_operation, l.log_data
-				FROM ' . LOG_TABLE . ' l, ' . USERS_TABLE . ' u
+			$sql = 'SELECT l.user_id, l.log_time, l.forum_id, l.topic_id, l.log_operation, l.log_data, u.username, u.user_colour
+				FROM ' . LOG_TABLE . ' l,' . USERS_TABLE . ' u
 				WHERE log_ip = \'' . $sql_ip . '\'
 				AND u.user_id = l.user_id
 				ORDER BY log_time DESC';
@@ -215,7 +215,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 				}
 				$row['username'] = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
 
-				unset($row['user_id'], $row['user_colour'], $row['log_operation'], $row['log_data']);
+				unset($row['user_id'], $row['user_colour'], $row['reportee_id'], $row['reportee_username'], $row['reportee_user_colour'], $row['log_operation'], $row['log_data']);
 
 				$cnt++;
 				if ($cnt == 1)
@@ -379,7 +379,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 			{
 				$row['username'] = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
 				$row[$user->lang['ACTIONS']] = '<a href="' . append_sid("{$phpbb_admin_path}index.$phpEx", 'i=users&amp;mode=overview&amp;u=' . $row['user_id']) . '">' . $user->lang['USER_ADMIN'] . '</a>';;
-				unset($row['user_colour']);
+				unset($row['user_id'], $row['user_colour']);
 
 				$cnt++;
 				if ($cnt == 1)
@@ -388,6 +388,7 @@ function asacp_display_ip_search($type, $ip, $url, $start = 0)
 				}
 
 				$row['user_regdate'] = $user->format_date($row['user_regdate']);
+
 				$output .= asacp_display_table_row($row, $cnt);
 			}
 			$db->sql_freeresult($result);

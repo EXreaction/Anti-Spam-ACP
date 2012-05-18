@@ -424,9 +424,11 @@ class acp_asacp
 					'asacp_log'								=> array('lang' => 'ASACP_LOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_user_flag_enable'				=> array('lang' => 'ASACP_USER_FLAG_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_notify_new_flag'					=> array('lang' => 'ASACP_NOTIFY_NEW_FLAG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+
+					'legend2'								=> 'ASACP_PROFILE_FIELDS',
 					'asacp_profile_during_reg'				=> array('lang' => 'ASACP_PROFILE_DURING_REG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 
-					'legend2'								=> 'ASACP_SPAM_WORDS',
+					'legend3'								=> 'ASACP_SPAM_WORDS',
 					'asacp_spam_words_enable'				=> array('lang' => 'ASACP_SPAM_WORDS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_spam_words_guest_always'			=> array('lang' => 'ASACP_SPAM_WORDS_GUEST_ALWAYS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_spam_words_post_limit'			=> array('lang' => 'ASACP_SPAM_WORDS_POST_LIMIT', 'validate' => 'string', 'type' => 'text:40:255', 'explain' => true),
@@ -435,12 +437,12 @@ class acp_asacp
 					'asacp_spam_words_pm_action'			=> array('lang' => 'ASACP_SPAM_WORDS_PM_ACTION', 'validate' => 'int:0:2', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 					'asacp_spam_words_profile_action'		=> array('lang' => 'ASACP_SPAM_WORDS_PROFILE_ACTION', 'validate' => 'int:0:1', 'type' => 'custom', 'method' => 'spam_words_nothing_deny_action', 'explain' => true),
 
-					'legend3'								=> 'ASACP_SFS_SETTINGS',
+					'legend4'								=> 'ASACP_SFS_SETTINGS',
 					'asacp_sfs_min_freq'					=> array('lang' => 'ASACP_SFS_MIN_FREQ', 'validate' => 'int:1', 'type' => 'text:6:10', 'explain' => true),
 					'asacp_sfs_action'						=> array('lang' => 'ASACP_SFS_ACTION', 'validate' => 'int:0:5', 'type' => 'custom', 'method' => 'sfs_action', 'explain' => true),
 					'asacp_sfs_key'							=> array('lang' => 'ASACP_SFS_KEY', 'validate' => 'string', 'type' => 'text:14:14', 'explain' => true),
 
-					'legend4'								=> 'ASACP_BAN_SETTINGS',
+					'legend5'								=> 'ASACP_BAN_SETTINGS',
 					'asacp_ocban_username'					=> array('lang' => 'ASACP_BAN_USERNAME', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_deactivate'				=> array('lang' => 'ASACP_BAN_DEACTIVATE_USER', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 					'asacp_ocban_move_to_group'				=> array('lang' => 'ASACP_BAN_MOVE_TO_GROUP', 'validate' => 'int:0', 'type' => 'custom', 'method' => 'group_list', 'explain' => true),
