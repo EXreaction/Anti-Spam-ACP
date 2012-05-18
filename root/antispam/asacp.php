@@ -12,7 +12,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('ASACP_VERSION', '1.0.3-pl1');
+define('ASACP_VERSION', '1.0.4');
 
 define('SPAM_WORDS_TABLE', $table_prefix . 'spam_words');
 define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
@@ -477,8 +477,16 @@ class antispam
 				// Output One Click Ban section
 				if ($auth->acl_get('m_asacp_ban') && $user_id != $user->data['user_id'])
 				{
-					$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $user_id, true, $user->session_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
-					self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, 'custom_fields');
+					$sql = 'SELECT ban_id FROM ' . BANLIST_TABLE . ' WHERE ban_userid = ' . $user_id;
+					$result = $db->sql_query($sql);
+					$ban_id = $db->sql_fetchfield('ban_id');
+					$db->sql_freeresult($result);
+
+					if (!$ban_id)
+					{
+						$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $user_id, true, $user->session_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
+						self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, 'custom_fields');
+					}
 				}
 
 				// Output IP Search section
