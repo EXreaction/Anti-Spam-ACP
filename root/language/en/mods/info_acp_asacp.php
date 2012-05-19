@@ -77,9 +77,9 @@ $lang = array_merge($lang, array(
 		'cat'						=> 'settings',
 	),
 
-	'acl_a_asacp_spam_log'			=> array(
+	'acl_m_asacp_spam_log'			=> array(
 		'lang'						=> 'Can view Spam Log',
-		'cat'						=> 'settings',
+		'cat'						=> 'misc',
 	),
 
 	'acl_a_asacp_spam_words'		=> array(
