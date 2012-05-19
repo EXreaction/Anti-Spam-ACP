@@ -38,7 +38,7 @@ $return = '<br /><br />' . sprintf($user->lang['RETURN_PAGE'], '<a href="' . $re
 switch ($mode)
 {
 	case 'display_ips' :
-		if (!$auth->acl_get('a_asacp_ip_search'))
+		if (!$auth->acl_get('m_asacp_ip_search'))
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
