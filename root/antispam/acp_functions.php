@@ -204,75 +204,70 @@ function view_spam_log($type, &$log, &$log_count, $limit = 0, $offset = 0, $sql_
 */
 function clear_spam_log($mode, $deleteall, $marked = array(), $keywords = '')
 {
-	global $db;
+	global $db, $user;
 
 	$where_sql = '';
 
 	if (!$deleteall && sizeof($marked))
 	{
-		$sql_in = array();
-		foreach ($marked as $mark)
-		{
-			$sql_in[] = $mark;
-		}
-		$where_sql = ' AND ' . $db->sql_in_set('log_id', $sql_in);
-		unset($sql_in);
+		$where_sql = ' AND ' . $db->sql_in_set('log_id', $marked);
+	}
+	else
+	{
+		return;
 	}
 
-	if ($where_sql || $deleteall)
+	// Use no preg_quote for $keywords because this would lead to sole backslashes being added
+	// We also use an OR connection here for spaces and the | string. Currently, regex is not supported for searching (but may come later).
+	$keywords = preg_split('#[\s|]+#u', utf8_strtolower($keywords), 0, PREG_SPLIT_NO_EMPTY);
+	$sql_keywords = '';
+
+	if ($deleteall && !empty($keywords))
 	{
-		// Use no preg_quote for $keywords because this would lead to sole backslashes being added
-		// We also use an OR connection here for spaces and the | string. Currently, regex is not supported for searching (but may come later).
-		$keywords = preg_split('#[\s|]+#u', utf8_strtolower($keywords), 0, PREG_SPLIT_NO_EMPTY);
-		$sql_keywords = '';
+		$keywords_pattern = array();
 
-		if ($deleteall && !empty($keywords))
+		// Build pattern and keywords...
+		for ($i = 0, $num_keywords = sizeof($keywords); $i < $num_keywords; $i++)
 		{
-			$keywords_pattern = array();
-
-			// Build pattern and keywords...
-			for ($i = 0, $num_keywords = sizeof($keywords); $i < $num_keywords; $i++)
-			{
-				$keywords_pattern[] = preg_quote($keywords[$i], '#');
-				$keywords[$i] = $db->sql_like_expression($db->any_char . $keywords[$i] . $db->any_char);
-			}
-
-			$keywords_pattern = '#' . implode('|', $keywords_pattern) . '#ui';
-
-			$operations = array();
-			foreach ($user->lang as $key => $value)
-			{
-				if (substr($key, 0, 4) == 'LOG_' && preg_match($keywords_pattern, $value))
-				{
-					$operations[] = $key;
-				}
-			}
-
-			$sql_keywords = ' AND (';
-			if (!empty($operations))
-			{
-				$sql_keywords .= $db->sql_in_set('l.log_operation', $operations) . ' OR ';
-			}
-			$sql_keywords .= 'LOWER(log_data) ' . implode(' OR LOWER(log_data) ', $keywords) . ')';
+			$keywords_pattern[] = preg_quote($keywords[$i], '#');
+			$keywords[$i] = $db->sql_like_expression($db->any_char . $keywords[$i] . $db->any_char);
 		}
 
-		$sql = 'DELETE FROM ' . SPAM_LOG_TABLE . '
-			WHERE log_type = ' . (($mode == 'log') ? 1 : 2) .
-			$where_sql .
-			$sql_keywords;
-		$db->sql_query($sql);
+		$keywords_pattern = '#' . implode('|', $keywords_pattern) . '#ui';
 
-		if ($deleteall)
+		$operations = array();
+		foreach ($user->lang as $key => $value)
 		{
-			if ($mode == 'log')
+			if (substr($key, 0, 4) == 'LOG_' && preg_match($keywords_pattern, $value))
 			{
-				add_log('admin', 'LOG_CLEAR_SPAM_LOG');
+				$operations[] = $key;
 			}
-			else
-			{
-				$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 0');
-				add_log('admin', 'LOG_CLEAR_FLAG_LOG');
-			}
+		}
+
+		$sql_keywords = ' AND (';
+		if (!empty($operations))
+		{
+			$sql_keywords .= $db->sql_in_set('log_operation', $operations) . ' OR ';
+		}
+		$sql_keywords .= 'LOWER(log_data) ' . implode(' OR LOWER(log_data) ', $keywords) . ')';
+	}
+
+	$sql = 'DELETE FROM ' . SPAM_LOG_TABLE . '
+		WHERE log_type = ' . (($mode == 'log') ? 1 : 2) .
+		$where_sql .
+		$sql_keywords;
+	$db->sql_query($sql);
+
+	if ($deleteall)
+	{
+		if ($mode == 'log')
+		{
+			add_log('admin', 'LOG_CLEAR_SPAM_LOG');
+		}
+		else
+		{
+			$db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_flag_new = 0');
+			add_log('admin', 'LOG_CLEAR_FLAG_LOG');
 		}
 	}
 }

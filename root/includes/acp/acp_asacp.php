@@ -202,8 +202,17 @@ class acp_asacp
 
 				// Set up general vars
 				$start		= request_var('start', 0);
-				$deletemark = (!empty($_POST['delmarked'])) ? true : false;
-				$deleteall	= (!empty($_POST['delall'])) ? true : false;
+				$action = request_var('action', array('' => ''));
+				if (is_array($action))
+				{
+					list($action, ) = each($action);
+				}
+				else
+				{
+					$action = request_var('action', '');
+				}
+				$deletemark = (!empty($_POST['delmarked']) || $action == 'del_marked') ? true : false;
+				$deleteall	= (!empty($_POST['delall']) || $action == 'del_all') ? true : false;
 				$marked		= request_var('mark', array(0));
 
 				// Sort keys
@@ -219,7 +228,7 @@ class acp_asacp
 				{
 					if (confirm_box(true))
 					{
-						clear_spam_log($mode, (($deletemark) ? false : $deleteall), $marked = array(), $keywords);
+						clear_spam_log($mode, (($deletemark) ? false : $deleteall), $marked, $keywords);
 					}
 					else
 					{
@@ -269,15 +278,21 @@ class acp_asacp
 					'L_EXPLAIN'		=> '',
 
 					'S_ON_PAGE'		=> on_page($log_count, $config['topics_per_page'], $start),
+					'PAGE_NUMBER'	=> on_page($log_count, $config['topics_per_page'], $start),
 					'PAGINATION'	=> generate_pagination($this->u_action . "&amp;$u_sort_param$keywords_param", $log_count, $config['topics_per_page'], $start, true),
 					'TOTAL'			=> ($log_count == 1) ? $user->lang['TOTAL_LOG'] : sprintf($user->lang['TOTAL_LOGS'], $log_count),
 
-					'S_LIMIT_DAYS'	=> $s_limit_days,
-					'S_SORT_KEY'	=> $s_sort_key,
-					'S_SORT_DIR'	=> $s_sort_dir,
-					'S_CLEARLOGS'	=> $auth->acl_get('a_clearlogs'),
-					'S_KEYWORDS'	=> $keywords,
-					'S_LOGS'		=> ($log_count > 0) ? true : false,
+					'S_LIMIT_DAYS'			=> $s_limit_days, // Yes, these duplicates are shit, but the acp/mcp use different variables
+					'S_SELECT_SORT_DAYS'	=> $s_limit_days,
+					'S_SORT_KEY'			=> $s_sort_key,
+					'S_SELECT_SORT_KEY'		=> $s_sort_key,
+					'S_SORT_DIR'			=> $s_sort_dir,
+					'S_SELECT_SORT_DIR'		=> $s_sort_dir,
+
+					'S_CLEARLOGS'			=> $auth->acl_get('a_clearlogs'),
+					'S_CLEAR_ALLOWED'	   	=> $auth->acl_get('a_clearlogs'),
+					'S_KEYWORDS'			=> $keywords,
+					'S_LOGS'				=> ($log_count > 0) ? true : false,
 				));
 
 				foreach ($log_data as $row)
