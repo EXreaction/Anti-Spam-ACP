@@ -458,6 +458,11 @@ class acp_asacp
 					'asacp_ocban_delete_profile_fields'		=> array('lang' => 'ASACP_BAN_DELETE_PROFILE_FIELDS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 				);
 
+				if (file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx))
+				{
+					$options['asacp_ocban_delete_blog'] = array('lang' => 'ASACP_BAN_DELETE_BLOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true);
+				}
+
 				$template->assign_vars(array(
 					'L_TITLE'			=> $user->lang['ASACP_SETTINGS'],
 					'L_TITLE_EXPLAIN'	=> '',

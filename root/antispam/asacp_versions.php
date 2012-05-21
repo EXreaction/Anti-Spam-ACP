@@ -244,6 +244,11 @@ $versions = array(
 			array('mcp', 'ANTISPAM', array('module_basename' => 'asacp')),
 		),
   ),
+  '1.0.5-dev'  		=> array(
+		'config_add'    => array(
+			array('asacp_ocban_blog', false),
+		),
+  ),
 );
 
 function asacp_update($action, $version)
