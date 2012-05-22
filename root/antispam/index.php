@@ -218,7 +218,7 @@ switch ($mode)
 			}
 
 			// Delete the user's blog
-			if ($config['asacp_ocban_blog'] && (function_exists('blog_delete_user') || file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx)))
+			if ($config['asacp_ocban_delete_blog'] && file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx))
 			{
 				if (!function_exists('blog_delete_user'))
 				{
@@ -364,7 +364,7 @@ switch ($mode)
 			{
 				$ban_actions[] = $user->lang['ASACP_BAN_DELETE_PROFILE_FIELDS'];
 			}
-			if ($config['asacp_ocban_blog'] && (function_exists('blog_delete_user') || file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx)))
+			if ($config['asacp_ocban_blog'] && file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx))
 			{
 				$ban_actions[] = $user->lang['ASACP_BAN_DELETE_BLOG'];
 			}

@@ -460,7 +460,7 @@ class acp_asacp
 
 				if (file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx))
 				{
-					$options['asacp_ocban_delete_blog'] = array('lang' => 'ASACP_BAN_DELETE_BLOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true);
+					$options['asacp_ocban_blog'] = array('lang' => 'ASACP_BAN_DELETE_BLOG', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true);
 				}
 
 				$template->assign_vars(array(
