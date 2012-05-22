@@ -103,9 +103,11 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>Fix spam words action on user profiles (#181)</change>
 			</changelog>
 		</entry>
+		<entry>
 			<date>2012-00-00</date>
 			<rev-version>1.0.5-dev</rev-version>
 			<changelog lang="en">
+				<change>Fix the delete all action to delete all log entries for the flag/spam logs</change>
 				<change>Option to delete the user's blog with the One Click Ban (if the User Blog Mod is installed)</change>
 			</changelog>
 		</entry>

@@ -212,7 +212,7 @@ function clear_spam_log($mode, $deleteall, $marked = array(), $keywords = '')
 	{
 		$where_sql = ' AND ' . $db->sql_in_set('log_id', $marked);
 	}
-	else
+	else if (!$deleteall && !sizeof($marked))
 	{
 		return;
 	}
