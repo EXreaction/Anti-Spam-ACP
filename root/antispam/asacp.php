@@ -548,7 +548,19 @@ class antispam
 	*/
 	public static function flagged_output($poster_id, &$poster_row, $template_block, $post_id = 0)
 	{
-		global $auth, $config;
+		global $auth, $config, $phpbb_root_path, $phpEx, $user, $template;
+
+		if (!isset($user->lang['USER_FLAGGED']))
+		{
+			$user->add_lang('mods/asacp');
+		}
+
+		// Output One Click Ban section
+		if ($auth->acl_get('m_asacp_ban') && $poster_id != $user->data['user_id'])
+		{
+			$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $poster_id . '&amp;p=' . $post_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
+			self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, $template_block);
+		}
 
 		if (!$config['asacp_enable'] || !$config['asacp_user_flag_enable'] || !$auth->acl_get('m_asacp_user_flag'))
 		{
@@ -557,13 +569,6 @@ class antispam
 
 		if (isset($poster_row['user_flagged']))
 		{
-			global $phpbb_root_path, $phpEx, $user, $template;
-
-			if (!isset($user->lang['USER_FLAGGED']))
-			{
-				$user->add_lang('mods/asacp');
-			}
-
 			if ($poster_row['user_flagged'])
 			{
 				$flagged_value = '<span class="error">' . $user->lang['YES'] . '</span> [ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", "mode=user_unflag&amp;u={$poster_id}&amp;p=$post_id") . '">' . $user->lang['USER_UNFLAG']. '</a> ]';
@@ -722,7 +727,7 @@ class antispam
 
 		return ($akismet->isCommentSpam()) ? true : false;
 	}
-	//public static function spam_words($data, $post_count = false)
+	//public static function akismet($data)
 
 	/**
 	* Add spam log event

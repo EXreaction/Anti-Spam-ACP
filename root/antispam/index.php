@@ -218,7 +218,7 @@ switch ($mode)
 			}
 
 			// Delete the user's blog
-			if ($config['asacp_ocban_delete_blog'] && file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx))
+			if ($config['asacp_ocban_blog'] && file_exists($phpbb_root_path . 'blog/includes/functions_admin.' . $phpEx))
 			{
 				if (!function_exists('blog_delete_user'))
 				{
@@ -312,6 +312,39 @@ switch ($mode)
 				}
 			}
 
+			// Submit the spam to Akismet
+			if (isset($_POST['akismet_submit']) && $config['asacp_akismet_enable'] && $config['asacp_akismet_key'] && ($post_id = request_var('p', 0)))
+			{
+				$sql = 'SELECT * FROM ' . POSTS_TABLE . '
+					WHERE post_id = ' . $post_id;
+				$result = $db->sql_query($sql);
+				$post = $db->sql_fetchrow($result);
+				$db->sql_freeresult($result);
+
+				if ($post)
+				{
+					if (!class_exists('Akismet'))
+					{
+						global $phpbb_root_path, $phpEx;
+						include($phpbb_root_path . 'antispam/Akismet.class.' . $phpEx);
+					}
+
+					$post['decoded_text'] = $post['post_text'];
+					decode_message($post['decoded_text'], $post['bbcode_uid']);
+
+					$akismet = new Akismet($config['asacp_akismet_domain'], $config['asacp_akismet_key']);
+					$akismet->setUserIP($post['poster_ip']);
+					$akismet->setReferrer('');
+					$akismet->setCommentUserAgent('');
+					$akismet->setCommentType('comment');
+					$akismet->setCommentAuthor($user_row['username']);
+					$akismet->setCommentAuthorEmail($user_row['user_email']);
+					$akismet->setCommentContent($post['decoded_text']);
+
+					$akismet->submitSpam();
+				}
+			}
+
 			trigger_error(sprintf($user->lang['ASACP_BAN_COMPLETE'], append_sid("{$phpbb_root_path}memberlist.$phpEx", "mode=viewprofile&amp;u=$user_id")));
 		}
 		else
@@ -369,19 +402,36 @@ switch ($mode)
 				$ban_actions[] = $user->lang['ASACP_BAN_DELETE_BLOG'];
 			}
 
+			$post = false;
+			if (($post_id = request_var('p', 0)))
+			{
+				$sql = 'SELECT * FROM ' . POSTS_TABLE . '
+					WHERE post_id = ' . $post_id;
+				$result = $db->sql_query($sql);
+				$post = $db->sql_fetchrow($result);
+				$db->sql_freeresult($result);
+
+				$post['decoded_text'] = $post['post_text'];
+				decode_message($post['decoded_text'], $post['bbcode_uid']);
+			}
+
 			$template->assign_vars(array(
+				'POST_TEXT'		   		=> (is_array($post)) ? $post['post_text'] : false,
 				'S_BAN_USER'			=> $config['asacp_ocban_username'],
+				'S_AKISMET_SUBMIT'		=> ($config['asacp_akismet_enable'] && $config['asacp_akismet_key'] && is_array($post)) ? true : false,
 				'S_SFS_SUBMIT'			=> ($config['asacp_sfs_key']) ? true : false,
 				'BAN_REASON'			=> utf8_normalize_nfc(request_var('ban_reason', '', true)),
+				'AKISMET_SUBMIT'		=> (isset($_POST['akismet_submit'])) ? true : false,
+				'AKISMET_TEXT'	   		=> (is_array($post)) ? $post['decoded_text'] : '',
 				'SFS_SUBMIT'			=> (isset($_POST['sfs_submit'])) ? true : false,
-				'SFS_EVIDENCE'			=> utf8_normalize_nfc(request_var('sfs_evidence', '', true)),
+				'SFS_EVIDENCE'			=> (!isset($_POST['confirm']) && !request_var('sfs_evidence', '', true) && is_array($post)) ? $post['decoded_text'] : utf8_normalize_nfc(request_var('sfs_evidence', '', true)),
 				'SFS_EVIDENCE_ERROR'	=> ($error) ? true : false,
 
 				'L_ASACP_BAN_ACTIONS'	=> sprintf($user->lang['ASACP_BAN_ACTIONS'], implode(', ', $ban_actions)),
 			));
 
 			$user->lang['ASACP_BAN_CONFIRM'] = sprintf($user->lang['ASACP_BAN_CONFIRM'], $username);
-			confirm_box(false, 'ASACP_BAN', '', 'antispam/oc_ban.html', "antispam/index.{$phpEx}?mode=ocban&amp;u=$user_id");
+			confirm_box(false, 'ASACP_BAN', '', 'antispam/oc_ban.html', "antispam/index.{$phpEx}?mode=ocban&amp;u=$user_id&amp;p=$post_id");
 		}
 	break;
 

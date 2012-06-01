@@ -19,14 +19,14 @@
 		<td class="row1" align="center">
 			<p class="gen"><strong>{L_ASACP_BAN_REASON}</strong><br />
 			{L_ASACP_BAN_REASON_EXPLAIN}</p><br />
-			<textarea name="ban_reason" id="ban_reason" rows="5" cols="76" class="inputbox">{BAN_REASON}</textarea>
+			<textarea name="ban_reason" id="ban_reason" rows="4" cols="76" class="inputbox">{BAN_REASON}</textarea>
 		</td>
 	</tr>
 	<tr>
 		<td class="row1" align="center">
 			<p class="gen"><strong>{L_ASACP_BAN_REASON_SHOWN_TO_USER}</strong><br />
 			{L_ASACP_BAN_REASON_SHOWN_TO_USER_EXPLAIN}</p><br />
-			<textarea name="ban_reason_shown" id="ban_reason_shown" rows="5" cols="76" class="inputbox">{BAN_REASON_SHOWN_TO_USER}</textarea>
+			<textarea name="ban_reason_shown" id="ban_reason_shown" rows="4" cols="76" class="inputbox">{BAN_REASON_SHOWN_TO_USER}</textarea>
 		</td>
 	</tr>
 	<!-- ENDIF -->
@@ -37,7 +37,16 @@
 			<input type="checkbox" name="sfs_submit"<!-- IF SFS_SUBMIT --> checked="checked"<!-- ENDIF --> /> {L_SFS_SUBMIT}<br /><br />
 
 			<p class="gen<!-- IF SFS_EVIDENCE_ERROR --> error<!-- ENDIF -->">{L_ASACP_EVIDENCE_SFS}</p>
-			<textarea name="sfs_evidence" id="sfs_evidence" rows="15" cols="76" class="inputbox">{SFS_EVIDENCE}</textarea>
+			<textarea name="sfs_evidence" id="sfs_evidence" rows="7" cols="76" class="inputbox">{SFS_EVIDENCE}</textarea>
+		</td>
+	</tr>
+	<!-- ENDIF -->
+	<!-- IF S_AKISMET_SUBMIT -->
+	<tr>
+		<td class="row1" align="center">
+			<p class="gen"><strong>{L_ASACP_AKISMET}</strong></p><br />
+			<input type="checkbox" name="akismet_submit"<!-- IF AKISMET_SUBMIT --> checked="checked"<!-- ENDIF --> /> {L_ASACP_AKISMET_SUBMIT}<br /><br />
+			<textarea name="akismet_post" rows="7" cols="76" class="inputbox" readonly="readonly">{AKISMET_TEXT}</textarea>
 		</td>
 	</tr>
 	<!-- ENDIF -->

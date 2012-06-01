@@ -30,6 +30,8 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+	'ASACP_AKISMET'			=> 'Akismet',
+	'ASACP_AKISMET_SUBMIT'	=> 'Submit the following post to Akismet (spam only)',
 	'ASACP_BAN'				=> 'One Click Ban',
 	'ASACP_BAN_ACTIONS'		=> 'The following actions will be performed: %s',
 	'ASACP_BAN_COMPLETE'	=> 'You have successfully banned the user.<br /><br /><a href="%s">Click here to return to the user\'s profile.</a>',

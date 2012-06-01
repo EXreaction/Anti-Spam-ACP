@@ -112,6 +112,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>Option to delete the user's blog with the One Click Ban (if the User Blog Mod is installed)</change>
 				<change>Make sure the acp/mcp module info files exist before attempting to install or update with the database update script</change>
 				<change>Remove the acp option to always check guest posts for spam words, now always check spam words for guest posts (who would really want it to do otherwise?)</change>
+				<change>Add link to One Click Ban from viewtopic for easier and faster banning of spammers.</change>
 			</changelog>
 		</entry>
 	</history>
