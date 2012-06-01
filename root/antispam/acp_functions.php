@@ -592,6 +592,23 @@ function asacp_display_options(&$options, &$error, $u_action)
 	$cfg_array = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $new_config;
 
 	validate_config_vars($options, $cfg_array, $error);
+
+	// Validate Akismet API key
+	if ($submit && isset($cfg_array['asacp_akismet_enable']) && $cfg_array['asacp_akismet_enable'] && isset($cfg_array['asacp_akismet_key']) && $cfg_array['asacp_akismet_key'] && isset($cfg_array['asacp_akismet_domain']) && $cfg_array['asacp_akismet_domain'])
+	{
+		if (!class_exists('Akismet'))
+		{
+			global $phpbb_root_path, $phpEx;
+			include($phpbb_root_path . 'antispam/Akismet.class.' . $phpEx);
+		}
+
+		$akismet = new Akismet($cfg_array['asacp_akismet_domain'], $cfg_array['asacp_akismet_key']);
+		if (!$akismet->isKeyValid())
+		{
+			$error[] = $user->lang['ASACP_AKISMET_INVALID_KEY'];
+		}
+	}
+
 	foreach ($options as $config_name => $null)
 	{
 		if (!isset($cfg_array[$config_name]) || strpos($config_name, 'legend') !== false)

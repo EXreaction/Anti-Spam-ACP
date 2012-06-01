@@ -651,7 +651,7 @@ class antispam
 			return false;
 		}
 
-		if ($user->data['is_registered'] || !$config['asacp_spam_words_guest_always'])
+		if ($user->data['is_registered'])
 		{
 			if ($post_count === false)
 			{
@@ -663,7 +663,7 @@ class antispam
 				return false;
 			}
 		}
-		// else the user is a guest and the guest always check is on.
+		// else the user is a guest
 
 		if (!class_exists('spam_words'))
 		{
@@ -677,6 +677,50 @@ class antispam
 
 		$flag_limit = (is_numeric($flag_limit) && $flag_limit > 0) ? (int) $flag_limit : $config['asacp_spam_words_flag_limit'];
 		return ($spam_words->spam_flags >= $flag_limit) ? true : false;
+	}
+	//public static function spam_words($data, $post_count = false)
+
+	/**
+	* Akismet Operations
+	*
+	* Send a message to check for spam.  If the message is flagged as spam, true is returned.
+	*
+	* @param string|array $data The message to check
+	*
+	* @return bool True if the message is flagged as spam, false if not
+	*/
+	public static function akismet($data)
+	{
+		global $cache, $config, $db, $user;
+
+		if (!$config['asacp_enable'] || !$config['asacp_akismet_enable'] || !$config['asacp_akismet_key'])
+		{
+			return false;
+		}
+
+		if ($user->data['is_registered'])
+		{
+			if ($user->data['user_posts'] > $config['asacp_akismet_post_limit'] && $config['asacp_akismet_post_limit'] > 0)
+			{
+				return false;
+			}
+		}
+		// else the user is a guest
+
+		if (!class_exists('Akismet'))
+		{
+			global $phpbb_root_path, $phpEx;
+			include($phpbb_root_path . 'antispam/Akismet.class.' . $phpEx);
+		}
+
+		$akismet = new Akismet($config['asacp_akismet_domain'], $config['asacp_akismet_key']);
+		$akismet->setUserIP($user->ip);
+		$akismet->setCommentType('comment');
+		$akismet->setCommentAuthor($user->data['username']);
+		$akismet->setCommentAuthorEmail($user->data['user_email']);
+		$akismet->setCommentContent((string) $data);
+
+		return ($akismet->isCommentSpam()) ? true : false;
 	}
 	//public static function spam_words($data, $post_count = false)
 

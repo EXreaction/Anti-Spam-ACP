@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD. Although MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD. No support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
+<header>
+	<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
+	<title lang="en">Anti-Spam ACP</title>
+	<description lang="en">Prevents spam on your phpBB3 forum.</description>
+
+	<author-notes lang="en">PHP versions less than 5.1.0 are not supported.  phpBB versions less than 3.0.6 are not supported.
+
+Support by the author is only provided at http://www.lithiumstudios.org
+A small fee is required for support by the author unless otherwise specified by the author in the release topic.
+Bug reports are accepted and, if confirmed as a bug, you will receive support for fixing the bug for free by the mod author.</author-notes>
+
+	<author-group>
+		<author>
+			<username>EXreaction</username>
+			<realname>Nathan Guse</realname>
+			<homepage>http://www.lithiumstudios.org/</homepage>
+			<email>exreaction@lithiumstudios.org</email>
+		</author>
+	</author-group>
+
+	<mod-version>1.0.5</mod-version>
+
+	<installation>
+		<level>easy</level>
+		<time>60</time>
+		<target-version>3.0.10</target-version>
+	</installation>
+</header>
+
+<action-group>
+	<copy>
+		<file from="root/*.*" to="*.*" />
+	</copy>
+	<open src="includes/ucp/ucp_pm_compose.php">
+		<edit>
+			<find><![CDATA[		// START Anti-Spam ACP
+		if ($config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
+		{
+			$user->add_lang('mods/asacp');
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		if (!sizeof($error) && $submit && $user->data['user_flagged'])
+		{
+			antispam::add_log('LOG_SENT_PM', array('pm' => $address_list), 'flag');
+		}
+		// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[		// START Anti-Spam ACP
+		if (!sizeof($error) && $config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
+		{
+			$user->add_lang('mods/asacp');
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		if (!sizeof($error) && $config['asacp_akismet_pm_action'] && antispam::akismet($message_parser->message))
+		{
+			$user->add_lang('mods/asacp');
+			antispam::add_log('LOG_SPAM_PM_DENIED_AKISMET', array($subject, $message_parser->message));
+			$error[] = $user->lang['SPAM_DENIED'];
+		}
+		if (!sizeof($error) && $submit && $user->data['user_flagged'])
+		{
+			antispam::add_log('LOG_SENT_PM', array('pm' => $address_list), 'flag');
+		}
+		// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<open src="posting.php">
+		<edit>
+			<find><![CDATA[	// START Anti-Spam ACP
+	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
+	$asacp_is_spam = false;
+	if ($config['asacp_spam_words_posting_action'] && antispam::spam_words(array($sc_title, $message_parser->message)))
+	{
+		switch ($config['asacp_spam_words_posting_action'])
+		{
+			case 1 :
+				$user->add_lang('mods/asacp');
+				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $message_parser->message));
+				$error[] = $user->lang['SPAM_DENIED'];
+			break;
+
+			case 2 :
+				$asacp_is_spam = true;
+			break;
+		}
+	}
+	// END Anti-Spam ACP]]></find>
+			<action type="replace-with"><![CDATA[	// START Anti-Spam ACP
+	$sc_title = (empty($post_data['topic_title'])) ? $post_data['post_subject'] : $post_data['topic_title'];
+	$asacp_is_spam = false;
+	if (!sizeof($error) && $config['asacp_spam_words_posting_action'] && antispam::spam_words(array($sc_title, $message_parser->message)))
+	{
+		switch ($config['asacp_spam_words_posting_action'])
+		{
+			case 1 :
+				$user->add_lang('mods/asacp');
+				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $message_parser->message));
+				$error[] = $user->lang['SPAM_DENIED'];
+			break;
+
+			case 2 :
+				$asacp_is_spam = true;
+			break;
+		}
+	}
+	if (!sizeof($error) && $config['asacp_akismet_post_action'] && antispam::akismet($message_parser->message))
+	{
+		switch ($config['asacp_akismet_post_action'])
+		{
+			case 1 :
+				$user->add_lang('mods/asacp');
+				antispam::add_log('LOG_SPAM_POST_DENIED_AKISMET', array($sc_title, $message_parser->message));
+				$error[] = $user->lang['SPAM_DENIED'];
+			break;
+
+			case 2 :
+				$asacp_is_spam = true;
+			break;
+		}
+	}
+	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+</action-group>
+</mod>

@@ -12,6 +12,8 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+global $user;
+
 $versions = array(
 	'0.1.0'		=> array(
 		'config_add'	=> array(
@@ -247,6 +249,15 @@ $versions = array(
   '1.0.5-dev'  		=> array(
 		'config_add'    => array(
 			array('asacp_ocban_blog', false),
+			array('asacp_akismet_enable', false),
+			array('asacp_akismet_api_key', ''),
+			array('asacp_akismet_domain', 'http://' . $user->extract_current_hostname()),
+			array('asacp_akismet_post_limit', 5),
+			array('asacp_akismet_post_action', 2),
+			array('asacp_akismet_pm_action', 1),
+		),
+		'config_remove'	=> array(
+			array('asacp_spam_words_guest_always', 1),
 		),
   ),
 );
