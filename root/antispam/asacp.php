@@ -19,6 +19,12 @@ define('SPAM_LOG_TABLE', $table_prefix . 'spam_log');
 
 if (!isset($config['asacp_version']) || version_compare(ASACP_VERSION, $config['asacp_version'], '>'))
 {
+	if (!file_exists($phpbb_root_path . 'includes/acp/info/acp_asacp.' . $phpEx) || !file_exists($phpbb_root_path . 'includes/mcp/info/mcp_asacp.' . $phpEx))
+	{
+		// The module info files do not exist, they should for proper installing/updating
+		trigger_error('includes/acp/info/acp_asacp.php or includes/mcp/info/mcp_asacp.php is missing');
+	}
+
 	include($phpbb_root_path . 'antispam/update_asacp.' . $phpEx);
 }
 
