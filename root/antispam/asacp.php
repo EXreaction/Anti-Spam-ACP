@@ -556,7 +556,7 @@ class antispam
 		}
 
 		// Output One Click Ban section
-		if ($auth->acl_get('m_asacp_ban') && $poster_id != $user->data['user_id'])
+		if ($auth->acl_get('m_asacp_ban') && $poster_id != $user->data['user_id'] && $post_id)
 		{
 			$asacp_ban = '[ <a href="' . append_sid("{$phpbb_root_path}antispam/index.$phpEx", 'mode=ocban&amp;u=' . $poster_id . '&amp;p=' . $post_id) . '">' . $user->lang['ASACP_BAN'] . '</a> ]';
 			self::cp_row_output($user->lang['ASACP_BAN'], $asacp_ban, $template_block);
