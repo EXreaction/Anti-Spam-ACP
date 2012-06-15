@@ -246,7 +246,7 @@ $versions = array(
 			array('mcp', 'ANTISPAM', array('module_basename' => 'asacp')),
 		),
   ),
-  '1.0.5-dev'  		=> array(
+  '1.0.5'  		=> array(
 		'config_add'    => array(
 			array('asacp_ocban_blog', false),
 			array('asacp_akismet_enable', false),
