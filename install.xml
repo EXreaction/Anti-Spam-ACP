@@ -24,7 +24,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.5-dev</mod-version>
+	<mod-version>1.0.6-dev</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -113,6 +113,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<change>Make sure the acp/mcp module info files exist before attempting to install or update with the database update script</change>
 				<change>Remove the acp option to always check guest posts for spam words, now always check spam words for guest posts (who would really want it to do otherwise?)</change>
 				<change>Add link to One Click Ban from viewtopic for easier and faster banning of spammers.</change>
+			</changelog>
+		</entry>
+		<entry>
+			<date>2012-00-00</date>
+			<rev-version>1.0.6-dev</rev-version>
+			<changelog lang="en">
+				<change>Decode messages before logging them</change>
 			</changelog>
 		</entry>
 	</history>
@@ -241,7 +248,9 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		{
 			case 1 :
 				$user->add_lang('mods/asacp');
-				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $message_parser->message));
+				$log_message = $message_parser->message;
+				decode_message($log_message, $message_parser->bbcode_uid);
+				antispam::add_log('LOG_SPAM_POST_DENIED', array($sc_title, $log_message));
 				$error[] = $user->lang['SPAM_DENIED'];
 			break;
 
@@ -256,7 +265,9 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 		{
 			case 1 :
 				$user->add_lang('mods/asacp');
-				antispam::add_log('LOG_SPAM_POST_DENIED_AKISMET', array($sc_title, $message_parser->message));
+				$log_message = $message_parser->message;
+				decode_message($log_message, $message_parser->bbcode_uid);
+				antispam::add_log('LOG_SPAM_POST_DENIED_AKISMET', array($sc_title, $log_message));
 				$error[] = $user->lang['SPAM_DENIED'];
 			break;
 
