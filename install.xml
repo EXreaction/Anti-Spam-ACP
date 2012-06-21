@@ -142,13 +142,17 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		if (!sizeof($error) && $config['asacp_spam_words_pm_action'] && antispam::spam_words(array($subject, $message_parser->message)))
 		{
 			$user->add_lang('mods/asacp');
-			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $message_parser->message));
+			$log_message = $message_parser->message;
+			decode_message($log_message, $message_parser->bbcode_uid);
+			antispam::add_log('LOG_SPAM_PM_DENIED', array($subject, $log_message));
 			$error[] = $user->lang['SPAM_DENIED'];
 		}
 		if (!sizeof($error) && $config['asacp_akismet_pm_action'] && antispam::akismet($message_parser->message))
 		{
 			$user->add_lang('mods/asacp');
-			antispam::add_log('LOG_SPAM_PM_DENIED_AKISMET', array($subject, $message_parser->message));
+			$log_message = $message_parser->message;
+			decode_message($log_message, $message_parser->bbcode_uid);
+			antispam::add_log('LOG_SPAM_PM_DENIED_AKISMET', array($subject, $log_message));
 			$error[] = $user->lang['SPAM_DENIED'];
 		}
 		if (!sizeof($error) && $submit && $user->data['user_flagged'])
