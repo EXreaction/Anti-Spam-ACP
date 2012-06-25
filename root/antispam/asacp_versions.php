@@ -240,10 +240,17 @@ $versions = array(
 		'config_add'    => array(
 			array('asacp_ocban_deactivate', false),
 		),
+		
+		'module_remove'	=> array(
+			array('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM'),
+			array('acp', 'ANTISPAM', array('module_basename' => 'asacp')),
+		),
 
 		'module_add'	=> array(
 			array('mcp', 0, 'ANTISPAM'),
 			array('mcp', 'ANTISPAM', array('module_basename' => 'asacp')),
+			array('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM'),
+			array('acp', 'ANTISPAM', array('module_basename' => 'asacp')),
 		),
   ),
   '1.0.5'  		=> array(
