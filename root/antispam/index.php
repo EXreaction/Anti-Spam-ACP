@@ -411,8 +411,11 @@ switch ($mode)
 				$post = $db->sql_fetchrow($result);
 				$db->sql_freeresult($result);
 
-				$post['decoded_text'] = $post['post_text'];
-				decode_message($post['decoded_text'], $post['bbcode_uid']);
+				if ($post)
+				{
+					$post['decoded_text'] = $post['post_text'];
+					decode_message($post['decoded_text'], $post['bbcode_uid']);
+				}
 			}
 
 			$template->assign_vars(array(
