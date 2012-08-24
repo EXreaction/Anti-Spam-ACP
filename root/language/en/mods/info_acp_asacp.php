@@ -56,6 +56,7 @@ $lang = array_merge($lang, array(
 	'LOG_SPAM_POST_DENIED_AKISMET'	=> 'A post was flagged as spam by Akismet and denied from posting.<br />The message subject was:<br />%s<br /><br />The message was:<br />%s',
 	'LOG_SPAM_PROFILE_DENIED'		=> 'One or more profile fields entered were flagged as spam.<br />The information submitted:<br /><br />%s',
 	'LOG_SPAM_SIGNATURE_DENIED'		=> 'Signature was flagged as spam.<br />The signature was:<br />%s',
+	'LOG_SPAM_USER_DENIED_SFS'		=> 'User was blocked from registering by the Stop Forum Spam settings.<br />The query was:<br />%s',
 	'LOG_USER_FLAGGED'				=> '%s was flagged.',
 	'LOG_USER_UNFLAGGED'			=> 'The flag on %s was removed.',
 

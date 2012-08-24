@@ -218,6 +218,13 @@ class antispam
 					if ($appears && $frequency >= $config['asacp_sfs_min_freq'])
 					{
 						self::$sfs_spam = true;
+
+						if ($config['asacp_sfs_action'])
+						{
+							self::add_log('LOG_SPAM_USER_DENIED_SFS', array($url));
+						}
+
+						break;
 					}
 				}
 			}
