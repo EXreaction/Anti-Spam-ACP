@@ -121,6 +121,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<changelog lang="en">
 				<change>Decode messages before logging them.</change>
 				<change>Log the queries to Stop Forum Spam that results in an account being blocked from registering.</change>
+				<change>Fix a MSSQL error #62</change>
 			</changelog>
 		</entry>
 	</history>
