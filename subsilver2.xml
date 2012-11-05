@@ -24,12 +24,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		</author>
 	</author-group>
 
-	<mod-version>1.0.5</mod-version>
+	<mod-version>1.0.6-dev</mod-version>
 
 	<installation>
 		<level>intermediate</level>
 		<time>120</time>
-		<target-version>3.0.10</target-version>
+		<target-version>3.0.11</target-version>
 	</installation>
 
 	<link-group>
@@ -40,8 +40,11 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 <action-group>
 	<open src="styles/subsilver2/template/overall_footer.html">
 		<edit>
-			<find><![CDATA[<span class="copyright">Powered by <a href="http://www.phpbb.com/">phpBB</a> &copy; 2000, 2002, 2005, 2007 phpBB Group]]></find>
-			<action type="before-add"><![CDATA[	<br />{L_ASACP_CREDITS}]]></action>
+			<find><![CDATA[<span class="copyright">]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[class="copyright">]]></inline-find>
+				<inline-action type="after-add"><![CDATA[{L_ASACP_CREDITS}<br />]]></inline-action>
+			</inline-edit>
 		</edit>
     </open>
 	<open src="styles/subsilver2/template/overall_header.html">
