@@ -240,7 +240,7 @@ $versions = array(
 		'config_add'    => array(
 			array('asacp_ocban_deactivate', false),
 		),
-		
+
 		'module_remove'	=> array(
 			array('acp', 'ACP_CAT_DOT_MODS', 'ANTISPAM'),
 			array('acp', 'ANTISPAM', array('module_basename' => 'asacp')),
@@ -267,6 +267,7 @@ $versions = array(
 			array('asacp_spam_words_guest_always', 1),
 		),
   ),
+  '1.0.6'		=> array(),
 );
 
 function asacp_update($action, $version)

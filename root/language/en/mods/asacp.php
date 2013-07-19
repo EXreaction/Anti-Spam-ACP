@@ -40,7 +40,7 @@ $lang = array_merge($lang, array(
 	'ASACP_BAN_REASON_EXPLAIN'	=> 'Please enter the ban reason (private).',
 	'ASACP_BAN_REASON_SHOWN_TO_USER'			=> 'Ban reason shown to the user',
 	'ASACP_BAN_REASON_SHOWN_TO_USER_EXPLAIN'	=> 'If a message is entered here, it will be shown to the user who was banned.',
-	'ASACP_CREDITS'			=> 'Protected by <a href="http://www.lithiumstudios.org" target="_blank">Anti-Spam ACP</a>',
+	'ASACP_CREDITS'			=> '',
 	'ASACP_EVIDENCE_SFS'	=> 'If submitting information to Stop Forum Spam, you must enter evidence here.<br />(8,000 character limit)',
 
 	'FOUNDER_ONLY'			=> 'You must be a Board Founder to access this page.',

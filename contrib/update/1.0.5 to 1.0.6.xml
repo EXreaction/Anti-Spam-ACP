@@ -17,17 +17,15 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<author>
 			<username>EXreaction</username>
 			<realname>Nathan Guse</realname>
-			<homepage>http://www.lithiumstudios.org/</homepage>
-			<email>exreaction@lithiumstudios.org</email>
 		</author>
 	</author-group>
 
-	<mod-version>1.0.6-dev</mod-version>
+	<mod-version>1.0.6</mod-version>
 
 	<installation>
 		<level>easy</level>
 		<time>60</time>
-		<target-version>3.0.10</target-version>
+		<target-version>3.0.11</target-version>
 	</installation>
 </header>
 
@@ -153,6 +151,21 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		}
 	}
 	// END Anti-Spam ACP]]></action>
+		</edit>
+    </open>
+	<open src="styles/prosilver/template/overall_footer.html">
+		<edit>
+			<find><![CDATA[		<br />{L_ASACP_CREDITS}]]></find>
+			<action type="replace-with"></action>
+		</edit>
+    </open>
+	<open src="styles/subsilver2/template/overall_footer.html">
+		<edit>
+			<find><![CDATA[<span class="copyright">]]></find>
+			<inline-edit>
+				<inline-find><![CDATA[{L_ASACP_CREDITS}<br />]]></inline-find>
+				<inline-action type="replace-with"></inline-action>
+			</inline-edit>
 		</edit>
     </open>
 </action-group>

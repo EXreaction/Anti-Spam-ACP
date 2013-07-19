@@ -476,7 +476,6 @@ class acp_asacp
 					'S_SETTINGS'		=> true,
 
 					'CURRENT_VERSION'	=> ASACP_VERSION,
-					'LATEST_VERSION'	=> $this->asacp_latest_version(),
 				));
 			break;
 		}
@@ -572,28 +571,6 @@ class acp_asacp
 
 		return '<label><input type="radio" name="config[' . $key . ']" value="0"' . $key0 . ' class="radio" /> ' . $user->lang['NOTHING'] . '</label>
 <label><input type="radio" name="config[' . $key . ']" value="1"' . $key1 . ' class="radio" /> ' . $user->lang['DENY_SUBMISSION'] . '</label>';
-	}
-
-    function asacp_latest_version()
-	{
-		global $user, $config;
-
-		$latest_version = antispam::version_check();
-		if ($latest_version === false)
-		{
-			$version = $user->lang['NOT_AVAILABLE'];
-			$version .= '<br />' . sprintf($user->lang['CLICK_CHECK_NEW_VERSION'], '<a href="http://www.lithiumstudios.org/phpBB3/viewtopic.php?f=31&amp;t=941">', '</a>');
-		}
-		else
-		{
-			$version = $latest_version;
-			if (version_compare(ASACP_VERSION, $latest_version, '<'))
-			{
-				$version .= '<br />' . sprintf($user->lang['CLICK_GET_NEW_VERSION'], '<a href="http://www.lithiumstudios.org/phpBB3/viewtopic.php?f=31&amp;t=941">', '</a>');
-			}
-		}
-
-		return $version;
 	}
 }
 

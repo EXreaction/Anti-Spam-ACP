@@ -122,7 +122,6 @@ $lang = array_merge($lang, array(
 	'INTERESTS_POST_COUNT'						=> 'Interests Post Count',
 	'INTERESTS_POST_COUNT_EXPLAIN'				=> 'If Interests is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
 
-	'LATEST_VERSION'							=> 'Latest Version',
 	'LOCATION_POST_COUNT'						=> 'Location Post Count',
 	'LOCATION_POST_COUNT_EXPLAIN'				=> 'If Location is set to Post Count, the user will be able to fill in that field after they have reached this many posts.',
 	'LOG_VIEW_POST'								=> '%sView Post%s',

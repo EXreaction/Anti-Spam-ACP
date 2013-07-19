@@ -19,12 +19,10 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<author>
 			<username>EXreaction</username>
 			<realname>Nathan Guse</realname>
-			<homepage>http://www.lithiumstudios.org/</homepage>
-			<email>exreaction@lithiumstudios.org</email>
 		</author>
 	</author-group>
 
-	<mod-version>1.0.6-dev</mod-version>
+	<mod-version>1.0.6</mod-version>
 
 	<installation>
 		<level>intermediate</level>
@@ -116,13 +114,14 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</changelog>
 		</entry>
 		<entry>
-			<date>2012-00-00</date>
-			<rev-version>1.0.6-dev</rev-version>
+			<date>2013-07-19</date>
+			<rev-version>1.0.6</rev-version>
 			<changelog lang="en">
 				<change>Decode messages before logging them.</change>
 				<change>Log the queries to Stop Forum Spam that results in an account being blocked from registering.</change>
 				<change>Fix a MSSQL error #62</change>
 				<change>Fix subsilver2 install instructions for phpBB updates</change>
+				<change>Remove references to Lithium Studios</change>
 			</changelog>
 		</entry>
 	</history>
@@ -217,12 +216,6 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			<action type="before-add"><![CDATA[	// START Anti-Spam ACP
 	antispam::page_header();
 	// END Anti-Spam ACP]]></action>
-		</edit>
-    </open>
-	<open src="styles/prosilver/template/overall_footer.html">
-		<edit>
-			<find><![CDATA[<!-- IF U_ACP --><br /><strong><a href="{U_ACP}">{L_ACP}</a></strong><!-- ENDIF -->]]></find>
-			<action type="before-add"><![CDATA[		<br />{L_ASACP_CREDITS}]]></action>
 		</edit>
     </open>
 	<open src="styles/prosilver/template/overall_header.html">

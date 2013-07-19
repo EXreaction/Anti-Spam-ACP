@@ -832,34 +832,5 @@ class antispam
 		return $message;
 	}
 	//public function build_spam_log_message($data)
-
-	/**
-	* Get the latest version number from Lithium Studios
-	*/
-	public static function version_check()
-	{
-		global $cache;
-
-		$version = $cache->get('asacp_version');
-		if ($version === false)
-		{
-			if (!function_exists('get_remote_file'))
-			{
-				global $phpbb_root_path, $phpEx;
-				include($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
-			}
-
-			$errstr = $errno = '';
-			$version = get_remote_file('lithiumstudios.org', '/updatecheck', 'anti_spam_acp_3_version.txt', $errstr, $errno, 80, 1);
-
-			if ($version !== false)
-			{
-				$cache->put('asacp_version', $version, 3600);
-			}
-		}
-
-		return $version;
-	}
-	//public static function version_check()
 }
 ?>

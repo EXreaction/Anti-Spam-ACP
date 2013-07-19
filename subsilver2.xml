@@ -19,12 +19,10 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<author>
 			<username>EXreaction</username>
 			<realname>Nathan Guse</realname>
-			<homepage>http://www.lithiumstudios.org/</homepage>
-			<email>exreaction@lithiumstudios.org</email>
 		</author>
 	</author-group>
 
-	<mod-version>1.0.6-dev</mod-version>
+	<mod-version>1.0.6</mod-version>
 
 	<installation>
 		<level>intermediate</level>
