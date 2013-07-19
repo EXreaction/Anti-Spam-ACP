@@ -71,6 +71,11 @@ class antispam
 
 		$user->add_lang('mods/asacp');
 
+		if (!class_exists('custom_profile'))
+		{
+			include($phpbb_root_path . 'includes/functions_profile_fields.' . $phpEx);
+		}
+
 		// Profile fields stuff
 		$cp = new custom_profile();
 
