@@ -279,7 +279,7 @@ require($phpbb_root_path . 'antispam/asacp.' . $phpEx);
 	// END Anti-Spam ACP]]></action>
 		</edit>
 		<edit>
-			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message, ($update_message || $update_subject) ? true : false);]]></find>
+			<find><![CDATA[$redirect_url = submit_post($mode, $post_data['post_subject']]]></find>
 			<action type="before-add"><![CDATA[			// START Anti-Spam ACP
 			if ($asacp_is_spam)
 			{
